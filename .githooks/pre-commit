@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Pre-commit hook: blocks commits containing secrets or .env files.
+# Install: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+STAGED=$(git diff --cached --name-only 2>/dev/null || true)
+
+# --- Block .env files ---
+ENV_FILES=$(echo "$STAGED" | grep -E '(^|/)\.env(\.|$)' || true)
+if [ -n "$ENV_FILES" ]; then
+  echo -e "${RED}BLOCKED: .env file staged for commit:${NC}"
+  echo "$ENV_FILES"
+  echo "Remove it with: git reset HEAD <file>"
+  exit 1
+fi
+
+# --- Block AWSYS API keys ---
+AWSYS_HITS=$(git diff --cached | grep -E 'awsys_[0-9a-f]{40,}' || true)
+if [ -n "$AWSYS_HITS" ]; then
+  echo -e "${RED}BLOCKED: AWSYS API key detected in staged changes.${NC}"
+  echo "Never commit real API keys. Use .env files (gitignored) instead."
+  exit 1
+fi
+
+# --- Block common secret patterns ---
+SECRET_PATTERNS='(password\s*=\s*["\x27][^"\x27]{8,}|secret\s*=\s*["\x27][^"\x27]{8,}|api_key\s*=\s*["\x27][^"\x27]{8,}|token\s*=\s*["\x27][^"\x27]{20,})'
+SECRET_HITS=$(git diff --cached | grep -iE "$SECRET_PATTERNS" | grep -v '#' | grep -v 'example\|placeholder\|YOUR_\|<.*>' || true)
+if [ -n "$SECRET_HITS" ]; then
+  echo -e "${YELLOW}WARNING: Possible secret detected in staged changes:${NC}"
+  echo "$SECRET_HITS" | head -5
+  echo ""
+  echo "If this is a false positive, double-check before proceeding."
+  echo "Press Ctrl+C to abort, or wait 5 seconds to continue..."
+  sleep 5
+fi
+
+# --- Run gitleaks if installed ---
+if command -v gitleaks &>/dev/null; then
+  gitleaks protect --staged --config .gitleaks.toml 2>/dev/null || {
+    echo -e "${RED}BLOCKED: gitleaks detected a secret. Run 'gitleaks protect --staged' for details.${NC}"
+    exit 1
+  }
+fi
+
+exit 0

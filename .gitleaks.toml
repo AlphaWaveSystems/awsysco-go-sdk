@@ -1,0 +1,27 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "awsys-api-key"
+description = "AWSYS.CO API Key"
+regex = '''awsys_[0-9a-f]{64}'''
+tags = ["key", "awsys"]
+
+[[rules]]
+id = "awsys-api-key-short"
+description = "AWSYS.CO API Key (short form)"
+regex = '''awsys_[0-9a-zA-Z]{20,}'''
+tags = ["key", "awsys"]
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''.gitleaks.toml''',
+  '''\.env\.example''',
+  '''README\.md''',
+]
+regexes = [
+  '''awsys_<your[_-]api[_-]key>''',
+  '''awsys_YOUR_API_KEY''',
+  '''awsys_\.\.\.',
+]
