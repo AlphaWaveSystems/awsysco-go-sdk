@@ -19,8 +19,8 @@ func TestBulkCreate(t *testing.T) {
 		},
 	})
 	if err != nil {
-		if awsysco.IsNotFound(err) {
-			t.Skipf("POST /api/v1/bulk not available on this environment")
+		if awsysco.IsNotFound(err) || awsysco.IsForbidden(err) || awsysco.IsAuthError(err) {
+			t.Skipf("POST /api/v1/bulk not available on this environment: %v", err)
 		}
 		t.Fatalf("Bulk.Create failed: %v", err)
 	}

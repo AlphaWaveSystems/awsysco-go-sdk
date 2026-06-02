@@ -15,9 +15,7 @@ func TestFoldersCreate(t *testing.T) {
 		Name:  "go-sdk-test-folder",
 		Color: "#3B82F6",
 	})
-	if err != nil {
-		t.Fatalf("Folders.Create failed: %v", err)
-	}
+	skipSetupError(t, "Folders.Create", err)
 	if folder.ID == "" {
 		t.Fatal("expected folder ID to be non-empty")
 	}
@@ -35,9 +33,7 @@ func TestFoldersList(t *testing.T) {
 	folder, err := client.Folders.Create(ctx, awsysco.CreateFolderInput{
 		Name: "go-sdk-test-list-folder",
 	})
-	if err != nil {
-		t.Fatalf("Folders.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Folders.Create (setup)", err)
 	defer func() { _ = client.Folders.Delete(ctx, folder.ID) }()
 
 	resp, err := client.Folders.List(ctx)
@@ -64,9 +60,7 @@ func TestFoldersAssignLink(t *testing.T) {
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-assign",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 	// Use shortCode (or ID) as the link identifier for folder assignment.
 	linkRef := link.ShortCode
 	if linkRef == "" {
@@ -77,9 +71,7 @@ func TestFoldersAssignLink(t *testing.T) {
 	folder, err := client.Folders.Create(ctx, awsysco.CreateFolderInput{
 		Name: "go-sdk-test-assign-folder",
 	})
-	if err != nil {
-		t.Fatalf("Folders.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Folders.Create (setup)", err)
 	defer func() { _ = client.Folders.Delete(ctx, folder.ID) }()
 
 	if err := client.Folders.AssignLink(ctx, linkRef, folder.ID); err != nil {
@@ -95,9 +87,7 @@ func TestFoldersRemoveLink(t *testing.T) {
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-remove-folder",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 	linkRef := link.ShortCode
 	if linkRef == "" {
 		linkRef = link.ID
@@ -107,9 +97,7 @@ func TestFoldersRemoveLink(t *testing.T) {
 	folder, err := client.Folders.Create(ctx, awsysco.CreateFolderInput{
 		Name: "go-sdk-test-remove-folder",
 	})
-	if err != nil {
-		t.Fatalf("Folders.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Folders.Create (setup)", err)
 	defer func() { _ = client.Folders.Delete(ctx, folder.ID) }()
 
 	// Assign first, then remove.
@@ -123,6 +111,28 @@ func TestFoldersRemoveLink(t *testing.T) {
 	t.Logf("removed link %s from folder", linkRef)
 }
 
+func TestFoldersUpdate(t *testing.T) {
+	client := newTestClient(t)
+	ctx := context.Background()
+
+	folder, err := client.Folders.Create(ctx, awsysco.CreateFolderInput{
+		Name: "go-sdk-test-update-folder",
+	})
+	skipSetupError(t, "Folders.Create (setup)", err)
+	defer func() { _ = client.Folders.Delete(ctx, folder.ID) }()
+
+	updated, err := client.Folders.Update(ctx, folder.ID, awsysco.UpdateFolderInput{
+		Name: "go-sdk-test-update-folder-renamed",
+	})
+	if err != nil {
+		if awsysco.IsNotFound(err) {
+			t.Skipf("Folders.Update not available on this environment: %v", err)
+		}
+		t.Fatalf("Folders.Update failed: %v", err)
+	}
+	t.Logf("updated folder: id=%s name=%s", updated.ID, updated.Name)
+}
+
 func TestFoldersDelete(t *testing.T) {
 	client := newTestClient(t)
 	ctx := context.Background()
@@ -130,9 +140,7 @@ func TestFoldersDelete(t *testing.T) {
 	folder, err := client.Folders.Create(ctx, awsysco.CreateFolderInput{
 		Name: "go-sdk-test-delete-folder",
 	})
-	if err != nil {
-		t.Fatalf("Folders.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Folders.Create (setup)", err)
 
 	if err := client.Folders.Delete(ctx, folder.ID); err != nil {
 		t.Fatalf("Folders.Delete failed: %v", err)

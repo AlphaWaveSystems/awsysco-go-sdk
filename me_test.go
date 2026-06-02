@@ -3,6 +3,8 @@ package awsysco_test
 import (
 	"context"
 	"testing"
+
+	awsysco "github.com/AlphaWaveSystems/awsysco-go-sdk"
 )
 
 func TestMeGet(t *testing.T) {
@@ -11,6 +13,9 @@ func TestMeGet(t *testing.T) {
 
 	me, err := client.Me.Get(ctx)
 	if err != nil {
+		if awsysco.IsRateLimitError(err) {
+			t.Skipf("Me.Get rate-limited (hourly limit): %v", err)
+		}
 		t.Fatalf("Me.Get failed: %v", err)
 	}
 	if me.Email == "" {
