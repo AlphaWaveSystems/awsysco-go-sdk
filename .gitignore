@@ -1,6 +1,7 @@
 # === SECRETS — NEVER COMMIT THESE ===
 .env
 .env.*
+.token-publish
 .env.local
 .env.test
 .env.staging
