@@ -25,12 +25,22 @@ type clientConfig struct {
 
 // Client is the AWSYS.CO API client.
 type Client struct {
-	Links     *LinksResource
-	Analytics *AnalyticsResource
-	QR        *QRResource
-	Folders   *FoldersResource
-	Bulk      *BulkResource
-	Me        *MeResource
+	Links         *LinksResource
+	Analytics     *AnalyticsResource
+	QR            *QRResource
+	Folders       *FoldersResource
+	Bulk          *BulkResource
+	Me            *MeResource
+	Tags          *TagsResource
+	TrustScore    *TrustScoreResource
+	DataExport    *DataExportResource
+	Namespace     *NamespaceResource
+	UtmTemplates  *UtmTemplatesResource
+	Webhooks      *WebhooksResource
+	SavedViews    *SavedViewsResource
+	CustomDomains *CustomDomainsResource
+	Agentlink     *AgentlinkResource
+	Affiliate     *AffiliateResource
 
 	cfg *clientConfig
 }
@@ -83,6 +93,16 @@ func NewClient(apiKey string, opts ...Option) *Client {
 	c.Folders = &FoldersResource{client: c}
 	c.Bulk = &BulkResource{client: c}
 	c.Me = &MeResource{client: c}
+	c.Tags = &TagsResource{client: c}
+	c.TrustScore = &TrustScoreResource{client: c}
+	c.DataExport = &DataExportResource{client: c}
+	c.Namespace = &NamespaceResource{client: c}
+	c.UtmTemplates = &UtmTemplatesResource{client: c}
+	c.Webhooks = &WebhooksResource{client: c}
+	c.SavedViews = &SavedViewsResource{client: c}
+	c.CustomDomains = &CustomDomainsResource{client: c}
+	c.Agentlink = &AgentlinkResource{client: c}
+	c.Affiliate = &AffiliateResource{client: c}
 
 	return c
 }

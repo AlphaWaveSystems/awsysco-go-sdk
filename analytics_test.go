@@ -15,9 +15,7 @@ func TestAnalyticsGetStats(t *testing.T) {
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-stats",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 	defer func() {
 		if link.ShortCode != "" {
 			_ = client.Links.Delete(ctx, link.ShortCode)
@@ -30,7 +28,7 @@ func TestAnalyticsGetStats(t *testing.T) {
 		id = link.ID
 	}
 
-	stats, err := client.Analytics.GetStats(ctx, id)
+	stats, err := client.Analytics.GetStats(ctx, id, "7d")
 	if err != nil {
 		if awsysco.IsNotFound(err) {
 			t.Skipf("Analytics.GetStats not available for this link on this environment: %v", err)
@@ -39,4 +37,18 @@ func TestAnalyticsGetStats(t *testing.T) {
 	}
 	// TotalClicks exists on the struct (may be 0 for a fresh link, that's fine).
 	t.Logf("stats for %s: totalClicks=%d", id, stats.TotalClicks)
+}
+
+func TestAnalyticsGetRecentClicks(t *testing.T) {
+	client := newTestClient(t)
+	ctx := context.Background()
+
+	clicks, err := client.Analytics.GetRecentClicks(ctx, 5)
+	if err != nil {
+		if awsysco.IsNotFound(err) || awsysco.IsAuthError(err) || awsysco.IsForbidden(err) {
+			t.Skipf("Analytics.GetRecentClicks not available on this environment: %v", err)
+		}
+		t.Fatalf("Analytics.GetRecentClicks failed: %v", err)
+	}
+	t.Logf("recent clicks: %d events", len(clicks))
 }

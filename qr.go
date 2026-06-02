@@ -1,11 +1,12 @@
 package awsysco
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 )
 
-// QRResource provides QR code URL construction.
+// QRResource provides QR code URL construction and settings management.
 type QRResource struct {
 	client *Client
 }
@@ -58,4 +59,34 @@ func (r *QRResource) GetURL(shortCode string, opts ...QROption) string {
 	q.Set("bgColor", cfg.bgColor)
 
 	return fmt.Sprintf("%s/api/qr/%s?%s", r.client.cfg.baseURL, shortCode, q.Encode())
+}
+
+// QRSettings holds the persisted QR code settings for a link.
+type QRSettings struct {
+	Size            int    `json:"size,omitempty"`
+	Color           string `json:"color,omitempty"`
+	BgColor         string `json:"bgColor,omitempty"`
+	ErrorCorrection string `json:"errorCorrection,omitempty"`
+	Margin          int    `json:"margin,omitempty"`
+	LogoURL         string `json:"logoUrl,omitempty"`
+}
+
+// GetSettings retrieves the saved QR code settings for the given short path.
+func (r *QRResource) GetSettings(ctx context.Context, shortPath string) (*QRSettings, error) {
+	var settings QRSettings
+	path := fmt.Sprintf("/api/link/%s/qr-settings", url.PathEscape(shortPath))
+	if err := r.client.doRequest(ctx, "GET", path, nil, &settings); err != nil {
+		return nil, err
+	}
+	return &settings, nil
+}
+
+// UpdateSettings saves QR code settings for the given short path.
+func (r *QRResource) UpdateSettings(ctx context.Context, shortPath string, settings QRSettings) (*QRSettings, error) {
+	var result QRSettings
+	path := fmt.Sprintf("/api/link/%s/qr-settings", url.PathEscape(shortPath))
+	if err := r.client.doRequest(ctx, "PUT", path, settings, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
 }

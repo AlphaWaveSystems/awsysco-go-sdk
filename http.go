@@ -116,6 +116,82 @@ func (c *Client) doRequestOnce(ctx context.Context, method, path string, body in
 	return nil
 }
 
+// doText performs a request and returns the response body as a plain string.
+// It is used for endpoints that return non-JSON bodies (e.g. CSV exports).
+func (c *Client) doText(ctx context.Context, method, path string, body interface{}) (string, error) {
+	const maxAttempts = 3
+	backoff := time.Second
+
+	for attempt := 0; attempt < maxAttempts; attempt++ {
+		result, err := c.doTextOnce(ctx, method, path, body)
+		if err == nil {
+			return result, nil
+		}
+
+		var rlErr *RateLimitError
+		if isRateLimit(err, &rlErr) {
+			if attempt == maxAttempts-1 {
+				return "", err
+			}
+			wait := backoff
+			if rlErr != nil && rlErr.RetryAfter > 0 {
+				wait = rlErr.RetryAfter
+			}
+			select {
+			case <-ctx.Done():
+				return "", ctx.Err()
+			case <-time.After(wait):
+			}
+			backoff *= 2
+			continue
+		}
+
+		return "", err
+	}
+
+	return "", fmt.Errorf("awsysco: max retry attempts exceeded")
+}
+
+func (c *Client) doTextOnce(ctx context.Context, method, path string, body interface{}) (string, error) {
+	var bodyReader io.Reader
+	if body != nil {
+		data, err := json.Marshal(body)
+		if err != nil {
+			return "", fmt.Errorf("awsysco: marshal request: %w", err)
+		}
+		bodyReader = bytes.NewReader(data)
+	}
+
+	urlStr := c.cfg.baseURL + path
+	req, err := http.NewRequestWithContext(ctx, method, urlStr, bodyReader)
+	if err != nil {
+		return "", fmt.Errorf("awsysco: create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+c.cfg.apiKey)
+	req.Header.Set("User-Agent", userAgent)
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+
+	resp, err := c.cfg.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("awsysco: http request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	raw, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("awsysco: read response: %w", err)
+	}
+
+	if resp.StatusCode >= 400 {
+		return "", parseErrorResponse(resp.StatusCode, raw, resp.Header)
+	}
+
+	return string(raw), nil
+}
+
 func parseErrorResponse(status int, raw []byte, headers http.Header) error {
 	var apiErr struct {
 		Error string `json:"error"`

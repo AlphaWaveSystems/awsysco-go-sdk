@@ -3,6 +3,7 @@ package awsysco
 import (
 	"context"
 	"fmt"
+	"net/url"
 )
 
 // FoldersResource provides access to the folders API.
@@ -40,6 +41,15 @@ func (r *FoldersResource) AssignLink(ctx context.Context, linkID, folderID strin
 func (r *FoldersResource) RemoveLink(ctx context.Context, linkID string) error {
 	body := map[string]interface{}{"folderId": nil}
 	return r.client.doRequest(ctx, "POST", fmt.Sprintf("/api/v1/links/%s/folder", linkID), body, nil)
+}
+
+// Update updates a folder's name or color.
+func (r *FoldersResource) Update(ctx context.Context, folderID string, input UpdateFolderInput) (*Folder, error) {
+	var folder Folder
+	if err := r.client.doRequest(ctx, "PATCH", fmt.Sprintf("/api/v1/folders/%s", url.PathEscape(folderID)), input, &folder); err != nil {
+		return nil, err
+	}
+	return &folder, nil
 }
 
 // Delete deletes a folder by its ID.

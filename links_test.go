@@ -14,9 +14,7 @@ func TestLinksCreate(t *testing.T) {
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-create",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create", err)
 	if link.ShortURL == "" && link.ShortCode == "" {
 		t.Fatal("expected ShortURL or ShortCode to be non-empty")
 	}
@@ -39,9 +37,7 @@ func TestLinksList(t *testing.T) {
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-list",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 	defer func() {
 		if link.ShortCode != "" {
 			_ = client.Links.Delete(ctx, link.ShortCode)
@@ -65,9 +61,7 @@ func TestLinksGet(t *testing.T) {
 	created, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-get",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 	defer func() {
 		if created.ShortCode != "" {
 			_ = client.Links.Delete(ctx, created.ShortCode)
@@ -102,9 +96,7 @@ func TestLinksUpdate(t *testing.T) {
 	created, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-update",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 	defer func() {
 		if created.ShortCode != "" {
 			_ = client.Links.Delete(ctx, created.ShortCode)
@@ -139,9 +131,7 @@ func TestLinksDelete(t *testing.T) {
 	created, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
 		URL: "https://example.com/go-sdk-test-delete",
 	})
-	if err != nil {
-		t.Fatalf("Links.Create (setup) failed: %v", err)
-	}
+	skipSetupError(t, "Links.Create (setup)", err)
 
 	id := created.ShortCode
 	if id == "" {

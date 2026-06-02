@@ -102,18 +102,52 @@ func (r *ListLinksResponse) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// RoutingRule defines a geo-based routing rule for a link.
+type RoutingRule struct {
+	Country     string `json:"country"`
+	RedirectURL string `json:"redirectUrl"`
+}
+
+// OgMeta defines OpenGraph metadata overrides for a link.
+type OgMeta struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	Image       string `json:"image,omitempty"`
+}
+
+// GeoRestriction defines geographic allow/block rules for a link.
+type GeoRestriction struct {
+	AllowedCountries []string `json:"allowedCountries,omitempty"`
+	BlockedCountries []string `json:"blockedCountries,omitempty"`
+}
+
 // CreateLinkInput is the input for creating a link.
 type CreateLinkInput struct {
-	URL        string     `json:"url"`
-	CustomSlug string     `json:"customSlug,omitempty"`
-	ExpiresAt  *time.Time `json:"expiresAt,omitempty"`
-	MaxClicks  *int       `json:"maxClicks,omitempty"`
+	URL             string          `json:"url"`
+	CustomSlug      string          `json:"customSlug,omitempty"`
+	ExpiresAt       *time.Time      `json:"expiresAt,omitempty"`
+	MaxClicks       *int            `json:"maxClicks,omitempty"`
+	RoutingRules    []RoutingRule   `json:"routingRules,omitempty"`
+	OgMeta          *OgMeta         `json:"ogMeta,omitempty"`
+	GeoRestriction  *GeoRestriction `json:"geoRestriction,omitempty"`
+	Password        string          `json:"password,omitempty"`
+	PassAdClickIds  bool            `json:"passAdClickIds,omitempty"`
+	FolderID        string          `json:"folderId,omitempty"`
+	Tags            []string        `json:"tags,omitempty"`
 }
 
 // UpdateLinkInput is the input for updating a link.
 type UpdateLinkInput struct {
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
-	MaxClicks *int       `json:"maxClicks,omitempty"`
+	URL             string          `json:"url,omitempty"`
+	ExpiresAt       *time.Time      `json:"expiresAt,omitempty"`
+	MaxClicks       *int            `json:"maxClicks,omitempty"`
+	RoutingRules    []RoutingRule   `json:"routingRules,omitempty"`
+	OgMeta          *OgMeta         `json:"ogMeta,omitempty"`
+	GeoRestriction  *GeoRestriction `json:"geoRestriction,omitempty"`
+	Password        string          `json:"password,omitempty"`
+	PassAdClickIds  bool            `json:"passAdClickIds,omitempty"`
+	FolderID        string          `json:"folderId,omitempty"`
+	Tags            []string        `json:"tags,omitempty"`
 }
 
 // ListLinksInput is the input for listing links.
@@ -122,11 +156,20 @@ type ListLinksInput struct {
 	Offset int
 }
 
+// AggregateStats holds aggregated click breakdown data.
+type AggregateStats struct {
+	Countries map[string]int `json:"countries"`
+	Devices   map[string]int `json:"devices"`
+	Browsers  map[string]int `json:"browsers"`
+	Referrers map[string]int `json:"referrers"`
+}
+
 // LinkStats holds analytics for a link.
 type LinkStats struct {
-	ShortCode   string       `json:"shortCode"`
-	TotalClicks int          `json:"totalClicks"`
-	Clicks      []ClickEvent `json:"clicks"`
+	ShortCode      string          `json:"shortCode"`
+	TotalClicks    int             `json:"totalClicks"`
+	Clicks         []ClickEvent    `json:"clicks"`
+	AggregateStats *AggregateStats `json:"aggregateStats,omitempty"`
 }
 
 // ClickEvent represents a single click on a link.
@@ -213,6 +256,12 @@ type ListFoldersResponse struct {
 // CreateFolderInput is the input for creating a folder.
 type CreateFolderInput struct {
 	Name  string `json:"name"`
+	Color string `json:"color,omitempty"`
+}
+
+// UpdateFolderInput is the input for updating a folder.
+type UpdateFolderInput struct {
+	Name  string `json:"name,omitempty"`
 	Color string `json:"color,omitempty"`
 }
 

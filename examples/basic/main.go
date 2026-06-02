@@ -24,23 +24,26 @@ func main() {
 
 	ctx := context.Background()
 
-	// Get current user info
+	// ── Me ──────────────────────────────────────────────────────────────────
 	me, err := client.Me.Get(ctx)
 	if err != nil {
 		log.Fatalf("failed to get user info: %v", err)
 	}
 	fmt.Printf("Logged in as: %s (tier: %s)\n", me.Email, me.SubscriptionTier)
 
-	// Create a shortened link
+	// ── Links ────────────────────────────────────────────────────────────────
+	maxClicks := 1000
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
-		URL: "https://example.com/very/long/url/that/needs/shortening",
+		URL:        "https://example.com/very/long/url/that/needs/shortening",
+		MaxClicks:  &maxClicks,
+		Tags:       []string{"demo", "go-sdk"},
+		OgMeta:     &awsysco.OgMeta{Title: "Example", Description: "SDK demo link"},
 	})
 	if err != nil {
 		log.Fatalf("failed to create link: %v", err)
 	}
 	fmt.Printf("Created link: %s -> %s\n", link.ShortURL, link.Long)
 
-	// List recent links
 	list, err := client.Links.List(ctx, awsysco.ListLinksInput{Limit: 5})
 	if err != nil {
 		log.Fatalf("failed to list links: %v", err)
@@ -50,18 +53,34 @@ func main() {
 		fmt.Printf("  %s -> %s (%d clicks)\n", l.ShortURL, l.Long, l.Clicks)
 	}
 
-	// Get analytics for the created link
-	stats, err := client.Analytics.GetStats(ctx, link.ID)
+	// ── Analytics ────────────────────────────────────────────────────────────
+	stats, err := client.Analytics.GetStats(ctx, link.ShortCode, "7d")
 	if err != nil {
-		log.Fatalf("failed to get stats: %v", err)
+		log.Printf("warning: failed to get stats: %v", err)
+	} else {
+		fmt.Printf("\nStats for %s (7d): %d total clicks\n", link.ShortCode, stats.TotalClicks)
 	}
-	fmt.Printf("\nStats for %s: %d total clicks\n", link.ShortCode, stats.TotalClicks)
 
-	// Generate a QR code URL
+	recentClicks, err := client.Analytics.GetRecentClicks(ctx, 10)
+	if err != nil {
+		log.Printf("warning: failed to get recent clicks: %v", err)
+	} else {
+		fmt.Printf("Recent click events: %d\n", len(recentClicks))
+	}
+
+	// ── QR ───────────────────────────────────────────────────────────────────
 	qrURL := client.QR.GetURL(link.ShortCode, awsysco.WithSize(400))
 	fmt.Printf("QR Code URL: %s\n", qrURL)
 
-	// Create a folder and assign the link to it
+	// ── Tags ─────────────────────────────────────────────────────────────────
+	tagResp, err := client.Tags.Add(ctx, link.ShortCode, "featured")
+	if err != nil {
+		log.Printf("warning: Tags.Add: %v", err)
+	} else {
+		fmt.Printf("Tags after add: %v\n", tagResp.Tags)
+	}
+
+	// ── Folders ───────────────────────────────────────────────────────────────
 	folder, err := client.Folders.Create(ctx, awsysco.CreateFolderInput{
 		Name:  "Example Folder",
 		Color: "#10B981",
@@ -71,12 +90,16 @@ func main() {
 	}
 	fmt.Printf("\nCreated folder: %s (id: %s)\n", folder.Name, folder.ID)
 
-	if err := client.Folders.AssignLink(ctx, link.ID, folder.ID); err != nil {
-		log.Fatalf("failed to assign link to folder: %v", err)
+	if err := client.Folders.AssignLink(ctx, link.ShortCode, folder.ID); err != nil {
+		log.Printf("warning: AssignLink: %v", err)
 	}
-	fmt.Printf("Assigned link %s to folder %s\n", link.ShortCode, folder.Name)
 
-	// Bulk create links
+	_, err = client.Folders.Update(ctx, folder.ID, awsysco.UpdateFolderInput{Name: "Example Folder (renamed)"})
+	if err != nil {
+		log.Printf("warning: Folders.Update: %v", err)
+	}
+
+	// ── Bulk ─────────────────────────────────────────────────────────────────
 	bulk, err := client.Bulk.Create(ctx, awsysco.BulkCreateInput{
 		URLs: []awsysco.BulkLinkInput{
 			{URL: "https://example.com/page1"},
@@ -85,13 +108,83 @@ func main() {
 		},
 	})
 	if err != nil {
-		log.Fatalf("failed to bulk create: %v", err)
+		log.Printf("warning: Bulk.Create: %v", err)
+	} else {
+		fmt.Printf("\nBulk created %d links (%d failed)\n", bulk.Created, bulk.Failed)
 	}
-	fmt.Printf("\nBulk created %d links (%d failed)\n", bulk.Created, bulk.Failed)
 
-	// Clean up the example link and folder
-	_ = client.Folders.RemoveLink(ctx, link.ID)
-	_ = client.Links.Delete(ctx, link.ID)
+	// ── Webhooks ─────────────────────────────────────────────────────────────
+	webhook, err := client.Webhooks.Create(ctx, awsysco.CreateWebhookInput{
+		URL:    "https://example.com/webhook",
+		Events: []string{"link.created", "link.click"},
+		Name:   "go-sdk-demo",
+	})
+	if err != nil {
+		log.Printf("warning: Webhooks.Create: %v", err)
+	} else {
+		fmt.Printf("\nCreated webhook: id=%s url=%s\n", webhook.ID, webhook.URL)
+		_, _ = client.Webhooks.Delete(ctx, webhook.ID)
+	}
+
+	// ── Namespace ─────────────────────────────────────────────────────────────
+	nsInfo, err := client.Namespace.Get(ctx)
+	if err != nil {
+		log.Printf("warning: Namespace.Get: %v", err)
+	} else {
+		fmt.Printf("\nNamespace access: hasAccess=%v tier=%s\n", nsInfo.HasAccess, nsInfo.Tier)
+	}
+
+	// ── UTM Templates ──────────────────────────────────────────────────────────
+	utmResp, err := client.UtmTemplates.Create(ctx, awsysco.CreateUtmTemplateInput{
+		Name:     "go-sdk-email",
+		Source:   "newsletter",
+		Medium:   "email",
+		Campaign: "go-sdk-demo",
+	})
+	if err != nil {
+		log.Printf("warning: UtmTemplates.Create: %v", err)
+	} else {
+		fmt.Printf("\nCreated UTM template: id=%s name=%s\n", utmResp.Template.ID, utmResp.Template.Name)
+		_, _ = client.UtmTemplates.Delete(ctx, utmResp.Template.ID)
+	}
+
+	// ── Saved Views ───────────────────────────────────────────────────────────
+	views, err := client.SavedViews.List(ctx)
+	if err != nil {
+		log.Printf("warning: SavedViews.List: %v", err)
+	} else {
+		fmt.Printf("\nSaved views: %d\n", len(views))
+	}
+
+	// ── Affiliate ─────────────────────────────────────────────────────────────
+	program, err := client.Affiliate.CreateProgram(ctx, awsysco.CreateAffiliateProgramInput{
+		Name:           "Go SDK Demo Program",
+		CommissionType: "cpc",
+		CpcRate:        0.05,
+	})
+	if err != nil {
+		log.Printf("warning: Affiliate.CreateProgram: %v", err)
+	} else {
+		fmt.Printf("\nCreated affiliate program: id=%s name=%s\n", program.ID, program.Name)
+	}
+
+	// ── Data Export ───────────────────────────────────────────────────────────
+	csv, err := client.DataExport.ExportLinks(ctx)
+	if err != nil {
+		log.Printf("warning: DataExport.ExportLinks: %v", err)
+	} else {
+		lines := 0
+		for _, c := range csv {
+			if c == '\n' {
+				lines++
+			}
+		}
+		fmt.Printf("\nExported links CSV: ~%d lines\n", lines)
+	}
+
+	// ── Cleanup ───────────────────────────────────────────────────────────────
+	_ = client.Folders.RemoveLink(ctx, link.ShortCode)
+	_ = client.Links.Delete(ctx, link.ShortCode)
 	_ = client.Folders.Delete(ctx, folder.ID)
 	fmt.Println("\nCleanup complete.")
 }
