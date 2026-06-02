@@ -17,6 +17,7 @@ type Link struct {
 	Created           time.Time  `json:"created"`
 	ExpiresAt         *time.Time `json:"expiresAt"`
 	MaxClicks         *int       `json:"maxClicks"`
+	ExpireFallbackURL string     `json:"expireFallbackUrl,omitempty"`
 	PasswordProtected bool       `json:"passwordProtected"`
 	Namespace         string     `json:"namespace"`
 	FullPath          string     `json:"fullPath"`
@@ -123,11 +124,12 @@ type GeoRestriction struct {
 
 // CreateLinkInput is the input for creating a link.
 type CreateLinkInput struct {
-	URL             string          `json:"url"`
-	CustomSlug      string          `json:"customSlug,omitempty"`
-	ExpiresAt       *time.Time      `json:"expiresAt,omitempty"`
-	MaxClicks       *int            `json:"maxClicks,omitempty"`
-	RoutingRules    []RoutingRule   `json:"routingRules,omitempty"`
+	URL                string          `json:"url"`
+	CustomSlug         string          `json:"customSlug,omitempty"`
+	ExpiresAt          *time.Time      `json:"expiresAt,omitempty"`
+	MaxClicks          *int            `json:"maxClicks,omitempty"`
+	ExpireFallbackURL  string          `json:"expireFallbackUrl,omitempty"`
+	RoutingRules       []RoutingRule   `json:"routingRules,omitempty"`
 	OgMeta          *OgMeta         `json:"ogMeta,omitempty"`
 	GeoRestriction  *GeoRestriction `json:"geoRestriction,omitempty"`
 	Password        string          `json:"password,omitempty"`
@@ -138,10 +140,11 @@ type CreateLinkInput struct {
 
 // UpdateLinkInput is the input for updating a link.
 type UpdateLinkInput struct {
-	URL             string          `json:"url,omitempty"`
-	ExpiresAt       *time.Time      `json:"expiresAt,omitempty"`
-	MaxClicks       *int            `json:"maxClicks,omitempty"`
-	RoutingRules    []RoutingRule   `json:"routingRules,omitempty"`
+	URL               string          `json:"url,omitempty"`
+	ExpiresAt         *time.Time      `json:"expiresAt,omitempty"`
+	MaxClicks         *int            `json:"maxClicks,omitempty"`
+	ExpireFallbackURL string          `json:"expireFallbackUrl,omitempty"`
+	RoutingRules      []RoutingRule   `json:"routingRules,omitempty"`
 	OgMeta          *OgMeta         `json:"ogMeta,omitempty"`
 	GeoRestriction  *GeoRestriction `json:"geoRestriction,omitempty"`
 	Password        string          `json:"password,omitempty"`
