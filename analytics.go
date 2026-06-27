@@ -27,6 +27,24 @@ func (r *AnalyticsResource) GetStats(ctx context.Context, shortPath string, peri
 	return &stats, nil
 }
 
+// GetAggregateStats returns the aggregated analytics breakdown for a link via
+// GET /api/v1/links/{shortPath}/stats/aggregate. opts.Period filters the window
+// ("7d", "30d", "90d"); pass nil or an empty period to use the API default.
+//
+// Free-tier responses populate UpgradeForMore and leave the paid-tier
+// breakdowns (DeviceBreakdown, UTMBreakdown, etc.) nil.
+func (r *AnalyticsResource) GetAggregateStats(ctx context.Context, shortPath string, opts *AggregateOptions) (*AggregateStats, error) {
+	path := fmt.Sprintf("/api/v1/links/%s/stats/aggregate", url.PathEscape(shortPath))
+	if opts != nil && opts.Period != "" {
+		path += "?period=" + url.QueryEscape(opts.Period)
+	}
+	var stats AggregateStats
+	if err := r.client.doRequest(ctx, "GET", path, nil, &stats); err != nil {
+		return nil, err
+	}
+	return &stats, nil
+}
+
 // GetRecentClicks returns recent click events across all links for the authenticated user.
 // limit controls the maximum number of events returned (0 uses the API default).
 func (r *AnalyticsResource) GetRecentClicks(ctx context.Context, limit int) ([]ClickEvent, error) {
