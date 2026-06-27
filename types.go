@@ -29,9 +29,9 @@ func (l *Link) UnmarshalJSON(b []byte) error {
 	// Use an alias to avoid infinite recursion.
 	type LinkAlias Link
 	aux := &struct {
-		Short    string      `json:"short"`
-		Clicks   interface{} `json:"clicks"`
-		Created  interface{} `json:"created"`
+		Short     string      `json:"short"`
+		Clicks    interface{} `json:"clicks"`
+		Created   interface{} `json:"created"`
 		ExpiresAt interface{} `json:"expiresAt"`
 		*LinkAlias
 	}{
@@ -124,18 +124,18 @@ type GeoRestriction struct {
 
 // CreateLinkInput is the input for creating a link.
 type CreateLinkInput struct {
-	URL                string          `json:"url"`
-	CustomSlug         string          `json:"customSlug,omitempty"`
-	ExpiresAt          *time.Time      `json:"expiresAt,omitempty"`
-	MaxClicks          *int            `json:"maxClicks,omitempty"`
-	ExpireFallbackURL  string          `json:"expireFallbackUrl,omitempty"`
-	RoutingRules       []RoutingRule   `json:"routingRules,omitempty"`
-	OgMeta          *OgMeta         `json:"ogMeta,omitempty"`
-	GeoRestriction  *GeoRestriction `json:"geoRestriction,omitempty"`
-	Password        string          `json:"password,omitempty"`
-	PassAdClickIds  bool            `json:"passAdClickIds,omitempty"`
-	FolderID        string          `json:"folderId,omitempty"`
-	Tags            []string        `json:"tags,omitempty"`
+	URL               string          `json:"url"`
+	CustomSlug        string          `json:"customSlug,omitempty"`
+	ExpiresAt         *time.Time      `json:"expiresAt,omitempty"`
+	MaxClicks         *int            `json:"maxClicks,omitempty"`
+	ExpireFallbackURL string          `json:"expireFallbackUrl,omitempty"`
+	RoutingRules      []RoutingRule   `json:"routingRules,omitempty"`
+	OgMeta            *OgMeta         `json:"ogMeta,omitempty"`
+	GeoRestriction    *GeoRestriction `json:"geoRestriction,omitempty"`
+	Password          string          `json:"password,omitempty"`
+	PassAdClickIds    bool            `json:"passAdClickIds,omitempty"`
+	FolderID          string          `json:"folderId,omitempty"`
+	Tags              []string        `json:"tags,omitempty"`
 }
 
 // UpdateLinkInput is the input for updating a link.
@@ -145,12 +145,12 @@ type UpdateLinkInput struct {
 	MaxClicks         *int            `json:"maxClicks,omitempty"`
 	ExpireFallbackURL string          `json:"expireFallbackUrl,omitempty"`
 	RoutingRules      []RoutingRule   `json:"routingRules,omitempty"`
-	OgMeta          *OgMeta         `json:"ogMeta,omitempty"`
-	GeoRestriction  *GeoRestriction `json:"geoRestriction,omitempty"`
-	Password        string          `json:"password,omitempty"`
-	PassAdClickIds  bool            `json:"passAdClickIds,omitempty"`
-	FolderID        string          `json:"folderId,omitempty"`
-	Tags            []string        `json:"tags,omitempty"`
+	OgMeta            *OgMeta         `json:"ogMeta,omitempty"`
+	GeoRestriction    *GeoRestriction `json:"geoRestriction,omitempty"`
+	Password          string          `json:"password,omitempty"`
+	PassAdClickIds    bool            `json:"passAdClickIds,omitempty"`
+	FolderID          string          `json:"folderId,omitempty"`
+	Tags              []string        `json:"tags,omitempty"`
 }
 
 // ListLinksInput is the input for listing links.
@@ -302,6 +302,97 @@ type QROptions struct {
 	Size    int
 	Color   string
 	BGColor string
+}
+
+// IntOrUnlimited represents a usage limit value that the API returns either as
+// a numeric quantity or as the string "unlimited". When the limit is unlimited,
+// Unlimited is true and Value is 0.
+type IntOrUnlimited struct {
+	Value     int
+	Unlimited bool
+}
+
+// UnmarshalJSON decodes a value that may be a JSON number or the string
+// "unlimited".
+func (u *IntOrUnlimited) UnmarshalJSON(b []byte) error {
+	// Try string form first (e.g. "unlimited").
+	var s string
+	if err := json.Unmarshal(b, &s); err == nil {
+		if s == "unlimited" {
+			u.Unlimited = true
+			u.Value = 0
+			return nil
+		}
+		// Some other string — treat as unbounded/unknown rather than failing.
+		u.Unlimited = true
+		u.Value = 0
+		return nil
+	}
+	// Otherwise decode as a plain integer.
+	var n int
+	if err := json.Unmarshal(b, &n); err != nil {
+		return err
+	}
+	u.Value = n
+	u.Unlimited = false
+	return nil
+}
+
+// UsageLimits holds the per-tier usage limits for the current account.
+// Fields that can be "unlimited" use IntOrUnlimited; the remainder are plain ints.
+type UsageLimits struct {
+	LinksPerMonth        IntOrUnlimited `json:"linksPerMonth"`
+	MonthlyLinks         IntOrUnlimited `json:"monthlyLinks"`
+	DailyLinks           IntOrUnlimited `json:"dailyLinks"`
+	MonthlyTrackedClicks IntOrUnlimited `json:"monthlyTrackedClicks"`
+	QRCodes              IntOrUnlimited `json:"qrCodes"`
+	Folders              IntOrUnlimited `json:"folders"`
+	APICallsPerMonth     int            `json:"apiCallsPerMonth"`
+	CustomSlugs          int            `json:"customSlugs"`
+}
+
+// UsageOverage describes the account's metered-overage state.
+type UsageOverage struct {
+	Active               bool     `json:"active"`
+	StartedAt            *string  `json:"startedAt"`
+	ExpiresAt            *string  `json:"expiresAt"`
+	HoursUntilDrop       *float64 `json:"hoursUntilDrop"`
+	ClicksThisCycle      int      `json:"clicksThisCycle"`
+	SpendingLimitCents   int      `json:"spendingLimitCents"`
+	EstimatedChargeCents int      `json:"estimatedChargeCents"`
+}
+
+// UsageStats is the response from the /api/user/stats endpoint.
+type UsageStats struct {
+	TotalLinks             int          `json:"totalLinks"`
+	TotalClicks            int          `json:"totalClicks"`
+	LinksCreatedThisMonth  int          `json:"linksCreatedThisMonth"`
+	QRCodesThisMonth       int          `json:"qrCodesThisMonth"`
+	FolderCount            int          `json:"folderCount"`
+	APICallsThisMonth      int          `json:"apiCallsThisMonth"`
+	TrackedClicksThisMonth int          `json:"trackedClicksThisMonth"`
+	Tier                   string       `json:"tier"`
+	Limits                 UsageLimits  `json:"limits"`
+	HasAPIKey              bool         `json:"hasApiKey"`
+	APIKeyCreatedAt        *string      `json:"apiKeyCreatedAt"`
+	UserPrefix             *string      `json:"userPrefix"`
+	IsPremium              bool         `json:"isPremium"`
+	Overage                UsageOverage `json:"overage"`
+}
+
+// Web2AppSession is the response from consuming a Web2App attribution token via
+// GET /api/v1/web2app/{token}.
+//
+// Web2App sessions are single-use: a successful consume deletes the token
+// server-side, so a second call with the same token returns 404. Tokens also
+// expire 24 hours after creation, after which they are deleted and return 404.
+type Web2AppSession struct {
+	Success     bool                   `json:"success"`
+	LinkID      string                 `json:"linkId"`
+	UTMParams   map[string]string      `json:"utmParams"`
+	RoutingRule map[string]interface{} `json:"routingRule"`
+	Country     *string                `json:"country"`
+	ClickedAt   *string                `json:"clickedAt"`
 }
 
 // MeResponse is the response from the /api/v1/me endpoint.
