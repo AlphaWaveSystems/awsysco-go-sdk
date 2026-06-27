@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	sdkVersion = "0.1.0"
+	sdkVersion = "0.2.0"
 	userAgent  = "awsysco-go-sdk/" + sdkVersion
 )
 

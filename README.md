@@ -155,6 +155,47 @@ me, err := client.Me.Get(ctx)
 // me.Limits map[string]interface{}
 ```
 
+### Usage (Account Stats & Limits)
+
+```go
+stats, err := client.Usage.Get(ctx)
+// stats.TotalLinks, stats.TotalClicks int
+// stats.LinksCreatedThisMonth, stats.QRCodesThisMonth int
+// stats.FolderCount, stats.APICallsThisMonth, stats.TrackedClicksThisMonth int
+// stats.Tier string
+// stats.HasAPIKey bool, stats.APIKeyCreatedAt *string
+// stats.UserPrefix *string, stats.IsPremium bool
+// stats.Overage — metered-overage state (active, clicks, estimated charge, ...)
+
+// Tier limits. Fields that can be "unlimited" use IntOrUnlimited:
+if stats.Limits.MonthlyLinks.Unlimited {
+    fmt.Println("monthly links: unlimited")
+} else {
+    fmt.Println("monthly links:", stats.Limits.MonthlyLinks.Value)
+}
+// Plain int limits: stats.Limits.APICallsPerMonth, stats.Limits.CustomSlugs
+```
+
+### Web2App (Attribution Sessions)
+
+Consume a deferred-deep-link attribution token. Sessions are **single-use** (a
+successful call deletes the token server-side) and expire **24 hours** after
+creation. A consumed or expired token returns 404.
+
+```go
+session, err := client.Web2App.ConsumeSession(ctx, token)
+if err != nil {
+    if awsysco.IsNotFound(err) {
+        // token already consumed or expired
+    }
+    log.Fatal(err)
+}
+// session.LinkID string
+// session.UTMParams map[string]string
+// session.RoutingRule map[string]interface{} (may be nil)
+// session.Country *string, session.ClickedAt *string
+```
+
 ## Error Handling
 
 All errors returned by the SDK are either `*awsysco.AwsysError` or `*awsysco.RateLimitError` (which embeds `AwsysError`).

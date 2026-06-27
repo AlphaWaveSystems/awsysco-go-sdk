@@ -41,6 +41,8 @@ type Client struct {
 	CustomDomains *CustomDomainsResource
 	Agentlink     *AgentlinkResource
 	Affiliate     *AffiliateResource
+	Usage         *UsageResource
+	Web2App       *Web2AppResource
 
 	cfg *clientConfig
 }
@@ -103,6 +105,8 @@ func NewClient(apiKey string, opts ...Option) *Client {
 	c.CustomDomains = &CustomDomainsResource{client: c}
 	c.Agentlink = &AgentlinkResource{client: c}
 	c.Affiliate = &AffiliateResource{client: c}
+	c.Usage = &UsageResource{client: c}
+	c.Web2App = &Web2AppResource{client: c}
 
 	return c
 }
