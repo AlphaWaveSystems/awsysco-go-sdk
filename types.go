@@ -159,8 +159,8 @@ type ListLinksInput struct {
 	Offset int
 }
 
-// ClickBreakdown holds aggregated click breakdown data attached to LinkStats.
-type ClickBreakdown struct {
+// AggregateStats holds aggregated click breakdown data attached to LinkStats.
+type AggregateStats struct {
 	Countries map[string]int `json:"countries"`
 	Devices   map[string]int `json:"devices"`
 	Browsers  map[string]int `json:"browsers"`
@@ -172,7 +172,7 @@ type LinkStats struct {
 	ShortCode      string          `json:"shortCode"`
 	TotalClicks    int             `json:"totalClicks"`
 	Clicks         []ClickEvent    `json:"clicks"`
-	AggregateStats *ClickBreakdown `json:"aggregateStats,omitempty"`
+	AggregateStats *AggregateStats `json:"aggregateStats,omitempty"`
 }
 
 // ClickEvent represents a single click on a link.
@@ -465,11 +465,11 @@ type UpgradeForMore struct {
 	Message   string   `json:"message"`
 }
 
-// AggregateStats is the response from the aggregate stats endpoint
+// AggregateAnalytics is the response from the aggregate stats endpoint
 // (GET /api/v1/links/{shortPath}/stats/aggregate). Paid-tier breakdowns are
 // pointers/omitempty and are nil for free-tier responses, which instead
 // populate UpgradeForMore.
-type AggregateStats struct {
+type AggregateAnalytics struct {
 	ShortCode         string           `json:"shortCode"`
 	FullPath          *string          `json:"fullPath,omitempty"`
 	Period            string           `json:"period"`

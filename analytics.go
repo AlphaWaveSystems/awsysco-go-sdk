@@ -33,12 +33,12 @@ func (r *AnalyticsResource) GetStats(ctx context.Context, shortPath string, peri
 //
 // Free-tier responses populate UpgradeForMore and leave the paid-tier
 // breakdowns (DeviceBreakdown, UTMBreakdown, etc.) nil.
-func (r *AnalyticsResource) GetAggregateStats(ctx context.Context, shortPath string, opts *AggregateOptions) (*AggregateStats, error) {
+func (r *AnalyticsResource) GetAggregateStats(ctx context.Context, shortPath string, opts *AggregateOptions) (*AggregateAnalytics, error) {
 	path := fmt.Sprintf("/api/v1/links/%s/stats/aggregate", url.PathEscape(shortPath))
 	if opts != nil && opts.Period != "" {
 		path += "?period=" + url.QueryEscape(opts.Period)
 	}
-	var stats AggregateStats
+	var stats AggregateAnalytics
 	if err := r.client.doRequest(ctx, "GET", path, nil, &stats); err != nil {
 		return nil, err
 	}
