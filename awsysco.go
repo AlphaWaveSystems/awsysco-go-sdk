@@ -43,6 +43,7 @@ type Client struct {
 	Affiliate     *AffiliateResource
 	Usage         *UsageResource
 	Web2App       *Web2AppResource
+	Imports       *ImportsResource
 
 	cfg *clientConfig
 }
@@ -107,6 +108,7 @@ func NewClient(apiKey string, opts ...Option) *Client {
 	c.Affiliate = &AffiliateResource{client: c}
 	c.Usage = &UsageResource{client: c}
 	c.Web2App = &Web2AppResource{client: c}
+	c.Imports = &ImportsResource{client: c}
 
 	return c
 }

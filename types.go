@@ -159,7 +159,7 @@ type ListLinksInput struct {
 	Offset int
 }
 
-// AggregateStats holds aggregated click breakdown data.
+// AggregateStats holds aggregated click breakdown data attached to LinkStats.
 type AggregateStats struct {
 	Countries map[string]int `json:"countries"`
 	Devices   map[string]int `json:"devices"`
@@ -393,6 +393,114 @@ type Web2AppSession struct {
 	RoutingRule map[string]interface{} `json:"routingRule"`
 	Country     *string                `json:"country"`
 	ClickedAt   *string                `json:"clickedAt"`
+}
+
+// ImportCounts holds the per-stage record counts for an import job.
+type ImportCounts struct {
+	Fetched     int `json:"fetched"`
+	Transformed int `json:"transformed"`
+	Written     int `json:"written"`
+	Errored     int `json:"errored"`
+}
+
+// ImportJob represents a provider import job created via the imports API.
+//
+// Status is one of: pending, running, completed, partial, failed, cancelled.
+type ImportJob struct {
+	ID              string       `json:"id"`
+	UserID          string       `json:"userId"`
+	Provider        string       `json:"provider"`
+	Status          string       `json:"status"`
+	ScanOnly        bool         `json:"scanOnly"`
+	TargetNamespace *string      `json:"targetNamespace"`
+	ScopeFilter     *string      `json:"scopeFilter"`
+	Counts          ImportCounts `json:"counts"`
+	Errors          []string     `json:"errors"`
+	CreatedAt       *string      `json:"createdAt"`
+	UpdatedAt       *string      `json:"updatedAt"`
+}
+
+// ImportStartOptions is the input for starting a provider import.
+type ImportStartOptions struct {
+	Provider        string `json:"provider"`
+	AccessToken     string `json:"access_token"`
+	TargetNamespace string `json:"target_namespace,omitempty"`
+	ScanOnly        bool   `json:"scan_only,omitempty"`
+}
+
+// ImportListOptions filters the imports List request.
+type ImportListOptions struct {
+	Limit int
+}
+
+// DayClicks holds the click count for a single calendar day.
+type DayClicks struct {
+	Date   string `json:"date"`
+	Clicks int    `json:"clicks"`
+}
+
+// HourClicks holds the click count for a single hour bucket.
+type HourClicks struct {
+	Hour   int `json:"hour"`
+	Clicks int `json:"clicks"`
+}
+
+// DeviceBreakdown holds device-category click counts (paid-tier field).
+type DeviceBreakdown struct {
+	Mobile  int `json:"mobile"`
+	Desktop int `json:"desktop"`
+	Tablet  int `json:"tablet"`
+}
+
+// UTMBreakdown holds UTM-parameter click breakdowns (paid-tier field).
+type UTMBreakdown struct {
+	Sources   map[string]int `json:"sources"`
+	Mediums   map[string]int `json:"mediums"`
+	Campaigns map[string]int `json:"campaigns"`
+}
+
+// UpgradeForMore describes paid-tier analytics fields gated behind an upgrade.
+type UpgradeForMore struct {
+	Available []string `json:"available"`
+	Message   string   `json:"message"`
+}
+
+// AggregateAnalytics is the response from the aggregate stats endpoint
+// (GET /api/v1/links/{shortPath}/stats/aggregate). Paid-tier breakdowns are
+// pointers/omitempty and are nil for free-tier responses, which instead
+// populate UpgradeForMore.
+type AggregateAnalytics struct {
+	ShortCode         string           `json:"shortCode"`
+	FullPath          *string          `json:"fullPath,omitempty"`
+	Period            string           `json:"period"`
+	TotalClicks       int              `json:"totalClicks"`
+	UniqueVisitors    int              `json:"uniqueVisitors"`
+	ClicksByDay       []DayClicks      `json:"clicksByDay"`
+	CountryBreakdown  map[string]int   `json:"countryBreakdown"`
+	TierLimit         int              `json:"tierLimit"`
+	Tier              string           `json:"tier"`
+	DeviceBreakdown   *DeviceBreakdown `json:"deviceBreakdown,omitempty"`
+	ReferrerBreakdown map[string]int   `json:"referrerBreakdown,omitempty"`
+	BrowserBreakdown  map[string]int   `json:"browserBreakdown,omitempty"`
+	OSBreakdown       map[string]int   `json:"osBreakdown,omitempty"`
+	SourceBreakdown   map[string]int   `json:"sourceBreakdown,omitempty"`
+	HourBreakdown     []HourClicks     `json:"hourBreakdown,omitempty"`
+	UTMBreakdown      *UTMBreakdown    `json:"utmBreakdown,omitempty"`
+	UpgradeForMore    *UpgradeForMore  `json:"upgradeForMore,omitempty"`
+}
+
+// AggregateOptions filters the aggregate stats request. Period is one of
+// "7d", "30d", or "90d".
+type AggregateOptions struct {
+	Period string
+}
+
+// WaitOptions configures ImportsResource.WaitForCompletion polling behaviour.
+type WaitOptions struct {
+	// PollInterval is the delay between status checks (default 2s).
+	PollInterval time.Duration
+	// Timeout is the maximum total wait before returning an error (default 120s).
+	Timeout time.Duration
 }
 
 // MeResponse is the response from the /api/v1/me endpoint.

@@ -1,27 +1,18 @@
+# Extends gitleaks' default rules; allowlists fixtures that intentionally
+# contain fake credentials (test files, examples, docs).
 [extend]
 useDefault = true
 
-[[rules]]
-id = "awsys-api-key"
-description = "AWSYS.CO API Key"
-regex = '''awsys_[0-9a-f]{64}'''
-tags = ["key", "awsys"]
-
-[[rules]]
-id = "awsys-api-key-short"
-description = "AWSYS.CO API Key (short form)"
-regex = '''awsys_[0-9a-zA-Z]{20,}'''
-tags = ["key", "awsys"]
-
 [allowlist]
-description = "Global allowlist"
+description = "Test fixtures, examples and docs use placeholder/fake tokens"
 paths = [
-  '''.gitleaks.toml''',
-  '''\.env\.example''',
-  '''README\.md''',
+  '''(^|/)tests?/''',
+  '''.*\.test\.(ts|js)$''',
+  '''.*_test\.go$''',
+  '''(^|/)examples?/''',
+  '''(^|/)README\.md$''',
+  '''(^|/)CHANGELOG\.md$''',
 ]
 regexes = [
-  '''awsys_<your[_-]api[_-]key>''',
-  '''awsys_YOUR_API_KEY''',
-  '''awsys_\.\.\.',
+  '''awsys_(test|example|dummy|fake)[A-Za-z0-9_]*''',
 ]

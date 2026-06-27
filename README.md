@@ -89,6 +89,32 @@ stats, err := client.Analytics.GetStats(ctx, "link_id")
 // stats.Clicks []ClickEvent — per-click breakdown (country, device, browser, OS, referrer)
 ```
 
+#### Aggregate stats
+
+`GetAggregateStats` returns pre-aggregated analytics for a link. The `period`
+option is `"7d"`, `"30d"`, or `"90d"`. Paid-tier breakdowns
+(`DeviceBreakdown`, `UTMBreakdown`, `HourBreakdown`, `ReferrerBreakdown`,
+`BrowserBreakdown`, `OSBreakdown`, `SourceBreakdown`) are pointers/maps that are
+**nil on the free tier**, where the response instead populates `UpgradeForMore`.
+
+```go
+agg, err := client.Analytics.GetAggregateStats(ctx, "abc123", &awsysco.AggregateOptions{
+    Period: "30d",
+})
+// agg.TotalClicks, agg.UniqueVisitors int
+// agg.ClicksByDay []DayClicks, agg.CountryBreakdown map[string]int
+// agg.Tier string, agg.TierLimit int
+
+if agg.UpgradeForMore != nil {
+    // free tier — paid breakdowns gated:
+    fmt.Println(agg.UpgradeForMore.Message, agg.UpgradeForMore.Available)
+} else {
+    // paid tier — richer breakdowns available:
+    fmt.Println("mobile clicks:", agg.DeviceBreakdown.Mobile)
+    fmt.Println("utm sources:", agg.UTMBreakdown.Sources)
+}
+```
+
 ### Folders
 
 ```go
@@ -194,6 +220,40 @@ if err != nil {
 // session.UTMParams map[string]string
 // session.RoutingRule map[string]interface{} (may be nil)
 // session.Country *string, session.ClickedAt *string
+```
+
+### Imports (Provider Migration)
+
+Import links from another provider (e.g. Bitly, Rebrandly). `Start` accepts an
+access token for the source provider; `ScanOnly` performs a dry run without
+writing links. Job `Status` progresses through `pending` → `running` →
+a terminal state (`completed`, `partial`, `failed`, or `cancelled`).
+
+```go
+// Kick off an import
+job, err := client.Imports.Start(ctx, awsysco.ImportStartOptions{
+    Provider:        "bitly",
+    AccessToken:     "bitly_access_token",
+    TargetNamespace: "promo", // optional
+    ScanOnly:        false,   // optional dry-run
+})
+
+// Poll a single status
+job, err = client.Imports.GetStatus(ctx, job.ID)
+// job.Status string, job.Counts (Fetched/Transformed/Written/Errored int)
+// job.Errors []string
+
+// List recent jobs
+jobs, err := client.Imports.List(ctx, &awsysco.ImportListOptions{Limit: 25})
+
+// Cancel a running import
+job, err = client.Imports.Cancel(ctx, job.ID)
+
+// Block until the job reaches a terminal state (defaults: poll 2s, timeout 120s)
+final, err := client.Imports.WaitForCompletion(ctx, job.ID, &awsysco.WaitOptions{
+    PollInterval: 5 * time.Second,
+    Timeout:      10 * time.Minute,
+})
 ```
 
 ## Error Handling
