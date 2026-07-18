@@ -1,0 +1,5 @@
+harness=0.32.0
+schema=1
+stack=go
+agent=awsysco-go-sdk
+installed=2026-07-18T02:25:54Z
