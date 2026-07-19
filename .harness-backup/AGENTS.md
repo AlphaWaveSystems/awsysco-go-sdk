@@ -1,7 +1,7 @@
 <!-- HARNESS:START
-     version=0.33.0
+     version=0.31.0
      schema=1
-     updated=2026-07-19T05:36:09Z
+     updated=2026-07-04T02:31:42Z
      DO NOT EDIT THIS BLOCK — regenerate with: harness-ctl update /Users/patrickbertsch/dev/awsysco-go-sdk
 -->
 

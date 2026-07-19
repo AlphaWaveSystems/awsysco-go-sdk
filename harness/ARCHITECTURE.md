@@ -1,13 +1,13 @@
 <!-- HARNESS:START
-     version=0.32.0
+     version=0.33.0
      schema=1
-     updated=2026-07-18T02:25:54Z
+     updated=2026-07-19T05:36:09Z
      DO NOT EDIT — regenerate with: harness-ctl update /Users/patrickbertsch/dev/awsysco-go-sdk
 -->
 
 # Architecture — awsysco-go-sdk
 
-> Auto-generated from constitution scan on 2026-07-18T02:25:54Z.
+> Auto-generated from constitution scan on 2026-07-19T05:36:09Z.
 > Reflects the state of the repo at install time — update manually as the project evolves,
 > or re-run `harness-ctl update /Users/patrickbertsch/dev/awsysco-go-sdk` to refresh from the latest scan.
 
@@ -19,10 +19,10 @@
 |---|---|
 | Name | awsysco-go-sdk |
 | Path | `/Users/patrickbertsch/dev/awsysco-go-sdk` |
-| Repository | https://github.com/AlphaWaveSystems/awsysco-go-sdk.git |
+| Repository | (not a git repo) |
 | Stack | go |
 | Language(s) | Go |
-| Runtime | go1.26.4 |
+| Runtime | (not detected) |
 | Package manager | go mod |
 | Zeus owner | `hephaestus` |
 
@@ -274,10 +274,10 @@ Variables the project reads at runtime. Do not commit values — use the harness
 Rules extracted from `CLAUDE.md` at install time:
 
 <!-- HARNESS:START
-     version=0.31.0
+     version=0.32.0
      schema=1
      agent=awsysco-go-sdk
-     updated=2026-07-04T02:31:42Z
+     updated=2026-07-18T02:25:54Z
      DO NOT EDIT THIS BLOCK — regenerate with: harness-ctl update /Users/patrickbertsch/dev/awsysco-go-sdk
 -->
 
