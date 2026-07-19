@@ -1,8 +1,8 @@
 <!-- HARNESS:START
-     version=0.33.0
+     version=0.34.0
      schema=1
      agent=awsysco-go-sdk
-     updated=2026-07-19T05:36:09Z
+     updated=2026-07-19T12:15:55Z
      DO NOT EDIT — regenerate with: harness-ctl update /Users/patrickbertsch/dev/awsysco-go-sdk
 -->
 

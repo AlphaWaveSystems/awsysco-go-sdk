@@ -1,44 +1,18 @@
 <!-- HARNESS:START
-     version=0.33.0
+     version=0.34.0
      schema=1
      agent=awsysco-go-sdk
-     updated=2026-07-19T05:36:09Z
+     updated=2026-07-19T12:15:55Z
      DO NOT EDIT THIS BLOCK — regenerate with: harness-ctl update /Users/patrickbertsch/dev/awsysco-go-sdk
 -->
 
-# Harness — Active Constraints
+# Harness — This Project
 
-**This file is the entry point for every task in this project — always start here.**
+**Agent `awsysco-go-sdk`** · tier `coder` · privacy `local_preferred`
 
-**Agent:** `awsysco-go-sdk` · trust: `worker` · model: `coder`
-**Budget:** 40 steps · 80000 tokens · $3.00 per session
-**Privacy:** local_preferred — local models preferred; cloud only on low confidence
-**Memory namespace:** `awsysco-go-sdk-worker`
-
-
-## Must escalate (blocks until human approves)
-
-- `create_pr`
-
-- `deploy`
-
-- `spend`
-
-
-
-## Available tools
-See `harness/TOOLS.md` for full reference with parameter schemas.
-
-- `web_search` — search the web via Brave/Google
-- `web_fetch` — fetch and extract URL content
-- `file_ops` — read/write files within the project root
-- `memory_store` / `memory_search` — per-session key-value memory
-- `code_search` — search this project's own codebase (read-only)
-
-## Project overrides (harness.yaml)
-
-*(no harness.yaml found — using manifest defaults)*
-
+Full harness configuration, budget, escalation rules, available tools, and — critically —
+how to actually connect to it, all live in **`AGENTS.md`**. Read that file, not this one,
+for anything harness-related.
 
 <!-- HARNESS:END -->
 
