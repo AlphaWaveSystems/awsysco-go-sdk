@@ -14,6 +14,8 @@ type AwsysError struct {
 	Raw     []byte
 }
 
+// Error implements the error interface, formatting the message, API error
+// code (if any), and HTTP status.
 func (e *AwsysError) Error() string {
 	if e.Code != "" {
 		return fmt.Sprintf("awsysco: %s (code=%s, status=%d)", e.Message, e.Code, e.Status)
@@ -25,6 +27,52 @@ func (e *AwsysError) Error() string {
 type RateLimitError struct {
 	AwsysError
 	RetryAfter time.Duration
+	// ResetsAt is when the current quota window resets, if the platform
+	// supplied one (quota-class 429s only). Nil when not provided.
+	ResetsAt *time.Time
+}
+
+// Unwrap exposes the embedded AwsysError so errors.As(err, &awsysErr) works
+// uniformly whether err is a *RateLimitError or a plain *AwsysError.
+func (e *RateLimitError) Unwrap() error { return &e.AwsysError }
+
+// ConfigurationError is returned when the client is misconfigured — e.g. no
+// API key and no AWSYS_API_KEY fallback, or an invalid base URL — before any
+// network call is made.
+type ConfigurationError struct {
+	Message string
+	Err     error
+}
+
+// Error implements the error interface.
+func (e *ConfigurationError) Error() string { return "awsysco: " + e.Message }
+
+// Unwrap returns the underlying error that caused the configuration error,
+// if any, so errors.Is/errors.As can see through it.
+func (e *ConfigurationError) Unwrap() error { return e.Err }
+
+// NetworkError wraps a transport-level failure (connection refused/reset,
+// DNS failure, etc.) that occurred while attempting a request.
+type NetworkError struct {
+	Op  string
+	URL string
+	Err error
+}
+
+// Error implements the error interface.
+func (e *NetworkError) Error() string {
+	return fmt.Sprintf("awsysco: network error (%s): %v", e.Op, e.Err)
+}
+
+// Unwrap returns the underlying transport error, so errors.Is (e.g. against
+// context.DeadlineExceeded) and errors.As can see through it.
+func (e *NetworkError) Unwrap() error { return e.Err }
+
+// TimeoutError is a NetworkError caused by a request or context deadline
+// being exceeded. errors.Is(err, context.DeadlineExceeded) works through the
+// embedded NetworkError's Unwrap.
+type TimeoutError struct {
+	NetworkError
 }
 
 // IsNotFound returns true if err is a 404 Not Found error.
@@ -81,6 +129,15 @@ func IsConflict(err error) bool {
 	var e *AwsysError
 	if errors.As(err, &e) {
 		return e.Status == 409
+	}
+	return false
+}
+
+// IsServerError returns true if err is a 5xx server error.
+func IsServerError(err error) bool {
+	var e *AwsysError
+	if errors.As(err, &e) {
+		return e.Status >= 500
 	}
 	return false
 }

@@ -3,7 +3,6 @@ package awsysco
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"strconv"
 	"time"
 )
@@ -25,11 +24,10 @@ func isTerminalImportStatus(status string) bool {
 }
 
 // Start kicks off a new provider import via POST /api/v1/imports. The request
-// body is sent as snake_case ({provider, access_token, target_namespace?,
-// scan_only?}).
+// body is sent as {provider, accessToken, targetNamespace?, scanOnly?}.
 func (r *ImportsResource) Start(ctx context.Context, opts ImportStartOptions) (*ImportJob, error) {
 	var job ImportJob
-	if err := r.client.doRequest(ctx, "POST", "/api/v1/imports", opts, &job); err != nil {
+	if err := r.client.doRequest(ctx, "POST", pathImports, opts, &job); err != nil {
 		return nil, err
 	}
 	return &job, nil
@@ -39,7 +37,7 @@ func (r *ImportsResource) Start(ctx context.Context, opts ImportStartOptions) (*
 // GET /api/v1/imports/{jobID}.
 func (r *ImportsResource) GetStatus(ctx context.Context, jobID string) (*ImportJob, error) {
 	var job ImportJob
-	path := fmt.Sprintf("/api/v1/imports/%s", url.PathEscape(jobID))
+	path := pathImport(jobID)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &job); err != nil {
 		return nil, err
 	}
@@ -50,7 +48,7 @@ func (r *ImportsResource) GetStatus(ctx context.Context, jobID string) (*ImportJ
 // returns the updated job.
 func (r *ImportsResource) Cancel(ctx context.Context, jobID string) (*ImportJob, error) {
 	var job ImportJob
-	path := fmt.Sprintf("/api/v1/imports/%s", url.PathEscape(jobID))
+	path := pathImport(jobID)
 	if err := r.client.doRequest(ctx, "DELETE", path, nil, &job); err != nil {
 		return nil, err
 	}
@@ -60,7 +58,7 @@ func (r *ImportsResource) Cancel(ctx context.Context, jobID string) (*ImportJob,
 // List returns recent import jobs via GET /api/v1/imports. The response is a
 // {"jobs": [...]} wrapper; the slice is returned directly.
 func (r *ImportsResource) List(ctx context.Context, opts *ImportListOptions) ([]ImportJob, error) {
-	path := "/api/v1/imports"
+	path := pathImports
 	if opts != nil && opts.Limit > 0 {
 		path += "?limit=" + strconv.Itoa(opts.Limit)
 	}
@@ -71,6 +69,23 @@ func (r *ImportsResource) List(ctx context.Context, opts *ImportListOptions) ([]
 		return nil, err
 	}
 	return resp.Jobs, nil
+}
+
+// GetRedirectMapCSV returns the completed import job's redirect map as a CSV
+// string via GET /api/v1/imports/{jobID}/redirect-map.csv.
+func (r *ImportsResource) GetRedirectMapCSV(ctx context.Context, jobID string) (string, error) {
+	return r.client.doText(ctx, "GET", pathImportRedirectMapCSV(jobID), nil)
+}
+
+// GetRedirectMapJSON returns the completed import job's redirect map as raw
+// JSON bytes via GET /api/v1/imports/{jobID}/redirect-map.json. Callers that
+// want a typed result can json.Unmarshal the returned bytes themselves.
+func (r *ImportsResource) GetRedirectMapJSON(ctx context.Context, jobID string) ([]byte, error) {
+	body, err := r.client.doText(ctx, "GET", pathImportRedirectMapJSON(jobID), nil)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(body), nil
 }
 
 // WaitForCompletion polls GetStatus until the job reaches a terminal status

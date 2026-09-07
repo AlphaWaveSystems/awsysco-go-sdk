@@ -58,7 +58,7 @@ func (r *QRResource) GetURL(shortCode string, opts ...QROption) string {
 	q.Set("color", cfg.color)
 	q.Set("bgColor", cfg.bgColor)
 
-	return fmt.Sprintf("%s/api/qr/%s?%s", r.client.cfg.baseURL, shortCode, q.Encode())
+	return fmt.Sprintf("%s%s?%s", r.client.cfg.baseURL, pathQRImage(shortCode), q.Encode())
 }
 
 // QRSettings holds the persisted QR code settings for a link.
@@ -74,7 +74,7 @@ type QRSettings struct {
 // GetSettings retrieves the saved QR code settings for the given short path.
 func (r *QRResource) GetSettings(ctx context.Context, shortPath string) (*QRSettings, error) {
 	var settings QRSettings
-	path := fmt.Sprintf("/api/link/%s/qr-settings", url.PathEscape(shortPath))
+	path := pathQRSettings(shortPath)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &settings); err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (r *QRResource) GetSettings(ctx context.Context, shortPath string) (*QRSett
 // UpdateSettings saves QR code settings for the given short path.
 func (r *QRResource) UpdateSettings(ctx context.Context, shortPath string, settings QRSettings) (*QRSettings, error) {
 	var result QRSettings
-	path := fmt.Sprintf("/api/link/%s/qr-settings", url.PathEscape(shortPath))
+	path := pathQRSettings(shortPath)
 	if err := r.client.doRequest(ctx, "PUT", path, settings, &result); err != nil {
 		return nil, err
 	}

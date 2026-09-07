@@ -1,0 +1,2015 @@
+{
+ "$schema": "awsys-sdk-contract/1",
+ "version": "1.0.4",
+ "platformBaseline": "2026-09",
+ "baseUrl": "https://awsys.co",
+ "auth": {
+  "header": "Authorization",
+  "scheme": "Bearer",
+  "keyPrefix": "awsys_"
+ },
+ "capabilities": [
+  {
+   "id": "create_link",
+   "capability": "1",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/links",
+    "query": {},
+    "body": {
+     "url": "https://example.com/"
+    }
+   },
+   "response": {
+    "status": 201,
+    "body": {
+     "success": true,
+     "shortUrl": "https://awsys.co/abc123",
+     "shortCode": "abc123",
+     "fullPath": null,
+     "namespace": null,
+     "long": "https://example.com/",
+     "created": "2026-09-01T00:00:00.000Z",
+     "expiresAt": null,
+     "maxClicks": null,
+     "expireFallbackUrl": null,
+     "trustScore": null,
+     "trustStatus": "pending",
+     "threats": []
+    }
+   }
+  },
+  {
+   "id": "create_link_custom_slug",
+   "capability": "1",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/links",
+    "query": {},
+    "body": {
+     "url": "https://example.com/",
+     "customSlug": "my-slug",
+     "expiresAt": "2027-01-01T00:00:00.000Z",
+     "maxClicks": 10
+    }
+   },
+   "response": {
+    "status": 201,
+    "body": {
+     "success": true,
+     "shortCode": "my-slug",
+     "shortUrl": "https://awsys.co/my-slug"
+    }
+   }
+  },
+  {
+   "id": "list_links",
+   "capability": "2",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links",
+    "query": {
+     "limit": "2",
+     "offset": "0"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "links": [
+      {
+       "id": "abc123",
+       "shortUrl": "https://awsys.co/abc123",
+       "shortCode": "abc123",
+       "fullPath": null,
+       "namespace": null,
+       "long": "https://example.com/",
+       "clicks": 0,
+       "created": "2026-09-01T00:00:00.000Z",
+       "expiresAt": null,
+       "maxClicks": null
+      },
+      {
+       "id": "def456",
+       "shortUrl": "https://awsys.co/abc123",
+       "shortCode": "def456",
+       "fullPath": null,
+       "namespace": null,
+       "long": "https://example.com/",
+       "clicks": 0,
+       "created": "2026-09-01T00:00:00.000Z",
+       "expiresAt": null,
+       "maxClicks": null
+      }
+     ],
+     "pagination": {
+      "limit": 2,
+      "offset": 0,
+      "hasMore": true
+     }
+    }
+   }
+  },
+  {
+   "id": "list_links_last_page",
+   "capability": "2",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links",
+    "query": {
+     "limit": "2",
+     "offset": "2"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "links": [
+      {
+       "id": "ghi789",
+       "shortUrl": "https://awsys.co/abc123",
+       "shortCode": "ghi789",
+       "fullPath": null,
+       "namespace": null,
+       "long": "https://example.com/",
+       "clicks": 0,
+       "created": "2026-09-01T00:00:00.000Z",
+       "expiresAt": null,
+       "maxClicks": null
+      }
+     ],
+     "pagination": {
+      "limit": 2,
+      "offset": 2,
+      "hasMore": false
+     }
+    }
+   },
+   "note": "iterator must stop; short page"
+  },
+  {
+   "id": "list_links_missing_hasmore",
+   "capability": "2",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links",
+    "query": {
+     "limit": "2",
+     "offset": "0"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "links": []
+    }
+   },
+   "note": "hasMore absent \u2192 false; iterator yields nothing"
+  },
+  {
+   "id": "list_links_limit_clamped",
+   "capability": "2",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links",
+    "query": {
+     "limit": "100",
+     "offset": "0"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "links": [],
+     "pagination": {
+      "limit": 100,
+      "offset": 0,
+      "hasMore": false
+     }
+    }
+   },
+   "note": "caller passed 500; SDK clamps to 100"
+  },
+  {
+   "id": "get_link",
+   "capability": "3",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links/abc123",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "abc123",
+     "shortUrl": "https://awsys.co/abc123",
+     "shortCode": "abc123",
+     "fullPath": null,
+     "namespace": null,
+     "long": "https://example.com/",
+     "clicks": 0,
+     "created": "2026-09-01T00:00:00.000Z",
+     "expiresAt": null,
+     "maxClicks": null
+    }
+   }
+  },
+  {
+   "id": "get_link_namespaced",
+   "capability": "3",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links/ns/slug",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "abc123",
+     "shortUrl": "https://awsys.co/abc123",
+     "shortCode": "slug",
+     "fullPath": "ns/slug",
+     "namespace": "ns",
+     "long": "https://example.com/",
+     "clicks": 0,
+     "created": "2026-09-01T00:00:00.000Z",
+     "expiresAt": null,
+     "maxClicks": null
+    }
+   },
+   "note": "slash must NOT be encoded for GET/DELETE wildcard routes"
+  },
+  {
+   "id": "update_link",
+   "capability": "4",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/v1/links/abc123",
+    "query": {},
+    "body": {
+     "maxClicks": 5,
+     "expiresAt": "2027-01-01T00:00:00.000Z"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "shortCode": "abc123",
+     "maxClicks": 5
+    }
+   }
+  },
+  {
+   "id": "delete_link",
+   "capability": "5",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/v1/links/abc123",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "message": "Link deleted"
+    }
+   }
+  },
+  {
+   "id": "link_stats",
+   "capability": "6",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links/abc123/stats",
+    "query": {
+     "period": "7d"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "shortCode": "abc123",
+     "fullPath": null,
+     "totalClicks": 1,
+     "clicks": [
+      {
+       "timestamp": "2026-09-01T00:00:00.000Z",
+       "country": "MX",
+       "browser": "Chrome",
+       "os": "macOS",
+       "referrer": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "aggregate_stats",
+   "capability": "7",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/links/abc123/stats/aggregate",
+    "query": {
+     "period": "7d"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "shortCode": "abc123",
+     "fullPath": null,
+     "totalClicks": 1,
+     "byCountry": {
+      "MX": 1
+     },
+     "byDay": {
+      "2026-09-01": 1
+     }
+    }
+   }
+  },
+  {
+   "id": "bulk_create",
+   "capability": "8",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/bulk",
+    "query": {},
+    "body": {
+     "urls": [
+      {
+       "url": "https://a.example/"
+      },
+      {
+       "url": "https://b.example/",
+       "customSlug": "b"
+      }
+     ]
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "summary": {
+      "total": 2,
+      "created": 2,
+      "failed": 0
+     },
+     "results": [
+      {
+       "url": "https://a.example/",
+       "shortCode": "x1",
+       "shortUrl": "https://awsys.co/x1",
+       "success": true
+      },
+      {
+       "url": "https://b.example/",
+       "shortCode": "b",
+       "shortUrl": "https://awsys.co/b",
+       "success": true
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "me",
+   "capability": "9",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/me",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "uid": "u1",
+     "email": "t@example.com",
+     "subscriptionTier": "pro",
+     "subscriptionSource": null,
+     "userPrefix": "op0p",
+     "isPremium": true,
+     "features": {
+      "customSlugs": true
+     },
+     "limits": {
+      "linksPerDay": 100
+     },
+     "utmTemplates": [
+      {
+       "id": "t1",
+       "name": "Launch",
+       "utmSource": "newsletter",
+       "utmMedium": "email",
+       "utmCampaign": "sept"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "usage",
+   "capability": "10",
+   "request": {
+    "method": "GET",
+    "path": "/api/user/stats",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "linksCreatedToday": 3,
+     "linksToday": 3,
+     "dailyLimit": 100,
+     "apiCallsThisMonth": 10,
+     "apiMonthlyLimit": 1000,
+     "overage": {
+      "enabled": false
+     }
+    }
+   }
+  },
+  {
+   "id": "recent_clicks",
+   "capability": "11",
+   "request": {
+    "method": "GET",
+    "path": "/api/user/clicks/recent",
+    "query": {
+     "limit": "10"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "clicks": [
+      {
+       "shortCode": "abc123",
+       "timestamp": "2026-09-01T00:00:00.000Z",
+       "country": "MX"
+      }
+     ],
+     "count": 1
+    }
+   },
+   "note": "path is /api/user/clicks/recent (NOT /api/user/recent-clicks); requires features.liveGlobe on the account (403 FEATURE_DISABLED otherwise); verified live envelope {clicks,count}"
+  },
+  {
+   "id": "profile_get",
+   "capability": "12",
+   "request": {
+    "method": "GET",
+    "path": "/api/user/profile",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "uid": "u1",
+     "email": "t@example.com",
+     "displayName": "T",
+     "subscriptionTier": "pro"
+    }
+   }
+  },
+  {
+   "id": "profile_update",
+   "capability": "13",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/user/profile",
+    "query": {},
+    "body": {
+     "displayName": "New"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "displayName": "New"
+    }
+   },
+   "note": "body keys are camelCase (user.js:212 reads displayName)"
+  },
+  {
+   "id": "qr_url",
+   "capability": "14",
+   "request": {
+    "method": "GET",
+    "path": "/api/qr/abc123",
+    "query": {
+     "size": "300",
+     "color": "000000",
+     "bgColor": "ffffff"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {}
+   },
+   "note": "client-side URL builder; assert exact URL string"
+  },
+  {
+   "id": "qr_settings_get",
+   "capability": "15",
+   "request": {
+    "method": "GET",
+    "path": "/api/link/abc123/qr-settings",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "size": 300,
+     "color": "#000000",
+     "bgColor": "#ffffff",
+     "logo": null
+    }
+   }
+  },
+  {
+   "id": "qr_settings_update",
+   "capability": "16",
+   "request": {
+    "method": "PUT",
+    "path": "/api/link/abc123/qr-settings",
+    "query": {},
+    "body": {
+     "color": "#ff0000"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "color": "#ff0000"
+    }
+   }
+  },
+  {
+   "id": "folders_list",
+   "capability": "17",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/folders",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "folders": [
+      {
+       "id": "f1",
+       "name": "Work",
+       "color": "#00f",
+       "linkCount": 2
+      }
+     ],
+     "limit": 10
+    }
+   },
+   "note": "limit is tier quota, not pagination"
+  },
+  {
+   "id": "folder_create",
+   "capability": "18",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/folders",
+    "query": {},
+    "body": {
+     "name": "Work"
+    }
+   },
+   "response": {
+    "status": 201,
+    "body": {
+     "id": "f1",
+     "name": "Work",
+     "color": null
+    }
+   }
+  },
+  {
+   "id": "folder_update",
+   "capability": "19",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/folders/f1",
+    "query": {},
+    "body": {
+     "name": "Work2"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "f1",
+     "name": "Work2"
+    }
+   }
+  },
+  {
+   "id": "folder_delete",
+   "capability": "20",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/v1/folders/f1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   }
+  },
+  {
+   "id": "folder_assign",
+   "capability": "21",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/links/abc123/folder",
+    "query": {},
+    "body": {
+     "folderId": "f1"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   }
+  },
+  {
+   "id": "folder_remove",
+   "capability": "22",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/links/abc123/folder",
+    "query": {},
+    "body": {
+     "folderId": null
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   },
+   "note": "null is a command; must be sent"
+  },
+  {
+   "id": "tags_add",
+   "capability": "23",
+   "request": {
+    "method": "POST",
+    "path": "/api/link/abc123/tags",
+    "query": {},
+    "body": {
+     "tags": [
+      "a",
+      "b"
+     ]
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "tags": [
+      "a",
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "id": "tag_remove",
+   "capability": "24",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/link/abc123/tags/a",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "tags": [
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "id": "views_list",
+   "capability": "25",
+   "request": {
+    "method": "GET",
+    "path": "/api/views",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "views": [
+      {
+       "id": "v1",
+       "name": "Mine",
+       "filters": {
+        "tag": "a"
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "view_create",
+   "capability": "26",
+   "request": {
+    "method": "POST",
+    "path": "/api/views",
+    "query": {},
+    "body": {
+     "name": "Mine",
+     "filters": {
+      "tag": "a"
+     }
+    }
+   },
+   "response": {
+    "status": 201,
+    "body": {
+     "id": "v1",
+     "name": "Mine",
+     "filters": {
+      "tag": "a"
+     }
+    }
+   }
+  },
+  {
+   "id": "view_update",
+   "capability": "27",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/views/v1",
+    "query": {},
+    "body": {
+     "name": "Yours"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "message": "updated"
+    }
+   }
+  },
+  {
+   "id": "view_delete",
+   "capability": "28",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/views/v1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "message": "deleted"
+    }
+   }
+  },
+  {
+   "id": "utm_list_via_me",
+   "capability": "29",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/me",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "utmTemplates": [
+      {
+       "id": "t1",
+       "name": "Launch"
+      }
+     ]
+    }
+   },
+   "note": "list derived from me.utmTemplates"
+  },
+  {
+   "id": "utm_create",
+   "capability": "30",
+   "request": {
+    "method": "POST",
+    "path": "/api/user/utm-templates",
+    "query": {},
+    "body": {
+     "name": "Launch",
+     "utmSource": "newsletter",
+     "utmMedium": "email",
+     "utmCampaign": "sept"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "t1",
+     "name": "Launch"
+    }
+   }
+  },
+  {
+   "id": "utm_delete",
+   "capability": "31",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/user/utm-templates/t1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   }
+  },
+  {
+   "id": "webhook_event_types",
+   "capability": "32",
+   "request": {
+    "method": "GET",
+    "path": "/api/webhooks/event-types",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "eventTypes": [
+      "link.created",
+      "link.clicked"
+     ]
+    }
+   }
+  },
+  {
+   "id": "webhooks_list",
+   "capability": "33",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/webhooks",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "webhooks": [
+      {
+       "id": "w1",
+       "url": "https://h.example/",
+       "events": [
+        "link.created"
+       ],
+       "name": "Unnamed Webhook",
+       "secret": "whsec_x",
+       "enabled": true,
+       "failureCount": 0,
+       "successCount": 0,
+       "lastTriggered": null,
+       "createdAt": "2026-09-01T00:00:00.000Z",
+       "updatedAt": null
+      },
+      {
+       "id": "w0",
+       "url": "https://legacy.example/",
+       "events": [
+        "link.click"
+       ],
+       "name": "Legacy",
+       "createdAt": "2026-06-01T00:00:00.000Z",
+       "lastDeliveryAt": null,
+       "lastStatus": null
+      }
+     ],
+     "limit": 5
+    }
+   },
+   "note": "serializeWebhook spreads the doc (services/webhooks.js:82); legacy docs (seen live on staging) lack enabled/secret \u2014 SDK models must treat every field except id/url/events as optional"
+  },
+  {
+   "id": "webhook_create",
+   "capability": "34",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/webhooks",
+    "query": {},
+    "body": {
+     "url": "https://h.example/",
+     "events": [
+      "link.created"
+     ]
+    }
+   },
+   "response": {
+    "status": 201,
+    "body": {
+     "id": "w1",
+     "url": "https://h.example/",
+     "events": [
+      "link.created"
+     ],
+     "name": "Unnamed Webhook",
+     "secret": "whsec_x",
+     "enabled": true,
+     "failureCount": 0,
+     "successCount": 0,
+     "lastTriggered": null,
+     "createdAt": "2026-09-01T00:00:00.000Z",
+     "updatedAt": null
+    }
+   }
+  },
+  {
+   "id": "webhook_update",
+   "capability": "35",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/webhooks/w1",
+    "query": {},
+    "body": {
+     "enabled": false
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "w1",
+     "url": "https://h.example/",
+     "events": [
+      "link.created"
+     ],
+     "name": "Unnamed Webhook",
+     "secret": "whsec_x",
+     "enabled": false,
+     "failureCount": 0,
+     "successCount": 0,
+     "lastTriggered": null,
+     "createdAt": "2026-09-01T00:00:00.000Z",
+     "updatedAt": "2026-09-02T00:00:00.000Z"
+    }
+   },
+   "note": "wire field is `enabled` (services/webhooks.js:122,150), never `active`"
+  },
+  {
+   "id": "webhook_delete",
+   "capability": "36",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/v1/webhooks/w1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "message": "deleted"
+    }
+   }
+  },
+  {
+   "id": "webhook_test",
+   "capability": "37",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/webhooks/w1/test",
+    "query": {},
+    "body": {
+     "eventType": "link.created"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "statusCode": 200,
+     "durationMs": 42
+    }
+   }
+  },
+  {
+   "id": "domains_list",
+   "capability": "38",
+   "request": {
+    "method": "GET",
+    "path": "/api/user/domains",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "domains": [
+      {
+       "domain": "go.example.com",
+       "status": "pending",
+       "verified": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "domain_add",
+   "capability": "39",
+   "request": {
+    "method": "POST",
+    "path": "/api/user/domains",
+    "query": {},
+    "body": {
+     "domain": "go.example.com"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "domain": "go.example.com",
+     "status": "pending",
+     "dnsRecords": [
+      {
+       "type": "TXT",
+       "name": "_awsys",
+       "value": "x"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "domain_verify",
+   "capability": "40",
+   "request": {
+    "method": "GET",
+    "path": "/api/user/domains/go.example.com/verify",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "domain": "go.example.com",
+     "verified": true,
+     "status": "verified"
+    }
+   }
+  },
+  {
+   "id": "domain_activate_deprecated",
+   "capability": "41",
+   "request": {
+    "method": "POST",
+    "path": "/api/user/domains/go.example.com/activate",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 401,
+    "body": {
+     "error": true,
+     "code": "UNAUTHORIZED",
+     "message": "Firebase auth required"
+    }
+   },
+   "expect_error": "AuthorizationError",
+   "note": "SDK must not call; raise deprecation + AuthorizationError"
+  },
+  {
+   "id": "domain_update",
+   "capability": "42",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/user/domains/go.example.com",
+    "query": {},
+    "body": {
+     "defaultRedirect": "https://example.com/"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "domain": "go.example.com",
+     "defaultRedirect": "https://example.com/"
+    }
+   }
+  },
+  {
+   "id": "domain_remove",
+   "capability": "43",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/user/domains/go.example.com",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   }
+  },
+  {
+   "id": "domain_check",
+   "capability": "44",
+   "request": {
+    "method": "GET",
+    "path": "/api/domains/check/go.example.com",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "hostname": "go.example.com",
+     "available": true
+    }
+   }
+  },
+  {
+   "id": "namespace_get",
+   "capability": "45",
+   "request": {
+    "method": "GET",
+    "path": "/api/user/namespace",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "hasAccess": true,
+     "namespace": "acme",
+     "tier": "pro",
+     "upgradeRequired": false
+    }
+   }
+  },
+  {
+   "id": "namespace_check",
+   "capability": "46",
+   "request": {
+    "method": "GET",
+    "path": "/api/namespace/check/acme",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "namespace": "acme",
+     "available": false
+    }
+   }
+  },
+  {
+   "id": "namespace_claim",
+   "capability": "47",
+   "request": {
+    "method": "POST",
+    "path": "/api/user/namespace",
+    "query": {},
+    "body": {
+     "namespace": "acme"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "namespace": "acme"
+    }
+   }
+  },
+  {
+   "id": "namespace_release",
+   "capability": "48",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/user/namespace",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "message": "released"
+    }
+   }
+  },
+  {
+   "id": "affiliate_program_create",
+   "capability": "49",
+   "request": {
+    "method": "POST",
+    "path": "/api/affiliate/programs",
+    "query": {},
+    "body": {
+     "name": "P",
+     "commissionRate": 10
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "p1",
+     "name": "P",
+     "commissionRate": 10
+    }
+   }
+  },
+  {
+   "id": "affiliate_programs_list",
+   "capability": "50",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/programs",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "programs": [
+      {
+       "id": "p1",
+       "name": "P"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "affiliate_program_get",
+   "capability": "51",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/programs/p1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "p1",
+     "name": "P"
+    }
+   }
+  },
+  {
+   "id": "affiliate_program_update",
+   "capability": "52",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/affiliate/programs/p1",
+    "query": {},
+    "body": {
+     "name": "P2"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "p1",
+     "name": "P2"
+    }
+   }
+  },
+  {
+   "id": "affiliate_program_stats",
+   "capability": "53",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/programs/p1/stats",
+    "query": {
+     "period": "30d"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "clicks": 10,
+     "conversions": 1
+    }
+   }
+  },
+  {
+   "id": "affiliate_partners_list",
+   "capability": "54",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/programs/p1/partners",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "partners": [
+      {
+       "id": "pt1",
+       "status": "pending"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "affiliate_partner_status",
+   "capability": "55",
+   "request": {
+    "method": "PATCH",
+    "path": "/api/affiliate/programs/p1/partners/pt1",
+    "query": {},
+    "body": {
+     "status": "approved"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "pt1",
+     "status": "approved"
+    }
+   }
+  },
+  {
+   "id": "affiliate_discover",
+   "capability": "56",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/discover",
+    "query": {
+     "limit": "20"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "programs": [
+      {
+       "id": "p9",
+       "name": "Other"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "affiliate_join",
+   "capability": "57",
+   "request": {
+    "method": "POST",
+    "path": "/api/affiliate/join/p9",
+    "query": {},
+    "body": {
+     "partnerCode": "CODE"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "ps1",
+     "programId": "p9",
+     "status": "pending"
+    }
+   }
+  },
+  {
+   "id": "affiliate_partnerships_list",
+   "capability": "58",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/partnerships",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "partnerships": [
+      {
+       "id": "ps1",
+       "programId": "p9"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "affiliate_partnership_stats",
+   "capability": "59",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/partnerships/ps1/stats",
+    "query": {
+     "period": "30d"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "clicks": 3
+    }
+   }
+  },
+  {
+   "id": "affiliate_leave",
+   "capability": "60",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/affiliate/partnerships/ps1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   }
+  },
+  {
+   "id": "affiliate_limits",
+   "capability": "61",
+   "request": {
+    "method": "GET",
+    "path": "/api/affiliate/limits",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "programs": {
+      "used": 1,
+      "limit": 3
+     },
+     "partnerships": {
+      "used": 1,
+      "limit": 10
+     }
+    }
+   }
+  },
+  {
+   "id": "agentlink_link_stats",
+   "capability": "62",
+   "request": {
+    "method": "GET",
+    "path": "/api/agentlink/links/abc123/stats",
+    "query": {
+     "period": "30"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "shortCode": "abc123",
+     "agentClicks": 2,
+     "clicks": []
+    }
+   }
+  },
+  {
+   "id": "agentlink_account_stats",
+   "capability": "63",
+   "request": {
+    "method": "GET",
+    "path": "/api/agentlink/account/stats",
+    "query": {
+     "period": "30"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "agentClicks": 2,
+     "byAgent": {
+      "claude": 2
+     }
+    }
+   }
+  },
+  {
+   "id": "agentlink_subscribe",
+   "capability": "64",
+   "request": {
+    "method": "POST",
+    "path": "/api/agentlink/subscribe",
+    "query": {},
+    "body": {
+     "email": "t@example.com"
+    }
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true
+    }
+   },
+   "auth": "none"
+  },
+  {
+   "id": "web2app_consume",
+   "capability": "65",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/web2app/tok123",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "success": true,
+     "linkId": "abc123",
+     "utmParams": {
+      "utm_source": "x"
+     },
+     "routingRule": null,
+     "country": "MX",
+     "clickedAt": "2026-09-01T00:00:00.000Z"
+    }
+   }
+  },
+  {
+   "id": "import_start",
+   "capability": "66",
+   "request": {
+    "method": "POST",
+    "path": "/api/v1/imports",
+    "query": {},
+    "body": {
+     "provider": "bitly",
+     "accessToken": "bitly_token",
+     "scanOnly": true
+    }
+   },
+   "response": {
+    "status": 201,
+    "body": {
+     "id": "j1",
+     "provider": "bitly",
+     "status": "queued",
+     "scanOnly": true,
+     "created": "2026-09-01T00:00:00.000Z"
+    }
+   },
+   "note": "accessToken must be redacted from any SDK logging/errors"
+  },
+  {
+   "id": "imports_list",
+   "capability": "67",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/imports",
+    "query": {
+     "limit": "20"
+    },
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "jobs": [
+      {
+       "id": "j1",
+       "status": "completed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "import_get",
+   "capability": "68",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/imports/j1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "j1",
+     "status": "completed",
+     "summary": {
+      "total": 5,
+      "imported": 5,
+      "failed": 0
+     }
+    }
+   }
+  },
+  {
+   "id": "import_cancel",
+   "capability": "69",
+   "request": {
+    "method": "DELETE",
+    "path": "/api/v1/imports/j1",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "id": "j1",
+     "status": "cancelled"
+    }
+   }
+  },
+  {
+   "id": "import_redirect_map_csv",
+   "capability": "70",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/imports/j1/redirect-map.csv",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": "old_url,new_url\nhttps://bit.ly/x,https://awsys.co/x\n"
+   },
+   "content_type": "text/csv"
+  },
+  {
+   "id": "import_redirect_map_json",
+   "capability": "71",
+   "request": {
+    "method": "GET",
+    "path": "/api/v1/imports/j1/redirect-map.json",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "mappings": [
+      {
+       "from": "https://bit.ly/x",
+       "to": "https://awsys.co/x"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "export_links_csv",
+   "capability": "72",
+   "request": {
+    "method": "GET",
+    "path": "/api/export/links",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": "shortCode,long,clicks\nabc123,https://example.com/,0\n"
+   },
+   "content_type": "text/csv"
+  },
+  {
+   "id": "export_link_stats_csv",
+   "capability": "73",
+   "request": {
+    "method": "GET",
+    "path": "/api/export/stats/abc123",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": "timestamp,country\n2026-09-01T00:00:00.000Z,MX\n"
+   },
+   "content_type": "text/csv"
+  },
+  {
+   "id": "trust_scan",
+   "capability": "74",
+   "request": {
+    "method": "GET",
+    "path": "/api/link-scan/abc123",
+    "query": {},
+    "body": null
+   },
+   "response": {
+    "status": 200,
+    "body": {
+     "shortCode": "abc123",
+     "trustScore": 95,
+     "trustStatus": "safe",
+     "threats": []
+    }
+   },
+   "auth": "optional",
+   "note": "optionalAuth: send the key or destination is stripped for non-owners (links.js:550+)"
+  }
+ ],
+ "errors": [
+  {
+   "id": "err_401_invalid_key",
+   "status": 401,
+   "body": {
+    "error": true,
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or unauthorized API key."
+   },
+   "expect_error": "AuthenticationError"
+  },
+  {
+   "id": "err_401_missing_key",
+   "status": 401,
+   "body": {
+    "error": true,
+    "message": "Valid API key required",
+    "code": "API_KEY_REQUIRED"
+   },
+   "expect_error": "AuthenticationError"
+  },
+  {
+   "id": "err_403_tier_string_error",
+   "status": 403,
+   "body": {
+    "error": "AgentLink analytics require Pro or higher",
+    "code": "TIER_INSUFFICIENT"
+   },
+   "expect_error": "AuthorizationError",
+   "note": "error is a string, no message \u2192 message = that string"
+  },
+  {
+   "id": "err_403_email",
+   "status": 403,
+   "body": {
+    "error": true,
+    "code": "EMAIL_NOT_VERIFIED",
+    "message": "Verify your email"
+   },
+   "expect_error": "AuthorizationError"
+  },
+  {
+   "id": "err_400_missing_url",
+   "status": 400,
+   "body": {
+    "error": true,
+    "message": "URL required",
+    "code": "MISSING_URL"
+   },
+   "expect_error": "ValidationError"
+  },
+  {
+   "id": "err_404_no_message",
+   "status": 404,
+   "body": {
+    "error": true,
+    "code": "IMPORT_JOB_NOT_FOUND"
+   },
+   "expect_error": "NotFoundError",
+   "note": "message absent \u2192 synthesize from code"
+  },
+  {
+   "id": "err_404_no_code",
+   "status": 404,
+   "body": {
+    "error": true,
+    "message": "Link not found"
+   },
+   "expect_error": "NotFoundError"
+  },
+  {
+   "id": "err_409",
+   "status": 409,
+   "body": {
+    "error": true,
+    "code": "SLUG_TAKEN",
+    "message": "Custom slug already in use"
+   },
+   "expect_error": "ConflictError"
+  },
+  {
+   "id": "err_429_hourly",
+   "status": 429,
+   "body": {
+    "error": true,
+    "code": "HOURLY_LIMIT_EXCEEDED",
+    "message": "Hourly API limit (50) exceeded.",
+    "resetsAt": "2026-09-06-04:00 UTC"
+   },
+   "expect_error": "RateLimitError",
+   "retry": false,
+   "note": "quota 429: do not retry"
+  },
+  {
+   "id": "err_429_monthly",
+   "status": 429,
+   "body": {
+    "error": true,
+    "code": "MONTHLY_LIMIT_EXCEEDED",
+    "message": "Monthly API limit exceeded"
+   },
+   "expect_error": "RateLimitError",
+   "retry": false
+  },
+  {
+   "id": "err_429_daily",
+   "status": 429,
+   "body": {
+    "error": true,
+    "message": "Daily limit reached",
+    "code": "DAILY_LIMIT_EXCEEDED"
+   },
+   "expect_error": "RateLimitError",
+   "retry": false
+  },
+  {
+   "id": "err_429_retry_after",
+   "status": 429,
+   "body": {
+    "error": true,
+    "message": "Too many requests"
+   },
+   "expect_error": "RateLimitError",
+   "headers": {
+    "Retry-After": "2"
+   },
+   "retry": true,
+   "note": "IP limiter: retry after 2s, succeed on 2nd attempt \u2192 no error surfaced"
+  },
+  {
+   "id": "err_429_exhausted",
+   "status": 429,
+   "body": {
+    "error": true,
+    "message": "Too many requests"
+   },
+   "expect_error": "RateLimitError",
+   "retry": true,
+   "attempts": 4,
+   "note": "4 attempts then RateLimitError"
+  },
+  {
+   "id": "err_500",
+   "status": 500,
+   "body": {
+    "error": true,
+    "message": "Internal error"
+   },
+   "expect_error": "ServerError",
+   "retry": false
+  },
+  {
+   "id": "err_503_get_retried",
+   "status": 503,
+   "body": {
+    "error": true,
+    "message": "unavailable"
+   },
+   "expect_error": "ServerError",
+   "method": "GET",
+   "retry": true,
+   "note": "GET retried; succeed on 2nd attempt"
+  },
+  {
+   "id": "err_503_post_not_retried",
+   "status": 503,
+   "body": {
+    "error": true,
+    "message": "unavailable"
+   },
+   "expect_error": "ServerError",
+   "method": "POST",
+   "retry": false
+  },
+  {
+   "id": "err_success_false_shape",
+   "status": 429,
+   "body": {
+    "success": false,
+    "message": "Too many attempts",
+    "code": "RATE_LIMITED"
+   },
+   "expect_error": "RateLimitError"
+  },
+  {
+   "id": "err_non_json",
+   "status": 502,
+   "body": "<html>Bad Gateway</html>",
+   "expect_error": "ServerError",
+   "note": "message falls back to status text"
+  },
+  {
+   "id": "err_timeout",
+   "status": null,
+   "body": null,
+   "expect_error": "TimeoutError",
+   "note": "no response within timeout \u2192 TimeoutError (NetworkError subclass)"
+  },
+  {
+   "id": "err_network",
+   "status": null,
+   "body": null,
+   "expect_error": "NetworkError",
+   "note": "connection refused"
+  },
+  {
+   "id": "err_403_feature_disabled",
+   "status": 403,
+   "body": {
+    "error": true,
+    "message": "Live Globe feature not enabled",
+    "code": "FEATURE_DISABLED"
+   },
+   "expect_error": "AuthorizationError",
+   "note": "recent clicks behind feature flag; not a path error"
+  }
+ ],
+ "behaviors": [
+  {
+   "id": "redaction",
+   "assert": "repr/str/toString/%v of client, config and every error never contains the API key or import accessToken"
+  },
+  {
+   "id": "user_agent",
+   "assert": "User-Agent matches ^awsysco-(python|ts|go)-sdk/\\d+\\.\\d+\\.\\d+ and version equals package version"
+  },
+  {
+   "id": "auth_header",
+   "assert": "Authorization: Bearer <key> on every authenticated request; absent on auth=none scenarios"
+  },
+  {
+   "id": "base_url_override",
+   "assert": "baseUrl https://staging.awsys.co/ \u2192 requests go to https://staging.awsys.co/api/\u2026; 'ftp://x' or 'awsys.co' \u2192 ConfigurationError"
+  },
+  {
+   "id": "missing_api_key",
+   "assert": "no key and no AWSYS_API_KEY \u2192 ConfigurationError before any request"
+  },
+  {
+   "id": "unknown_fields_preserved",
+   "assert": "extra JSON fields in responses do not raise and are accessible"
+  },
+  {
+   "id": "timestamp_variants",
+   "assert": "ISO string and {_seconds,_nanoseconds} both parse; garbage keeps raw string"
+  },
+  {
+   "id": "iterator_links",
+   "assert": "list_all over scenarios list_links \u2192 list_links_last_page yields 3 links with 2 requests"
+  }
+ ]
+}

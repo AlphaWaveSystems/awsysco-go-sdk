@@ -2,8 +2,6 @@ package awsysco
 
 import (
 	"context"
-	"fmt"
-	"net/url"
 )
 
 // NamespaceResource provides access to the branded namespace API.
@@ -30,7 +28,7 @@ type NamespaceCheckResult struct {
 // Get returns the authenticated user's current namespace info.
 func (r *NamespaceResource) Get(ctx context.Context) (*NamespaceInfo, error) {
 	var info NamespaceInfo
-	if err := r.client.doRequest(ctx, "GET", "/api/user/namespace", nil, &info); err != nil {
+	if err := r.client.doRequest(ctx, "GET", pathUserNamespace, nil, &info); err != nil {
 		return nil, err
 	}
 	return &info, nil
@@ -39,7 +37,7 @@ func (r *NamespaceResource) Get(ctx context.Context) (*NamespaceInfo, error) {
 // Check tests whether the given namespace is available to claim.
 func (r *NamespaceResource) Check(ctx context.Context, namespace string) (*NamespaceCheckResult, error) {
 	var result NamespaceCheckResult
-	path := fmt.Sprintf("/api/namespace/check/%s", url.PathEscape(namespace))
+	path := pathNamespaceCheck(namespace)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &result); err != nil {
 		return nil, err
 	}
@@ -50,7 +48,7 @@ func (r *NamespaceResource) Check(ctx context.Context, namespace string) (*Names
 func (r *NamespaceResource) Claim(ctx context.Context, namespace string) (*NamespaceInfo, error) {
 	body := map[string]string{"namespace": namespace}
 	var info NamespaceInfo
-	if err := r.client.doRequest(ctx, "POST", "/api/user/namespace", body, &info); err != nil {
+	if err := r.client.doRequest(ctx, "POST", pathUserNamespace, body, &info); err != nil {
 		return nil, err
 	}
 	return &info, nil
@@ -59,7 +57,7 @@ func (r *NamespaceResource) Claim(ctx context.Context, namespace string) (*Names
 // Release releases the authenticated user's current namespace.
 func (r *NamespaceResource) Release(ctx context.Context) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	if err := r.client.doRequest(ctx, "DELETE", "/api/user/namespace", nil, &result); err != nil {
+	if err := r.client.doRequest(ctx, "DELETE", pathUserNamespace, nil, &result); err != nil {
 		return nil, err
 	}
 	return result, nil

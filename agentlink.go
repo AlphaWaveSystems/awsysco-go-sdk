@@ -2,8 +2,6 @@ package awsysco
 
 import (
 	"context"
-	"fmt"
-	"net/url"
 	"strconv"
 )
 
@@ -17,7 +15,7 @@ type AgentlinkResource struct {
 func (r *AgentlinkResource) Subscribe(ctx context.Context, email string) (map[string]interface{}, error) {
 	body := map[string]string{"email": email}
 	var result map[string]interface{}
-	if err := r.client.doRequest(ctx, "POST", "/api/agentlink/subscribe", body, &result); err != nil {
+	if err := r.client.doRequest(ctx, "POST", pathAgentlinkSubscribe, body, &result); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -27,10 +25,7 @@ func (r *AgentlinkResource) Subscribe(ctx context.Context, email string) (map[st
 // periodDays specifies the look-back window in days (e.g. 7, 30).
 func (r *AgentlinkResource) GetLinkStats(ctx context.Context, shortPath string, periodDays int) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/agentlink/links/%s/stats?period=%s",
-		url.PathEscape(shortPath),
-		strconv.Itoa(periodDays),
-	)
+	path := pathAgentlinkLinkStats(shortPath) + "?period=" + strconv.Itoa(periodDays)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &result); err != nil {
 		return nil, err
 	}
@@ -41,7 +36,7 @@ func (r *AgentlinkResource) GetLinkStats(ctx context.Context, shortPath string, 
 // periodDays specifies the look-back window in days (e.g. 7, 30).
 func (r *AgentlinkResource) GetAccountStats(ctx context.Context, periodDays int) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/agentlink/account/stats?period=%s", strconv.Itoa(periodDays))
+	path := pathAgentlinkAccountStats + "?period=" + strconv.Itoa(periodDays)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &result); err != nil {
 		return nil, err
 	}

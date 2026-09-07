@@ -27,7 +27,8 @@ type AffiliateProgram struct {
 type CreateAffiliateProgramInput struct {
 	Name           string  `json:"name"`
 	Description    string  `json:"description,omitempty"`
-	CommissionType string  `json:"commissionType"`
+	CommissionType string  `json:"commissionType,omitempty"`
+	CommissionRate float64 `json:"commissionRate,omitempty"`
 	CpcRate        float64 `json:"cpcRate,omitempty"`
 	CpaRate        float64 `json:"cpaRate,omitempty"`
 	CookieDays     int     `json:"cookieDays,omitempty"`
@@ -41,7 +42,7 @@ type JoinProgramInput struct {
 // CreateProgram creates a new affiliate program.
 func (r *AffiliateResource) CreateProgram(ctx context.Context, input CreateAffiliateProgramInput) (*AffiliateProgram, error) {
 	var program AffiliateProgram
-	if err := r.client.doRequest(ctx, "POST", "/api/affiliate/programs", input, &program); err != nil {
+	if err := r.client.doRequest(ctx, "POST", pathAffiliatePrograms, input, &program); err != nil {
 		return nil, err
 	}
 	return &program, nil
@@ -52,7 +53,7 @@ func (r *AffiliateResource) ListPrograms(ctx context.Context) ([]AffiliateProgra
 	var resp struct {
 		Programs []AffiliateProgram `json:"programs"`
 	}
-	if err := r.client.doRequest(ctx, "GET", "/api/affiliate/programs", nil, &resp); err != nil {
+	if err := r.client.doRequest(ctx, "GET", pathAffiliatePrograms, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp.Programs, nil
@@ -61,7 +62,7 @@ func (r *AffiliateResource) ListPrograms(ctx context.Context) ([]AffiliateProgra
 // GetProgram retrieves a single affiliate program by ID.
 func (r *AffiliateResource) GetProgram(ctx context.Context, programID string) (*AffiliateProgram, error) {
 	var program AffiliateProgram
-	path := fmt.Sprintf("/api/affiliate/programs/%s", url.PathEscape(programID))
+	path := pathAffiliateProgram(programID)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &program); err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func (r *AffiliateResource) GetProgram(ctx context.Context, programID string) (*
 // UpdateProgram updates an existing affiliate program.
 func (r *AffiliateResource) UpdateProgram(ctx context.Context, programID string, input CreateAffiliateProgramInput) (*AffiliateProgram, error) {
 	var program AffiliateProgram
-	path := fmt.Sprintf("/api/affiliate/programs/%s", url.PathEscape(programID))
+	path := pathAffiliateProgram(programID)
 	if err := r.client.doRequest(ctx, "PATCH", path, input, &program); err != nil {
 		return nil, err
 	}
@@ -82,10 +83,7 @@ func (r *AffiliateResource) UpdateProgram(ctx context.Context, programID string,
 // period examples: "7d", "30d".
 func (r *AffiliateResource) GetProgramStats(ctx context.Context, programID, period string) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/affiliate/programs/%s/stats?period=%s",
-		url.PathEscape(programID),
-		url.QueryEscape(period),
-	)
+	path := pathAffiliateProgramStats(programID) + "?period=" + url.QueryEscape(period)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &result); err != nil {
 		return nil, err
 	}
@@ -97,7 +95,7 @@ func (r *AffiliateResource) ListPartners(ctx context.Context, programID string) 
 	var resp struct {
 		Partners []map[string]interface{} `json:"partners"`
 	}
-	path := fmt.Sprintf("/api/affiliate/programs/%s/partners", url.PathEscape(programID))
+	path := pathAffiliateProgramPartners(programID)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &resp); err != nil {
 		return nil, err
 	}
@@ -109,10 +107,7 @@ func (r *AffiliateResource) ListPartners(ctx context.Context, programID string) 
 func (r *AffiliateResource) UpdatePartnerStatus(ctx context.Context, programID, partnerID, status string) (map[string]interface{}, error) {
 	body := map[string]string{"status": status}
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/affiliate/programs/%s/partners/%s",
-		url.PathEscape(programID),
-		url.PathEscape(partnerID),
-	)
+	path := pathAffiliateProgramPartner(programID, partnerID)
 	if err := r.client.doRequest(ctx, "PATCH", path, body, &result); err != nil {
 		return nil, err
 	}
@@ -122,7 +117,7 @@ func (r *AffiliateResource) UpdatePartnerStatus(ctx context.Context, programID, 
 // Discover returns publicly discoverable affiliate programs.
 // limit controls the maximum number returned (0 uses the API default of 20).
 func (r *AffiliateResource) Discover(ctx context.Context, limit int) ([]AffiliateProgram, error) {
-	path := "/api/affiliate/discover"
+	path := pathAffiliateDiscover
 	if limit > 0 {
 		path += fmt.Sprintf("?limit=%d", limit)
 	}
@@ -138,7 +133,7 @@ func (r *AffiliateResource) Discover(ctx context.Context, limit int) ([]Affiliat
 // Join joins a discovered affiliate program.
 func (r *AffiliateResource) Join(ctx context.Context, programID string, input JoinProgramInput) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/affiliate/join/%s", url.PathEscape(programID))
+	path := pathAffiliateJoin(programID)
 	if err := r.client.doRequest(ctx, "POST", path, input, &result); err != nil {
 		return nil, err
 	}
@@ -150,7 +145,7 @@ func (r *AffiliateResource) ListPartnerships(ctx context.Context) ([]map[string]
 	var resp struct {
 		Partnerships []map[string]interface{} `json:"partnerships"`
 	}
-	if err := r.client.doRequest(ctx, "GET", "/api/affiliate/partnerships", nil, &resp); err != nil {
+	if err := r.client.doRequest(ctx, "GET", pathAffiliatePartnerships, nil, &resp); err != nil {
 		return nil, err
 	}
 	return resp.Partnerships, nil
@@ -159,10 +154,7 @@ func (r *AffiliateResource) ListPartnerships(ctx context.Context) ([]map[string]
 // GetPartnershipStats returns analytics for the given partnership.
 func (r *AffiliateResource) GetPartnershipStats(ctx context.Context, partnershipID, period string) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/affiliate/partnerships/%s/stats?period=%s",
-		url.PathEscape(partnershipID),
-		url.QueryEscape(period),
-	)
+	path := pathAffiliatePartnershipStats(partnershipID) + "?period=" + url.QueryEscape(period)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &result); err != nil {
 		return nil, err
 	}
@@ -172,7 +164,7 @@ func (r *AffiliateResource) GetPartnershipStats(ctx context.Context, partnership
 // LeaveProgram cancels the authenticated user's partnership with the given program.
 func (r *AffiliateResource) LeaveProgram(ctx context.Context, partnershipID string) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	path := fmt.Sprintf("/api/affiliate/partnerships/%s", url.PathEscape(partnershipID))
+	path := pathAffiliatePartnership(partnershipID)
 	if err := r.client.doRequest(ctx, "DELETE", path, nil, &result); err != nil {
 		return nil, err
 	}
@@ -182,7 +174,7 @@ func (r *AffiliateResource) LeaveProgram(ctx context.Context, partnershipID stri
 // GetLimits returns the affiliate feature limits for the authenticated user's tier.
 func (r *AffiliateResource) GetLimits(ctx context.Context) (map[string]interface{}, error) {
 	var result map[string]interface{}
-	if err := r.client.doRequest(ctx, "GET", "/api/affiliate/limits", nil, &result); err != nil {
+	if err := r.client.doRequest(ctx, "GET", pathAffiliateLimits, nil, &result); err != nil {
 		return nil, err
 	}
 	return result, nil

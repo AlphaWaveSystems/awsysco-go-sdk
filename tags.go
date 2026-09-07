@@ -2,8 +2,6 @@ package awsysco
 
 import (
 	"context"
-	"fmt"
-	"net/url"
 )
 
 // TagsResource provides access to the link tags API.
@@ -17,11 +15,13 @@ type TagsResponse struct {
 	Tags    []string `json:"tags"`
 }
 
-// Add adds a tag to the given link.
-func (r *TagsResource) Add(ctx context.Context, shortPath, tag string) (*TagsResponse, error) {
-	body := map[string]string{"tag": tag}
+// Add adds one or more tags to the given link. The platform's endpoint takes
+// a batch ({"tags": [...]}) rather than one tag per call; Add is variadic so
+// existing single-tag call sites (Add(ctx, shortPath, "a")) keep compiling.
+func (r *TagsResource) Add(ctx context.Context, shortPath string, tags ...string) (*TagsResponse, error) {
+	body := map[string][]string{"tags": tags}
 	var resp TagsResponse
-	path := fmt.Sprintf("/api/link/%s/tags", url.PathEscape(shortPath))
+	path := pathTags(shortPath)
 	if err := r.client.doRequest(ctx, "POST", path, body, &resp); err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (r *TagsResource) Add(ctx context.Context, shortPath, tag string) (*TagsRes
 // Remove removes a tag from the given link.
 func (r *TagsResource) Remove(ctx context.Context, shortPath, tag string) (*TagsResponse, error) {
 	var resp TagsResponse
-	path := fmt.Sprintf("/api/link/%s/tags/%s", url.PathEscape(shortPath), url.PathEscape(tag))
+	path := pathTag(shortPath, tag)
 	if err := r.client.doRequest(ctx, "DELETE", path, nil, &resp); err != nil {
 		return nil, err
 	}

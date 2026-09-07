@@ -1,0 +1,44 @@
+run:
+  timeout: 5m
+
+# Sane default lint set for a small Go SDK. Kept reasonably permissive:
+# we want real bugs (vet, staticcheck, errcheck) and dead-code hygiene
+# (unused, ineffassign, gosimple), not a wholesale style rewrite.
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - gofmt
+    - misspell
+
+issues:
+  # Don't cap the number of reported issues per linter/run — for a repo
+  # this size it's cheap to see everything, rather than truncating output.
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+  exclude-dirs:
+    - livetest
+    - examples
+
+  exclude-rules:
+    # livetest/ is a separate module (integration tests against a real
+    # staging API key) and examples/ is sample/documentation code — relax
+    # strictness there instead of the core SDK. exclude-dirs above already
+    # skips them for most linters; this rule additionally softens
+    # anything that still gets analyzed as part of the main module walk.
+    - path: livetest/
+      linters:
+        - errcheck
+        - staticcheck
+        - unused
+    - path: examples/
+      linters:
+        - errcheck
+        - staticcheck
+        - unused

@@ -1,0 +1,70 @@
+name: Release
+
+# Reacts only to a tag that already exists (pushed manually/by a human).
+# This workflow never creates, pushes, or otherwise manages tags itself —
+# tagging is a deliberate, human-gated action outside its scope.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, test, and publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Build and test
+        run: |
+          go build ./...
+          go test -race ./...
+
+      - name: Extract release notes from CHANGELOG.md
+        id: notes
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          NOTES_FILE="$(mktemp)"
+
+          # CHANGELOG.md may not exist yet (added in a later, separate task),
+          # or may not yet have a section for this tag. Either case degrades
+          # gracefully to a generic body instead of failing the release job.
+          if [ -f CHANGELOG.md ]; then
+            # Extract the body of the "## [vX.Y.Z]" section matching this tag,
+            # up to (but not including) the next "## [" heading.
+            awk -v tag="$TAG" '
+              BEGIN { found = 0 }
+              /^## \[/ {
+                if (found) exit
+                if (index($0, "[" tag "]") > 0) { found = 1; next }
+              }
+              found { print }
+            ' CHANGELOG.md > "$NOTES_FILE"
+          fi
+
+          if [ ! -s "$NOTES_FILE" ]; then
+            echo "See CHANGELOG.md for details." > "$NOTES_FILE"
+          fi
+
+          {
+            echo "notes_file=$NOTES_FILE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.0.9
+        with:
+          name: ${{ github.ref_name }}
+          body_path: ${{ steps.notes.outputs.notes_file }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -285,7 +285,34 @@ type BulkLinkInput struct {
 type BulkCreateResponse struct {
 	Created int              `json:"created"`
 	Failed  int              `json:"failed"`
+	Total   int              `json:"total"`
 	Results []BulkLinkResult `json:"results"`
+}
+
+// UnmarshalJSON reads Created/Failed/Total from the platform's real response
+// envelope ({success, summary:{total,created,failed}, results}), falling back
+// to top-level created/failed/total fields if summary is absent.
+func (b *BulkCreateResponse) UnmarshalJSON(data []byte) error {
+	type BulkCreateResponseAlias BulkCreateResponse
+	aux := &struct {
+		Summary *struct {
+			Total   int `json:"total"`
+			Created int `json:"created"`
+			Failed  int `json:"failed"`
+		} `json:"summary"`
+		*BulkCreateResponseAlias
+	}{
+		BulkCreateResponseAlias: (*BulkCreateResponseAlias)(b),
+	}
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+	if aux.Summary != nil {
+		b.Created = aux.Summary.Created
+		b.Failed = aux.Summary.Failed
+		b.Total = aux.Summary.Total
+	}
+	return nil
 }
 
 // BulkLinkResult is the result of a single link in a bulk create.
@@ -423,9 +450,9 @@ type ImportJob struct {
 // ImportStartOptions is the input for starting a provider import.
 type ImportStartOptions struct {
 	Provider        string `json:"provider"`
-	AccessToken     string `json:"access_token"`
-	TargetNamespace string `json:"target_namespace,omitempty"`
-	ScanOnly        bool   `json:"scan_only,omitempty"`
+	AccessToken     string `json:"accessToken"`
+	TargetNamespace string `json:"targetNamespace,omitempty"`
+	ScanOnly        bool   `json:"scanOnly,omitempty"`
 }
 
 // ImportListOptions filters the imports List request.
@@ -512,4 +539,45 @@ type MeResponse struct {
 	IsPremium        bool                   `json:"isPremium"`
 	Features         map[string]interface{} `json:"features"`
 	Limits           map[string]interface{} `json:"limits"`
+}
+
+// TrialInfo describes an account's active trial, if any. Profile.Trial is nil
+// when the account has no trial.
+type TrialInfo struct {
+	Active   bool    `json:"active"`
+	Locked   bool    `json:"locked"`
+	DaysLeft int     `json:"daysLeft"`
+	Tier     string  `json:"tier"`
+	EndsAt   *string `json:"endsAt"`
+}
+
+// Profile is the response from GET /api/user/profile.
+type Profile struct {
+	UID                   string                 `json:"uid"`
+	Email                 string                 `json:"email"`
+	EmailVerified         bool                   `json:"emailVerified"`
+	IsPremium             bool                   `json:"isPremium"`
+	UserPrefix            string                 `json:"userPrefix"`
+	SubscriptionTier      string                 `json:"subscriptionTier"`
+	SubscriptionSource    string                 `json:"subscriptionSource"`
+	LinksCreatedThisMonth int                    `json:"linksCreatedThisMonth"`
+	APICallsThisMonth     int                    `json:"apiCallsThisMonth"`
+	HasAPIKey             bool                   `json:"hasApiKey"`
+	Created               string                 `json:"created"`
+	PreferredLanguage     string                 `json:"preferredLanguage"`
+	Trial                 *TrialInfo             `json:"trial"`
+	OfferDeclinedAt       *string                `json:"offerDeclinedAt"`
+	Limits                map[string]interface{} `json:"limits"`
+	Features              map[string]interface{} `json:"features"`
+	FeatureFlags          map[string]interface{} `json:"featureFlags"`
+	UtmTemplates          []UtmTemplate          `json:"utmTemplates"`
+	FiscalData            map[string]interface{} `json:"fiscalData"`
+}
+
+// ProfileUpdateInput is the input for ProfileResource.Update. Only non-nil
+// fields are sent in the request body.
+type ProfileUpdateInput struct {
+	DisplayName       *string `json:"displayName,omitempty"`
+	PhotoURL          *string `json:"photoURL,omitempty"`
+	PreferredLanguage *string `json:"preferredLanguage,omitempty"`
 }

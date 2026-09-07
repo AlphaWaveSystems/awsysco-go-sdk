@@ -34,10 +34,10 @@ func main() {
 	// ── Links ────────────────────────────────────────────────────────────────
 	maxClicks := 1000
 	link, err := client.Links.Create(ctx, awsysco.CreateLinkInput{
-		URL:        "https://example.com/very/long/url/that/needs/shortening",
-		MaxClicks:  &maxClicks,
-		Tags:       []string{"demo", "go-sdk"},
-		OgMeta:     &awsysco.OgMeta{Title: "Example", Description: "SDK demo link"},
+		URL:       "https://example.com/very/long/url/that/needs/shortening",
+		MaxClicks: &maxClicks,
+		Tags:      []string{"demo", "go-sdk"},
+		OgMeta:    &awsysco.OgMeta{Title: "Example", Description: "SDK demo link"},
 	})
 	if err != nil {
 		log.Fatalf("failed to create link: %v", err)

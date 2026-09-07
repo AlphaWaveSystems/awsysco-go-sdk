@@ -1,0 +1,153 @@
+name: Contract Drift
+
+# Watches for the upstream awsys-shortener API contract moving out from
+# under this SDK. Fires when the platform side dispatches a change
+# (client_payload: {sha, ref, contractVersion, source}) and also on a
+# weekly schedule as a backstop in case a dispatch is ever missed.
+on:
+  repository_dispatch:
+    types: [api-contract-changed]
+  schedule:
+    - cron: '0 9 * * 1' # Monday 09:00 UTC
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-drift:
+    name: Check upstream contract for drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Fetch upstream contract
+        run: |
+          curl -sSL \
+            "https://raw.githubusercontent.com/AlphaWaveSystems/awsys-shortener/master/contracts/sdk-contract.json" \
+            -o /tmp/sdk-contract-upstream.json
+
+      - name: Compare contract versions
+        id: diff
+        run: |
+          UPSTREAM_VERSION="$(jq -r '.version' /tmp/sdk-contract-upstream.json)"
+          VENDORED_VERSION="$(jq -r '.version' testdata/sdk-contract.json)"
+
+          echo "upstream_version=$UPSTREAM_VERSION" >> "$GITHUB_OUTPUT"
+          echo "vendored_version=$VENDORED_VERSION" >> "$GITHUB_OUTPUT"
+
+          if [ "$UPSTREAM_VERSION" != "$VENDORED_VERSION" ]; then
+            echo "version_mismatch=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_mismatch=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run contract test suites against fetched contract
+        id: contract_tests
+        run: |
+          set +e
+
+          # Swap the freshly fetched contract in for this CI run only —
+          # never committed, restored unconditionally below.
+          cp testdata/sdk-contract.json /tmp/sdk-contract.json.orig
+          cp /tmp/sdk-contract-upstream.json testdata/sdk-contract.json
+
+          go test -race -run 'TestContractFixtures|TestContractErrors' ./... \
+            2>&1 | tee /tmp/contract-test-output.txt
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+
+          # Restore the vendored fixture regardless of outcome so the swap
+          # never leaks into the working tree / a commit.
+          cp /tmp/sdk-contract.json.orig testdata/sdk-contract.json
+
+          echo "exit_code=$TEST_EXIT_CODE" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Report drift (issue create/comment)
+        if: steps.diff.outputs.version_mismatch == 'true' || steps.contract_tests.outputs.exit_code != '0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_VERSION: ${{ steps.diff.outputs.upstream_version }}
+          VENDORED_VERSION: ${{ steps.diff.outputs.vendored_version }}
+          VERSION_MISMATCH: ${{ steps.diff.outputs.version_mismatch }}
+          TEST_EXIT_CODE: ${{ steps.contract_tests.outputs.exit_code }}
+          # repository_dispatch client_payload fields, for extra context only.
+          # Treated as untrusted data: always passed through env vars, never
+          # interpolated directly into a shell command or gh argument string.
+          PAYLOAD_SHA: ${{ github.event.client_payload.sha }}
+          PAYLOAD_REF: ${{ github.event.client_payload.ref }}
+          PAYLOAD_CONTRACT_VERSION: ${{ github.event.client_payload.contractVersion }}
+          PAYLOAD_SOURCE: ${{ github.event.client_payload.source }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          ISSUE_TITLE="contract drift: sdk-contract ${UPSTREAM_VERSION}"
+          LABEL="sdk-parity"
+
+          gh label create "$LABEL" --color 5319E7 \
+            --description "SDK/API contract drift, auto-filed by contract-drift workflow" \
+            || true
+
+          BODY_FILE="$(mktemp)"
+          {
+            echo "Automated contract-drift check found a discrepancy between the vendored SDK contract and the upstream awsys-shortener contract."
+            echo
+            echo "- Trigger: ${EVENT_NAME}"
+            echo "- Vendored version (testdata/sdk-contract.json): ${VENDORED_VERSION}"
+            echo "- Upstream version (awsys-shortener/contracts/sdk-contract.json): ${UPSTREAM_VERSION}"
+            echo "- Version mismatch: ${VERSION_MISMATCH}"
+            echo "- Contract test suite exit code: ${TEST_EXIT_CODE} (0 = pass)"
+            if [ -n "$PAYLOAD_SHA" ] || [ -n "$PAYLOAD_REF" ] || [ -n "$PAYLOAD_CONTRACT_VERSION" ] || [ -n "$PAYLOAD_SOURCE" ]; then
+              echo
+              echo "Dispatch payload (informational only, from the platform repo):"
+              echo "- sha: ${PAYLOAD_SHA}"
+              echo "- ref: ${PAYLOAD_REF}"
+              echo "- contractVersion: ${PAYLOAD_CONTRACT_VERSION}"
+              echo "- source: ${PAYLOAD_SOURCE}"
+            fi
+            echo
+            echo "Update \`testdata/sdk-contract.json\` and reconcile SDK types/behavior with the upstream contract, then close this issue."
+          } > "$BODY_FILE"
+
+          EXISTING_ISSUE="$(gh issue list --state open --search "in:title \"${ISSUE_TITLE}\"" --json number,title \
+            --jq ".[] | select(.title == \"${ISSUE_TITLE}\") | .number" | head -n1)"
+
+          if [ -n "$EXISTING_ISSUE" ]; then
+            gh issue comment "$EXISTING_ISSUE" --body-file "$BODY_FILE"
+          else
+            gh issue create --title "$ISSUE_TITLE" --label "$LABEL" --body-file "$BODY_FILE"
+          fi
+
+  # Nightly live-integration run against the real staging API. Skips
+  # cleanly (does not fail) when AWSYS_API_KEY isn't configured, e.g. in
+  # forks or while the staging key is being rotated. Re-provisioning the
+  # staging test account/key is documented in
+  # docs/STAGING-TEST-ACCOUNTS.md in the platform (awsys-shortener) repo.
+  nightly-livetest:
+    name: Nightly live-integration test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Run livetest suite
+        env:
+          AWSYS_API_KEY: ${{ secrets.AWSYS_API_KEY }}
+        run: |
+          if [ -z "${AWSYS_API_KEY}" ]; then
+            echo "AWSYS_API_KEY secret is not set — skipping live-integration tests."
+            exit 0
+          fi
+          cd livetest
+          go test ./...

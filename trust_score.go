@@ -2,8 +2,6 @@ package awsysco
 
 import (
 	"context"
-	"fmt"
-	"net/url"
 )
 
 // TrustScoreResource provides access to the link trust-score scanning API.
@@ -24,7 +22,7 @@ type TrustScoreResult struct {
 // Scan retrieves the trust-score scan result for the given short path.
 func (r *TrustScoreResource) Scan(ctx context.Context, shortPath string) (*TrustScoreResult, error) {
 	var result TrustScoreResult
-	path := fmt.Sprintf("/api/link-scan/%s", url.PathEscape(shortPath))
+	path := pathLinkScan(shortPath)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &result); err != nil {
 		return nil, err
 	}
