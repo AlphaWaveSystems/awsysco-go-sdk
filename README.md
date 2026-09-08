@@ -375,16 +375,19 @@ templates, err := client.UtmTemplates.List(ctx)
 _, err = client.UtmTemplates.Delete(ctx, resp.Template.ID)
 ```
 
-> **No dedicated list endpoint (ADR-003):** the platform has no
-> `GET /api/user/utm-templates` list route. `UtmTemplates.List` instead reads
-> the `utmTemplates` field off `GET /api/v1/me` and unmarshals it locally. If
-> that field is missing, `null`, or an unexpected shape, `List` returns an
-> **empty slice**, not an error — genuine transport/HTTP failures still
-> propagate normally.
+> **List is currently non-functional on the platform (ADR-020, retracting
+> ADR-003):** verified live 2026-09-08 — `GET /api/v1/me` does not actually
+> return a `utmTemplates` field, and there is no working
+> `GET /api/user/utm-templates` route either (tracked upstream as platform
+> issue #831). `UtmTemplates.List` always returns an **empty slice** until
+> that ships — never silently treat this as an authoritative "you have no
+> templates" answer, and note it now logs one `awsysco: warning: ...` line
+> per call to make the limitation visible. Genuine transport/HTTP failures
+> from the underlying `/api/v1/me` call still propagate normally.
 >
-> Also note the wire field names are `utmSource`/`utmMedium`/`utmCampaign`/
-> `utmTerm`/`utmContent` (not the bare `source`/`medium`/... — fixed in
-> v1.2.0 to match the platform contract).
+> The wire field names are `source`/`medium`/`campaign`/`term`/`content`
+> (not `utmSource`/`utmMedium`/`utmCampaign`/...) — verified live against
+> `POST /api/user/utm-templates`.
 
 ### Data Export
 
@@ -493,7 +496,8 @@ if stats.Limits.MonthlyLinks.Unlimited {
 } else {
     fmt.Println("monthly links:", stats.Limits.MonthlyLinks.Value)
 }
-// Plain int limits: stats.Limits.APICallsPerMonth, stats.Limits.CustomSlugs
+// Plain int limits: stats.Limits.APICallsPerMonth
+// stats.Limits.CustomSlugs bool — a tier feature flag, not a count
 ```
 
 ### Profile

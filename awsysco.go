@@ -11,9 +11,11 @@ package awsysco
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -74,7 +76,28 @@ func WithBaseURL(u string) Option {
 			c.configErr = &ConfigurationError{Message: err.Error(), Err: err}
 			return
 		}
+		warnIfInsecureBaseURL(parsed)
 		c.baseURL = parsed
+	}
+}
+
+// warnIfInsecureBaseURL logs a warning-level line (via the standard log
+// package — no logging dependency) if u doesn't use https. It never fails
+// or blocks configuration; a non-https base URL is allowed (e.g. for local
+// testing against an httptest server) but deserves a visible nudge since API
+// traffic, including the API key, would otherwise travel unencrypted.
+func warnIfInsecureBaseURL(u string) {
+	if !strings.HasPrefix(u, "https://") {
+		log.Printf("awsysco: warning: base URL %q does not use https — API traffic, including your API key, will not be encrypted in transit", u)
+	}
+}
+
+// warnIfKeyMissingPrefix logs a warning-level line if apiKey is non-empty
+// but doesn't look like a real AWSYS.CO API key (which always starts with
+// "awsys_"). It never fails or blocks configuration.
+func warnIfKeyMissingPrefix(apiKey string) {
+	if apiKey != "" && !strings.HasPrefix(apiKey, "awsys_") {
+		log.Printf("awsysco: warning: API key does not start with %q — this does not look like a valid AWSYS.CO API key", "awsys_")
 	}
 }
 
@@ -141,6 +164,7 @@ func NewClient(apiKey string, opts ...Option) *Client {
 	if apiKey == "" {
 		apiKey = os.Getenv("AWSYS_API_KEY")
 	}
+	warnIfKeyMissingPrefix(apiKey)
 
 	cfg := &clientConfig{
 		apiKey:     apiKey,
@@ -156,6 +180,7 @@ func NewClient(apiKey string, opts ...Option) *Client {
 	if cfg.baseURL == "" {
 		if envURL := os.Getenv("AWSYS_BASE_URL"); envURL != "" {
 			if parsed, err := validateBaseURL(envURL); err == nil {
+				warnIfInsecureBaseURL(parsed)
 				cfg.baseURL = parsed
 			} else if cfg.configErr == nil {
 				cfg.configErr = &ConfigurationError{Message: err.Error(), Err: err}
@@ -216,6 +241,19 @@ func maskKey(key string) string {
 		return prefix + "****"
 	}
 	return prefix + "..." + trimmed[len(trimmed)-4:]
+}
+
+// redactSecret masks an arbitrary secret value (webhook signing secret,
+// provider OAuth access token, etc.) for safe display in logging/debug
+// output. Unlike maskKey it never reveals any part of the original value —
+// these secrets don't have a conventional prefix worth preserving, and
+// callers shouldn't be able to reconstruct or narrow down the value from a
+// partial leak.
+func redactSecret(s string) string {
+	if s == "" {
+		return `""`
+	}
+	return "[REDACTED]"
 }
 
 // String implements fmt.Stringer, redacting the API key.

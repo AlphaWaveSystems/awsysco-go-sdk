@@ -2,6 +2,7 @@ package awsysco
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -26,11 +27,16 @@ type Link struct {
 // UnmarshalJSON handles the API inconsistency where "shortCode" may be
 // returned as "short" on some endpoints.
 func (l *Link) UnmarshalJSON(b []byte) error {
-	// Use an alias to avoid infinite recursion.
+	// Use an alias to avoid infinite recursion. Deliberately does NOT
+	// shadow Clicks here (unlike Created/ExpiresAt below) — a same-tagged
+	// field declared directly on this anonymous struct takes priority over
+	// the same tag promoted from the embedded *LinkAlias, which would
+	// silently swallow the real "clicks" value into an unused field and
+	// leave l.Clicks always 0. Let it decode straight through the
+	// embedded alias instead.
 	type LinkAlias Link
 	aux := &struct {
 		Short     string      `json:"short"`
-		Clicks    interface{} `json:"clicks"`
 		Created   interface{} `json:"created"`
 		ExpiresAt interface{} `json:"expiresAt"`
 		*LinkAlias
@@ -185,7 +191,10 @@ type ClickEvent struct {
 	Referrer  string    `json:"referrer"`
 }
 
-// firestoreTimestamp handles both ISO string and Firestore {_seconds, _nanoseconds} formats.
+// firestoreTimestamp handles both ISO string and Firestore
+// {_seconds,_nanoseconds} / {seconds,nanoseconds} formats. Per ADR-017 it
+// must never raise on an unknown/garbage shape — worst case the field ends
+// up zero and decoding of the containing struct still succeeds.
 type firestoreTimestamp struct {
 	time.Time
 }
@@ -194,23 +203,47 @@ func (f *firestoreTimestamp) UnmarshalJSON(b []byte) error {
 	// Try plain string first.
 	var s string
 	if err := json.Unmarshal(b, &s); err == nil {
-		t, err := time.Parse(time.RFC3339, s)
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, s); err == nil {
 			f.Time = t
-			return nil
 		}
-		// Not a recognized date string — leave zero.
+		// Not a recognized date string — leave zero, never error.
 		return nil
 	}
-	// Try Firestore object {_seconds: N, _nanoseconds: N}.
-	var obj struct {
-		Seconds     int64 `json:"_seconds"`
-		Nanoseconds int64 `json:"_nanoseconds"`
-	}
-	if err := json.Unmarshal(b, &obj); err == nil && obj.Seconds != 0 {
-		f.Time = time.Unix(obj.Seconds, obj.Nanoseconds).UTC()
+
+	// Try a Firestore-shaped object: {_seconds,_nanoseconds} (underscore) or
+	// {seconds,nanoseconds} (bare) — the platform has emitted both forms.
+	// Decode field-by-field via a raw map instead of a fixed struct so a
+	// garbage value on one key (e.g. nanoseconds:"q", seconds:[1]) doesn't
+	// blow up decoding of the whole object — it's simply treated as absent.
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(b, &raw); err != nil {
+		// Not an object either (or some other shape entirely) — never error.
 		return nil
 	}
+
+	getInt := func(keys ...string) (int64, bool) {
+		for _, k := range keys {
+			v, ok := raw[k]
+			if !ok {
+				continue
+			}
+			var n int64
+			if json.Unmarshal(v, &n) == nil {
+				return n, true
+			}
+			// Present but not a valid int64 (wrong type, or a number too
+			// large/small to fit — e.g. 1e300) — treat as absent, not fatal.
+		}
+		return 0, false
+	}
+
+	secs, ok := getInt("_seconds", "seconds")
+	if !ok {
+		// No usable seconds field at all — leave zero, never error.
+		return nil
+	}
+	nanos, _ := getInt("_nanoseconds", "nanoseconds")
+	f.Time = time.Unix(secs, nanos).UTC()
 	return nil
 }
 
@@ -324,6 +357,7 @@ type BulkLinkResult struct {
 }
 
 // QROptions configures QR code generation.
+//
 // Deprecated: use QROption functional options with QRResource.GetURL instead.
 type QROptions struct {
 	Size    int
@@ -366,7 +400,11 @@ func (u *IntOrUnlimited) UnmarshalJSON(b []byte) error {
 }
 
 // UsageLimits holds the per-tier usage limits for the current account.
-// Fields that can be "unlimited" use IntOrUnlimited; the remainder are plain ints.
+// Fields that can be "unlimited" use IntOrUnlimited; the remainder are plain
+// ints. CustomSlugs is a plain bool, not a count — the platform models it as
+// a tier feature flag (functions/app/config/tierLimits.js), not a quota; see
+// functions/app/routes/user.js and apiV1.js for the same field on /api/user/*
+// and /api/v1/* responses.
 type UsageLimits struct {
 	LinksPerMonth        IntOrUnlimited `json:"linksPerMonth"`
 	MonthlyLinks         IntOrUnlimited `json:"monthlyLinks"`
@@ -375,7 +413,7 @@ type UsageLimits struct {
 	QRCodes              IntOrUnlimited `json:"qrCodes"`
 	Folders              IntOrUnlimited `json:"folders"`
 	APICallsPerMonth     int            `json:"apiCallsPerMonth"`
-	CustomSlugs          int            `json:"customSlugs"`
+	CustomSlugs          bool           `json:"customSlugs"`
 }
 
 // UsageOverage describes the account's metered-overage state.
@@ -454,6 +492,20 @@ type ImportStartOptions struct {
 	TargetNamespace string `json:"targetNamespace,omitempty"`
 	ScanOnly        bool   `json:"scanOnly,omitempty"`
 }
+
+// String implements fmt.Stringer, redacting AccessToken so a provider OAuth
+// token never leaks through logging/debug output of an ImportStartOptions
+// value (or pointer — the method set of *ImportStartOptions includes this
+// value-receiver method too).
+func (o ImportStartOptions) String() string {
+	return fmt.Sprintf(
+		"awsysco.ImportStartOptions{Provider: %q, AccessToken: %s, TargetNamespace: %q, ScanOnly: %v}",
+		o.Provider, redactSecret(o.AccessToken), o.TargetNamespace, o.ScanOnly,
+	)
+}
+
+// GoString implements fmt.GoStringer, redacting AccessToken.
+func (o ImportStartOptions) GoString() string { return o.String() }
 
 // ImportListOptions filters the imports List request.
 type ImportListOptions struct {

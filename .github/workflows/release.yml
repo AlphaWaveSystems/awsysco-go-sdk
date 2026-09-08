@@ -24,6 +24,23 @@ jobs:
           go-version: '1.24'
           cache: true
 
+      - name: Verify tag matches package version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          # Extract sdkVersion from http.go rather than hardcoding it here,
+          # so this check stays correct as the const changes over releases.
+          SDK_VERSION="$(grep -oE 'sdkVersion = "[0-9]+\.[0-9]+\.[0-9]+"' http.go | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+          if [ -z "$SDK_VERSION" ]; then
+            echo "::error::could not extract sdkVersion from http.go"
+            exit 1
+          fi
+          if [ "$TAG" != "v$SDK_VERSION" ]; then
+            echo "::error::pushed tag '$TAG' does not match package version 'v$SDK_VERSION' (http.go sdkVersion=$SDK_VERSION)"
+            exit 1
+          fi
+          echo "tag $TAG matches package version v$SDK_VERSION"
+
       - name: Build and test
         run: |
           go build ./...

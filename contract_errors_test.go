@@ -17,10 +17,12 @@ import (
 // contractErrorFixture mirrors one entry of the "errors" array in
 // testdata/sdk-contract.json.
 type contractErrorFixture struct {
-	ID          string          `json:"id"`
-	Status      *int            `json:"status"`
-	Body        json.RawMessage `json:"body"`
-	ExpectError string          `json:"expect_error"`
+	ID          string            `json:"id"`
+	Status      *int              `json:"status"`
+	Body        json.RawMessage   `json:"body"`
+	Headers     map[string]string `json:"headers"`
+	ExpectError string            `json:"expect_error"`
+	Retry       *bool             `json:"retry"`
 }
 
 type contractErrorsFile struct {
@@ -50,6 +52,11 @@ var predicateFor = map[string]func(error) bool{
 	"ConflictError":       awsysco.IsConflict,
 	"RateLimitError":      awsysco.IsRateLimitError,
 	"ServerError":         awsysco.IsServerError,
+	// SDKError is the contract's umbrella class for "some well-typed SDK
+	// error, not a raw unwrapped decode/parse exception" — used by
+	// err_2xx_malformed_json, where a 2xx status rules out every
+	// status-specific predicate above.
+	"SDKError": awsysco.IsSDKError,
 }
 
 // probe exercises the shared error-parsing path in http.go — the exact
@@ -75,6 +82,9 @@ func TestContractErrors(t *testing.T) {
 			case "err_network":
 				testContractNetworkError(t)
 				return
+			case "err_user_cancel":
+				testContractUserCancel(t)
+				return
 			}
 
 			if f.Status == nil {
@@ -82,6 +92,9 @@ func TestContractErrors(t *testing.T) {
 			}
 
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				for k, v := range f.Headers {
+					w.Header().Set(k, v)
+				}
 				w.WriteHeader(*f.Status)
 				if len(f.Body) > 0 {
 					var raw string
@@ -143,7 +156,62 @@ func TestContractErrors(t *testing.T) {
 					}
 				}
 			}
+
+			// Fixture-specific extras for the new 1.0.9 error ids: confirm
+			// the header/body-driven fields that drive Part B's retry-cap
+			// and quota-class fixes are actually populated as expected. The
+			// generic loop above always uses WithMaxRetries(0), so it can't
+			// observe retry *behavior* (see the dedicated retry_test.go
+			// cases for that) — this only checks the parsed fields.
+			switch f.ID {
+			case "err_429_resets_at_only":
+				if re == nil || re.ResetsAt == nil {
+					t.Error("expected ResetsAt to be populated from the resetsAt body field, got nil")
+				}
+				if re != nil && re.Code != "" {
+					t.Errorf("Code = %q, want empty (this fixture has no quota code — resetsAt alone must drive quota-class detection)", re.Code)
+				}
+			case "err_429_retry_after_oversized", "err_503_retry_after_oversized":
+				if ae.RetryAfter <= 30*time.Second {
+					t.Errorf("RetryAfter = %v, want > 30s (parsed from the oversized Retry-After header)", ae.RetryAfter)
+				}
+			}
 		})
+	}
+}
+
+// testContractUserCancel covers err_user_cancel: a request aborted by the
+// CALLER cancelling its context (as opposed to a deadline elapsing) must
+// surface as something satisfying errors.Is(err, context.Canceled), and must
+// never be reported as *awsysco.TimeoutError — a TimeoutError implies the
+// server was too slow, not that the caller gave up on purpose.
+func testContractUserCancel(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Block until the client gives up (or the test times out) —
+		// simulates a slow server the caller deliberately cancels out on.
+		<-r.Context().Done()
+	}))
+	defer srv.Close()
+
+	client := awsysco.NewClient("awsys_test", awsysco.WithBaseURL(srv.URL), awsysco.WithMaxRetries(0))
+
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		time.Sleep(20 * time.Millisecond)
+		cancel()
+	}()
+
+	err := probe(ctx, client)
+
+	if err == nil {
+		t.Fatal("expected an error, got nil")
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("errors.Is(err, context.Canceled) = false, want true: %v", err)
+	}
+	var te *awsysco.TimeoutError
+	if errors.As(err, &te) {
+		t.Error("a caller-cancelled context must not surface as *awsysco.TimeoutError")
 	}
 }
 

@@ -12,6 +12,10 @@ type AwsysError struct {
 	Code    string
 	Status  int
 	Raw     []byte
+	// RetryAfter is the parsed value of a Retry-After response header, if the
+	// server sent one — populated for any status, not only 429. Zero when
+	// absent or unparseable.
+	RetryAfter time.Duration
 }
 
 // Error implements the error interface, formatting the message, API error
@@ -115,11 +119,13 @@ func IsForbidden(err error) bool {
 	return false
 }
 
-// IsValidationError returns true if err is a 400 Validation error.
+// IsValidationError returns true if err is a 400 or 422 Validation error.
+// The platform uses 422 for some validation failures (e.g. VALIDATION_FAILED)
+// and 400 for others; both map to the same conceptual ValidationError class.
 func IsValidationError(err error) bool {
 	var e *AwsysError
 	if errors.As(err, &e) {
-		return e.Status == 400
+		return e.Status == 400 || e.Status == 422
 	}
 	return false
 }
@@ -140,4 +146,65 @@ func IsServerError(err error) bool {
 		return e.Status >= 500
 	}
 	return false
+}
+
+// IsConfigurationError returns true if err is a *ConfigurationError (client
+// misconfiguration detected before any network call was made).
+func IsConfigurationError(err error) bool {
+	var e *ConfigurationError
+	return errors.As(err, &e)
+}
+
+// IsNetworkError returns true if err is a *NetworkError OR a *TimeoutError (a
+// transport-level failure such as connection refused/reset, DNS failure, or
+// a request/context deadline being exceeded). *TimeoutError embeds
+// NetworkError by value, not pointer, so errors.As against *NetworkError
+// alone would NOT match it — both are checked explicitly here so
+// IsNetworkError means "any transport-level problem"; use IsTimeoutError to
+// narrow to the timeout-specific case.
+func IsNetworkError(err error) bool {
+	var e *NetworkError
+	if errors.As(err, &e) {
+		return true
+	}
+	var te *TimeoutError
+	return errors.As(err, &te)
+}
+
+// IsTimeoutError returns true if err is a *TimeoutError (a request or
+// context deadline was exceeded). It returns false for a caller-cancelled
+// context (context.Canceled), which surfaces as a plain *NetworkError.
+func IsTimeoutError(err error) bool {
+	var e *TimeoutError
+	return errors.As(err, &e)
+}
+
+// IsSDKError returns true if err is any of this SDK's well-typed error kinds
+// (AwsysError, RateLimitError, ConfigurationError, NetworkError, or
+// TimeoutError) as opposed to an unexpected/unwrapped error such as a raw
+// encoding/json failure. Every error this SDK returns from an API call
+// satisfies IsSDKError.
+//
+// TimeoutError is checked explicitly, not only via NetworkError: it embeds
+// NetworkError by value, so errors.As against *NetworkError alone does not
+// match a *TimeoutError (Unwrap resolves to the *underlying* transport
+// error, not the embedded NetworkError struct itself).
+func IsSDKError(err error) bool {
+	if err == nil {
+		return false
+	}
+	var ae *AwsysError
+	if errors.As(err, &ae) {
+		return true
+	}
+	var ce *ConfigurationError
+	if errors.As(err, &ce) {
+		return true
+	}
+	var ne *NetworkError
+	if errors.As(err, &ne) {
+		return true
+	}
+	var te *TimeoutError
+	return errors.As(err, &te)
 }

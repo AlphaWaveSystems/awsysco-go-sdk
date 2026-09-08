@@ -3,6 +3,7 @@ package awsysco
 import (
 	"context"
 	"encoding/json"
+	"log"
 )
 
 // UtmTemplatesResource provides access to the UTM template API.
@@ -10,25 +11,30 @@ type UtmTemplatesResource struct {
 	client *Client
 }
 
-// UtmTemplate represents a saved UTM parameter template.
+// UtmTemplate represents a saved UTM parameter template. Wire field names
+// are source/medium/campaign/term/content (not utmSource/utmMedium/...) —
+// verified live against POST /api/user/utm-templates (functions/app/routes/
+// user.js:355); see ADR-020, which retracts the earlier utmSource/utmMedium/
+// utmCampaign assumption from ADR-003.
 type UtmTemplate struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Source   string `json:"utmSource"`
-	Medium   string `json:"utmMedium"`
-	Campaign string `json:"utmCampaign"`
-	Term     string `json:"utmTerm,omitempty"`
-	Content  string `json:"utmContent,omitempty"`
+	Source   string `json:"source"`
+	Medium   string `json:"medium"`
+	Campaign string `json:"campaign"`
+	Term     string `json:"term,omitempty"`
+	Content  string `json:"content,omitempty"`
 }
 
-// CreateUtmTemplateInput is the input for creating a UTM template.
+// CreateUtmTemplateInput is the input for creating a UTM template. See
+// UtmTemplate's doc comment for the source/medium/campaign wire naming.
 type CreateUtmTemplateInput struct {
 	Name     string `json:"name"`
-	Source   string `json:"utmSource"`
-	Medium   string `json:"utmMedium"`
-	Campaign string `json:"utmCampaign"`
-	Term     string `json:"utmTerm,omitempty"`
-	Content  string `json:"utmContent,omitempty"`
+	Source   string `json:"source"`
+	Medium   string `json:"medium"`
+	Campaign string `json:"campaign"`
+	Term     string `json:"term,omitempty"`
+	Content  string `json:"content,omitempty"`
 }
 
 // CreateUtmTemplateResponse is the response from creating a UTM template.
@@ -37,10 +43,16 @@ type CreateUtmTemplateResponse struct {
 	Template UtmTemplate `json:"template"`
 }
 
-// List reads templates from the utmTemplates field of GET /api/v1/me — no
-// dedicated list endpoint exists on the platform (see ADR-003). If the field
-// is missing, null, or an unexpected shape, List returns an empty slice
-// rather than an error; genuine transport/HTTP errors are still propagated.
+// List reads templates from the utmTemplates field of GET /api/v1/me.
+//
+// Deprecated/known-broken: as of ADR-020 (retracting ADR-003), the platform's
+// GET /api/v1/me response does not actually carry a utmTemplates field, and
+// there is no dedicated GET /api/user/utm-templates route either — tracked
+// upstream as platform issue #831. Until that ships, this always returns an
+// empty slice (never silently claims "no templates exist" without warning):
+// it logs a one-line warning on every call so the limitation is visible
+// rather than silently swallowed. Genuine transport/HTTP errors from the
+// underlying /api/v1/me call are still returned as errors.
 func (r *UtmTemplatesResource) List(ctx context.Context) ([]UtmTemplate, error) {
 	var resp struct {
 		UtmTemplates json.RawMessage `json:"utmTemplates"`
@@ -54,6 +66,7 @@ func (r *UtmTemplatesResource) List(ctx context.Context) ([]UtmTemplate, error) 
 	}
 	if templates == nil {
 		templates = []UtmTemplate{}
+		log.Printf("awsysco: warning: UtmTemplates.List has no working platform endpoint yet (see ADR-020, platform issue #831) — always returning an empty slice, not an authoritative \"no templates\" result")
 	}
 	return templates, nil
 }

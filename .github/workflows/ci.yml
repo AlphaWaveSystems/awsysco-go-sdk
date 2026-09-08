@@ -47,6 +47,19 @@ jobs:
       - name: go test (root module only)
         run: go test -race ./...
 
+      - name: livetest module build/vet (compile check only, no secrets)
+        # livetest/ is a separate module (its own go.mod) so it's invisible
+        # to the root `go build ./...`/`go vet ./...` above — verify it at
+        # least compiles and vets cleanly. Its tests need a real
+        # AWSYS_API_KEY against staging, so they're deliberately not run
+        # here — this step is compile verification only.
+        run: |
+          cd livetest
+          go build ./...
+          go vet ./...
+
       - name: govulncheck
         run: |
-          go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+          go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+          # Pinned (not @latest) so a new govulncheck release can't silently
+          # change CI behavior/output between runs; bump deliberately.

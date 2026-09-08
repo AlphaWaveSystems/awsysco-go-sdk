@@ -57,15 +57,28 @@ func isIdempotentMethod(method string) bool {
 	}
 }
 
+// maxRetryAfter caps how long the SDK will honor a server-supplied
+// Retry-After value; anything larger means "don't bother retrying at all"
+// rather than sleeping for the full duration.
+const maxRetryAfter = 30 * time.Second
+
 // retryDecision reports whether err is retryable for the given method and,
 // if so, how long to wait before the next attempt.
 func retryDecision(err error, method string, attempt int) (wait time.Duration, retryable bool) {
 	var rl *RateLimitError
 	if errors.As(err, &rl) {
-		if quotaCodes[rl.Code] {
+		// Quota-class 429s are never retried: either a recognized quota code,
+		// or (even with no code at all) a resetsAt in the body — both mean
+		// retrying before the window resets cannot help.
+		if quotaCodes[rl.Code] || rl.ResetsAt != nil {
 			return 0, false
 		}
 		if rl.RetryAfter > 0 {
+			if rl.RetryAfter > maxRetryAfter {
+				// Server asked us to wait longer than we're willing to sleep
+				// for — fail fast instead of blocking the caller.
+				return 0, false
+			}
 			return rl.RetryAfter, true
 		}
 		return backoff(attempt), true
@@ -87,6 +100,12 @@ func retryDecision(err error, method string, attempt int) (wait time.Duration, r
 	var ae *AwsysError
 	if errors.As(err, &ae) {
 		if (ae.Status == 502 || ae.Status == 503 || ae.Status == 504) && isIdempotentMethod(method) {
+			if ae.RetryAfter > 0 {
+				if ae.RetryAfter > maxRetryAfter {
+					return 0, false
+				}
+				return ae.RetryAfter, true
+			}
 			return backoff(attempt), true
 		}
 		return 0, false
@@ -159,8 +178,18 @@ func indexByte(s string, b byte) int {
 
 // wrapTransportError converts a transport-level error from httpClient.Do
 // into a NetworkError or TimeoutError.
+//
+// A caller-cancelled context (context.Canceled) is deliberately never
+// promoted to *TimeoutError, even though it also aborts the in-flight
+// request — a TimeoutError implies the server was too slow, but here the
+// caller gave up on purpose. It surfaces as a plain *NetworkError instead,
+// so errors.Is(err, context.Canceled) still works through NetworkError's
+// Unwrap, and errors.As(err, &timeoutErr) correctly returns false.
 func wrapTransportError(method, url string, err error) error {
 	base := NetworkError{Op: method, URL: url, Err: err}
+	if errors.Is(err, context.Canceled) {
+		return &base
+	}
 	if errors.Is(err, context.DeadlineExceeded) {
 		return &TimeoutError{NetworkError: base}
 	}
@@ -216,7 +245,13 @@ func (c *Client) doRequestOnce(ctx context.Context, method, path string, body in
 
 	raw, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("awsysco: read response: %w", err)
+		// A Client.Timeout deadline (or a caller-cancelled context) can fire
+		// mid-body-read just as easily as during Do() — e.g. a server that
+		// sends headers, flushes, then stalls the body. Route this through
+		// the same transport-error classifier as Do()'s error so it still
+		// becomes *TimeoutError/*NetworkError as appropriate, not a bare
+		// wrapped error the caller can't type-switch on.
+		return wrapTransportError(method, reqURL, err)
 	}
 
 	if resp.StatusCode >= 400 {
@@ -225,7 +260,15 @@ func (c *Client) doRequestOnce(ctx context.Context, method, path string, body in
 
 	if result != nil && len(raw) > 0 {
 		if err := json.Unmarshal(raw, result); err != nil {
-			return fmt.Errorf("awsysco: decode response: %w", err)
+			// A 2xx response with a body that isn't valid JSON (e.g. an HTML
+			// interstitial from a proxy) must never surface as a raw
+			// encoding/json error — wrap it into a well-typed SDK error so
+			// callers can handle it uniformly via errors.As/IsSDKError.
+			return &AwsysError{
+				Message: "received a 2xx response with an unparseable body",
+				Status:  resp.StatusCode,
+				Raw:     raw,
+			}
 		}
 	}
 
@@ -283,7 +326,9 @@ func (c *Client) doTextOnce(ctx context.Context, method, path string, body inter
 
 	raw, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("awsysco: read response: %w", err)
+		// See the matching comment in doRequestOnce: a body-read failure can
+		// be a timeout/cancellation just as easily as Do() itself.
+		return "", wrapTransportError(method, reqURL, err)
 	}
 
 	if resp.StatusCode >= 400 {
@@ -345,24 +390,17 @@ func parseErrorResponse(status int, raw []byte, headers http.Header) error {
 		}
 	}
 
+	retryAfter := parseRetryAfterHeader(headers)
+
 	base := AwsysError{
-		Message: msg,
-		Code:    code,
-		Status:  status,
-		Raw:     raw,
+		Message:    msg,
+		Code:       code,
+		Status:     status,
+		Raw:        raw,
+		RetryAfter: retryAfter,
 	}
 
 	if status == 429 {
-		var retryAfter time.Duration
-		if ra := headers.Get("Retry-After"); ra != "" {
-			if secs, err := strconv.Atoi(ra); err == nil {
-				retryAfter = time.Duration(secs) * time.Second
-			} else if t, err := http.ParseTime(ra); err == nil {
-				if d := time.Until(t); d > 0 {
-					retryAfter = d
-				}
-			}
-		}
 		var resetsAt *time.Time
 		if body.ResetsAt != "" {
 			if t, err := time.Parse(time.RFC3339, body.ResetsAt); err == nil {
@@ -377,4 +415,24 @@ func parseErrorResponse(status int, raw []byte, headers http.Header) error {
 	}
 
 	return &base
+}
+
+// parseRetryAfterHeader parses a Retry-After response header (either an
+// integer number of seconds or an HTTP-date), returning 0 if absent,
+// malformed, or already in the past. Applies to any status code — the
+// platform can send Retry-After on a retryable 5xx as well as on 429.
+func parseRetryAfterHeader(headers http.Header) time.Duration {
+	ra := headers.Get("Retry-After")
+	if ra == "" {
+		return 0
+	}
+	if secs, err := strconv.Atoi(ra); err == nil {
+		return time.Duration(secs) * time.Second
+	}
+	if t, err := http.ParseTime(ra); err == nil {
+		if d := time.Until(t); d > 0 {
+			return d
+		}
+	}
+	return 0
 }

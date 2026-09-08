@@ -69,14 +69,46 @@ suite to keep it that way, and rounds out resource coverage.
   (tag-triggered GitHub Release with notes extracted from this file), and
   `.github/workflows/contract-drift.yml` (weekly + dispatch-triggered check
   of the vendored contract fixture against the live upstream contract,
-  auto-filing a GitHub issue on drift), plus `.golangci.yml`.
+  auto-filing a GitHub issue on drift), plus `.golangci.yml`. CI now also
+  compiles/vets the `livetest/` module (no secrets required — build/vet
+  only, not `go test`) so it can't silently bit-rot, and pins `govulncheck`
+  to `v1.1.4` instead of `@latest`. `release.yml` now hard-fails before
+  building/testing if the pushed tag doesn't exactly match
+  `v<sdkVersion>` (read from `http.go`, not hardcoded).
+- Vendored contract fixture (`testdata/sdk-contract.json`) bumped to
+  `v1.0.9` (79 capabilities, 27 errors, 15 behaviors — up from v1.0.4's 21
+  errors/8 behaviors), adding coverage for 6 new error scenarios
+  (`err_422_validation`, `err_429_resets_at_only`,
+  `err_429_retry_after_oversized`, `err_503_retry_after_oversized`,
+  `err_2xx_malformed_json`, `err_user_cancel`) and 7 new cross-cutting
+  behaviors (`user_agent`, `unknown_fields_preserved`, `timestamp_variants`,
+  `timestamp_never_raises`, `iterator_links_limit_zero`, `redaction_str`,
+  `config_warnings`, `links_list_has_more_from_pagination`,
+  `body_read_within_timeout`), all covered by new/extended tests
+  (`contract_errors_test.go`, `behaviors_test.go`, `retry_test.go`).
+- `AwsysError.RetryAfter` — the parsed `Retry-After` response header,
+  populated for any status (not only 429) that sends one.
+- `IsConfigurationError`, `IsNetworkError`, `IsTimeoutError`, `IsSDKError`
+  predicates, alongside the existing `Is*` family.
+- `NewClient`/`WithBaseURL` now log one `awsysco: warning: ...` line (via
+  the standard `log` package — no new dependency) when the API key doesn't
+  start with `awsys_`, or the base URL doesn't use `https://`. Neither
+  condition blocks configuration; both are informational.
+- `CreateWebhookInput`/`UpdateWebhookInput`/`ImportStartOptions` now
+  implement `String()`/`GoString()`, redacting `Secret`/`AccessToken` (as
+  `[REDACTED]`) so they never leak through `%v`/`%+v`/`%s`/`%#v` formatting
+  or accidental `Println`/logging of an input value.
 
 ### Fixed
 
 - `Analytics.GetRecentClicks` — corrected the request path from the
   nonexistent `/api/user/recent-clicks` to the platform's actual
   `GET /api/user/clicks/recent`, and updated the response envelope to match
-  (`{clicks, count}`).
+  (`{clicks, count}`). Also gained an optional `since ...time.Time`
+  parameter (variadic, at most the first value used) to add `since`
+  filtering support without breaking the existing two-argument call sites —
+  a backward-compatible signature widening under ADR-014, not a breaking
+  change.
 - `Folders.Update` — corrected to use the unversioned
   `PATCH /api/folders/{id}` route; the `/api/v1/folders/{id}` PATCH route
   404s live on the platform (List/Create/Delete remain on `/api/v1/folders`).
@@ -84,9 +116,65 @@ suite to keep it that way, and rounds out resource coverage.
   unversioned `/api/webhooks` paths to the platform's actual
   `/api/v1/webhooks` paths. `Update` deliberately remains on the unversioned
   `/api/webhooks/{id}` twin, matching the live platform.
-- `UtmTemplate` / `CreateUtmTemplateInput` field names — corrected from
-  `source`/`medium`/`campaign`/`term`/`content` to the platform's actual
-  wire names `utmSource`/`utmMedium`/`utmCampaign`/`utmTerm`/`utmContent`.
+- `UtmTemplate` / `CreateUtmTemplateInput` field names — **re-corrected**
+  back to the platform's actual wire names `source`/`medium`/`campaign`/
+  `term`/`content` (not `utmSource`/`utmMedium`/`utmCampaign`/`utmTerm`/
+  `utmContent` as an earlier pass in this same unreleased version assumed).
+  Verified live 2026-09-08 against `POST /api/user/utm-templates`
+  (`functions/app/routes/user.js:355`); see ADR-020, which retracts
+  ADR-003's original ("read via `/api/v1/me`") assumption entirely —
+  `/api/v1/me` does not actually return `utmTemplates`, and there is no
+  working `GET` list route at all yet (tracked upstream as platform issue
+  #831). `UtmTemplates.List` now logs a warning on every call rather than
+  silently returning an empty slice as if that were an authoritative
+  "you have no templates" answer.
+- `UsageLimits.CustomSlugs` — corrected from `int` to `bool`. It's a tier
+  feature flag on the platform (`functions/app/config/tierLimits.js`,
+  `routes/user.js:475`, `routes/apiV1.js:91`), not a count; decoding a real
+  `usage` response with the previous `int` field would have failed outright.
+- `Link.UnmarshalJSON` — fixed a shadowed `clicks` decode field that
+  silently discarded the real click count on every `Link` decode, leaving
+  `Link.Clicks` always `0` regardless of the API response. Caught by the new
+  `unknown_fields_preserved` behavior test.
+- `firestoreTimestamp` — now also recognizes the bare `{seconds,
+  nanoseconds}` shape (previously only the underscore-prefixed
+  `{_seconds,_nanoseconds}`), and no longer conflates a genuinely-present
+  `seconds: 0` (a legitimate epoch timestamp) with an absent field; a
+  garbage value on one sub-field (e.g. `nanoseconds: "q"`) no longer blocks
+  parsing a valid `seconds` value alongside it. Still never errors on an
+  unrecognized shape, per ADR-017.
+- Body-read failures (`io.ReadAll(resp.Body)`, as opposed to `httpClient.Do`
+  itself) are now classified through the same transport-error path as
+  connection-level failures, so a server that sends headers/flushes and
+  then stalls the body correctly surfaces as `*TimeoutError`, not a bare
+  wrapped `encoding/json`-adjacent error the caller can't type-switch on.
+- A caller-cancelled context (`context.Canceled`) no longer risks being
+  reported as `*TimeoutError` — `wrapTransportError` now checks
+  `context.Canceled` before `context.DeadlineExceeded`/`net.Error.Timeout()`
+  and passes it through as a plain `*NetworkError` instead, so
+  `errors.Is(err, context.Canceled)` holds and `errors.As(err, &timeoutErr)`
+  correctly returns `false`.
+- A 2xx response with a body that isn't valid JSON (e.g. an HTML
+  interstitial) now surfaces as a typed `*AwsysError` (`Status` set to the
+  actual 2xx status code) instead of a raw, unhandled `encoding/json`
+  unmarshal error.
+- `IsValidationError` now also returns `true` for HTTP 422 (in addition to
+  400) — the platform uses 422 for some validation failures
+  (`VALIDATION_FAILED`) and 400 for others; both are the same conceptual
+  class.
+- 429 responses with a `resetsAt` body field but no recognized quota `code`
+  are now correctly treated as quota-class and never retried (previously
+  only a recognized `code` triggered this).
+- A server-supplied `Retry-After` above the 30s backoff cap (429, or a
+  retryable 5xx that now also carries `AwsysError.RetryAfter`) now fails
+  the request immediately instead of sleeping for the full duration.
+- `Webhook.Enabled` is now `*bool` (was `bool`), so a response that omits
+  the field decodes as `nil` ("unknown") instead of `false`
+  ("disabled") — previously an active webhook with an omitted `enabled`
+  field would have misreported as disabled.
+- `LinksResource.List` now clamps `Limit` to the platform maximum of 100
+  when it exceeds that, matching `Iter`'s existing clamping (a `Limit` of
+  `0` or negative still omits the query parameter entirely, unchanged).
 - `Tags.Add` — the platform's endpoint takes a batch (`{"tags": [...]}`),
   not one tag per call; `Add` is now variadic (`Add(ctx, shortPath, tags...)`)
   so existing single-tag call sites keep compiling while also supporting

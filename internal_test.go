@@ -8,3 +8,9 @@ package awsysco
 func TestingOptionWithClock(clock retryClock) Option {
 	return withClock(clock)
 }
+
+// TestingSDKVersion exposes the unexported sdkVersion const to the SDK's own
+// black-box test files, so behavior tests can assert the User-Agent header
+// matches the package version without duplicating the literal. Not part of
+// the public API.
+const TestingSDKVersion = sdkVersion

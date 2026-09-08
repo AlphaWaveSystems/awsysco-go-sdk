@@ -1,6 +1,6 @@
 {
  "$schema": "awsys-sdk-contract/1",
- "version": "1.0.4",
+ "version": "1.0.9",
  "platformBaseline": "2026-09",
  "baseUrl": "https://awsys.co",
  "auth": {
@@ -431,16 +431,40 @@
    "response": {
     "status": 200,
     "body": {
-     "linksCreatedToday": 3,
-     "linksToday": 3,
-     "dailyLimit": 100,
-     "apiCallsThisMonth": 10,
-     "apiMonthlyLimit": 1000,
+     "totalLinks": 222,
+     "totalClicks": 5,
+     "linksCreatedThisMonth": 222,
+     "qrCodesThisMonth": 0,
+     "folderCount": 0,
+     "apiCallsThisMonth": 1,
+     "trackedClicksThisMonth": 5,
+     "tier": "pro",
+     "limits": {
+      "linksPerMonth": 1000,
+      "monthlyLinks": 1000,
+      "dailyLinks": 100,
+      "monthlyTrackedClicks": 10000,
+      "apiCallsPerMonth": 1000,
+      "qrCodes": 100,
+      "folders": 10,
+      "customSlugs": true
+     },
+     "hasApiKey": true,
+     "apiKeyCreatedAt": "2026-09-07T03:09:24.886Z",
+     "userPrefix": "op0p",
+     "isPremium": true,
      "overage": {
-      "enabled": false
+      "active": false,
+      "startedAt": null,
+      "expiresAt": null,
+      "hoursUntilDrop": null,
+      "clicksThisCycle": 0,
+      "spendingLimitCents": null,
+      "estimatedChargeCents": 0
      }
     }
-   }
+   },
+   "note": "verified live 2026-09-07 on staging; limits values illustrative, keys exact"
   },
   {
    "id": "recent_clicks",
@@ -830,7 +854,7 @@
      ]
     }
    },
-   "note": "list derived from me.utmTemplates"
+   "note": "BROKEN: /api/v1/me does NOT return utmTemplates and no GET /api/user/utm-templates exists (issue #831). No API-key list path today."
   },
   {
    "id": "utm_create",
@@ -841,18 +865,27 @@
     "query": {},
     "body": {
      "name": "Launch",
-     "utmSource": "newsletter",
-     "utmMedium": "email",
-     "utmCampaign": "sept"
+     "source": "newsletter",
+     "medium": "email",
+     "campaign": "sept"
     }
    },
    "response": {
     "status": 200,
     "body": {
-     "id": "t1",
-     "name": "Launch"
+     "success": true,
+     "template": {
+      "id": "t1",
+      "name": "Launch",
+      "source": "newsletter",
+      "medium": "email",
+      "campaign": "sept",
+      "term": "",
+      "content": ""
+     }
     }
-   }
+   },
+   "note": "platform reads source/medium/campaign/term/content (user.js:355); currently 500s (uuidv4 undefined, issue #831)"
   },
   {
    "id": "utm_delete",
@@ -1976,6 +2009,72 @@
    },
    "expect_error": "AuthorizationError",
    "note": "recent clicks behind feature flag; not a path error"
+  },
+  {
+   "id": "err_422_validation",
+   "status": 422,
+   "body": {
+    "error": true,
+    "code": "VALIDATION_FAILED",
+    "message": "expiresAt must be in the future"
+   },
+   "expect_error": "ValidationError",
+   "note": "422 maps to ValidationError and reports status 422"
+  },
+  {
+   "id": "err_429_resets_at_only",
+   "status": 429,
+   "body": {
+    "error": true,
+    "message": "Limit exceeded",
+    "resetsAt": "2026-10-01T00:00:00Z"
+   },
+   "expect_error": "RateLimitError",
+   "retry": false,
+   "note": "resetsAt present with no quota code \u2192 quota-class, never retried"
+  },
+  {
+   "id": "err_429_retry_after_oversized",
+   "status": 429,
+   "body": {
+    "error": true,
+    "message": "Too many requests"
+   },
+   "headers": {
+    "Retry-After": "86400"
+   },
+   "expect_error": "RateLimitError",
+   "retry": false,
+   "note": "Retry-After above the 30s cap \u2192 raise immediately with retry_after=86400, do not sleep"
+  },
+  {
+   "id": "err_2xx_malformed_json",
+   "status": 200,
+   "body": "<html>interstitial</html>",
+   "expect_error": "SDKError",
+   "note": "non-JSON 2xx body must surface as an SDK error (ServerError acceptable), never a raw parse exception"
+  },
+  {
+   "id": "err_user_cancel",
+   "status": null,
+   "body": null,
+   "expect_error": "CancelledError",
+   "note": "caller-initiated cancellation (signal/ctx) must not be reported as TimeoutError; idiomatic: TS distinct error or rethrown AbortError, Python asyncio.CancelledError passthrough, Go ctx.Err()"
+  },
+  {
+   "id": "err_503_retry_after_oversized",
+   "status": 503,
+   "body": {
+    "error": true,
+    "message": "unavailable"
+   },
+   "headers": {
+    "Retry-After": "3600"
+   },
+   "method": "GET",
+   "expect_error": "ServerError",
+   "retry": false,
+   "note": "Retry-After above the 30 s cap on a retryable 5xx \u2192 raise immediately, never sleep"
   }
  ],
  "behaviors": [
@@ -2005,11 +2104,39 @@
   },
   {
    "id": "timestamp_variants",
-   "assert": "ISO string and {_seconds,_nanoseconds} both parse; garbage keeps raw string"
+   "assert": "ISO string and {_seconds,_nanoseconds} both parse; garbage keeps raw string; normalization is applied automatically to timestamp fields on real responses, not only via an exported helper"
   },
   {
    "id": "iterator_links",
    "assert": "list_all over scenarios list_links \u2192 list_links_last_page yields 3 links with 2 requests"
+  },
+  {
+   "id": "body_read_within_timeout",
+   "assert": "timeout covers headers AND body read; a server that sends headers then stalls the body raises TimeoutError"
+  },
+  {
+   "id": "config_warnings",
+   "assert": "key not starting with awsys_ and non-https base URL each emit one warning-level log line"
+  },
+  {
+   "id": "release_tag_matches_version",
+   "assert": "publish/release workflow fails if the git tag does not equal v<package version>"
+  },
+  {
+   "id": "iterator_links_limit_zero",
+   "assert": "list_all/listAll/Iter with limit 0 or negative clamps to \u22651 and terminates"
+  },
+  {
+   "id": "redaction_str",
+   "assert": "str()/print/f-string/%s formatting (not only repr/inspect) of client, config, errors AND models carrying secrets (Webhook.secret) never contain the API key or secret; every object reachable from the client (resources, transport/http client) is covered \u2014 TS `private` is erased at runtime and Go %+v follows pointers"
+  },
+  {
+   "id": "timestamp_never_raises",
+   "assert": "timestamp normalizer never raises for {seconds:1,nanoseconds:'q'}, {_seconds:1e300}, {seconds:-1e14}, {seconds:[1]} \u2014 field keeps a string form of the raw value"
+  },
+  {
+   "id": "links_list_has_more_from_pagination",
+   "assert": "list() exposes hasMore read from pagination.hasMore (True/False), not from a top-level key"
   }
  ]
 }

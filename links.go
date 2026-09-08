@@ -20,11 +20,18 @@ func (r *LinksResource) Create(ctx context.Context, input CreateLinkInput) (*Lin
 	return &link, nil
 }
 
-// List returns a paginated list of links.
+// List returns a paginated list of links. input.Limit is clamped to the
+// platform maximum of 100 when it exceeds that (matching Iter's clamping);
+// a zero or negative Limit omits the query parameter entirely, letting the
+// platform apply its own default — that omission behavior is unchanged.
 func (r *LinksResource) List(ctx context.Context, input ListLinksInput) (*ListLinksResponse, error) {
 	q := url.Values{}
 	if input.Limit > 0 {
-		q.Set("limit", strconv.Itoa(input.Limit))
+		limit := input.Limit
+		if limit > 100 {
+			limit = 100
+		}
+		q.Set("limit", strconv.Itoa(limit))
 	}
 	if input.Offset > 0 {
 		q.Set("offset", strconv.Itoa(input.Offset))

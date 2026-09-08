@@ -97,9 +97,10 @@ var contractInvokers = map[string]capabilityInvoker{
 		return err
 	},
 	"list_links_limit_clamped": func(ctx context.Context, c *awsysco.Client) error {
-		// SDK itself doesn't clamp Links.List (only Iter clamps) — 100 is
-		// passed straight through, which is exactly what the fixture expects.
-		_, err := c.Links.List(ctx, awsysco.ListLinksInput{Limit: 100, Offset: 0})
+		// Fixture note: "caller passed 500; SDK clamps to 100" — Links.List
+		// now clamps Limit above the platform max the same way Iter does,
+		// so passing 500 here must still put "limit=100" on the wire.
+		_, err := c.Links.List(ctx, awsysco.ListLinksInput{Limit: 500, Offset: 0})
 		return err
 	},
 	"get_link": func(ctx context.Context, c *awsysco.Client) error {
