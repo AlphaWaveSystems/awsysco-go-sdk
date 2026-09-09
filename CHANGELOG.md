@@ -101,6 +101,15 @@ suite to keep it that way, and rounds out resource coverage.
 
 ### Fixed
 
+- `AffiliateProgram.CookieDays` — corrected the wire field name from
+  `cookieDays` to the platform's actual `cookieDurationDays` (the old tag
+  decoded silently to `0` on every real response). Also gained `MerchantID`,
+  `MaxPartners`, `PartnerCount`, `IsPublic`, `CreatedAt`, and `UpdatedAt`
+  (the latter two normalizing the platform's Firestore
+  `{_seconds,_nanoseconds}` shape to an ISO-8601 string, same pattern as
+  `SavedView`). The same type is shared between the owner's full view and
+  `Discover`'s public-summary subset; fields Discover omits (status,
+  merchantId, etc.) simply decode as zero values.
 - `TrustScoreResult.Score`/`Status` — corrected the wire field names from
   `score`/`status` to the platform's actual `trustScore`/`trustStatus`
   (`GET /api/link-scan/*`); the old tags decoded silently to `nil` on every

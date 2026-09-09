@@ -611,6 +611,66 @@ func TestContractFixtureFieldsDecodeThroughTypedAccessors(t *testing.T) {
 			t.Error("Tier is empty — expected \"builder\" from the fixture")
 		}
 	})
+
+	t.Run("affiliate_program_create", func(t *testing.T) {
+		cap := findFixture(t, fixture, "affiliate_program_create")
+		client := fixtureServer(t, cap)
+		program, err := client.Affiliate.CreateProgram(ctx, awsysco.CreateAffiliateProgramInput{Name: "P", CommissionRate: 10})
+		if err != nil {
+			t.Fatalf("Affiliate.CreateProgram: %v", err)
+		}
+		if program.MerchantID == "" {
+			t.Error("MerchantID is empty")
+		}
+		if program.CommissionType == "" {
+			t.Error("CommissionType is empty")
+		}
+		if program.CookieDays == 0 {
+			t.Error("CookieDays is 0 — cookieDurationDays tag regressed to cookieDays?")
+		}
+		if program.MaxPartners == 0 {
+			t.Error("MaxPartners is 0")
+		}
+		if program.Status == "" {
+			t.Error("Status is empty")
+		}
+		if !program.IsPublic {
+			t.Error("IsPublic is false — expected true from the fixture")
+		}
+		if program.CreatedAt == nil || *program.CreatedAt == "" {
+			t.Error("CreatedAt is nil/empty — Firestore {_seconds,_nanoseconds} normalization broken?")
+		}
+	})
+
+	t.Run("affiliate_discover", func(t *testing.T) {
+		cap := findFixture(t, fixture, "affiliate_discover")
+		client := fixtureServer(t, cap)
+		programs, err := client.Affiliate.Discover(ctx, 20)
+		if err != nil {
+			t.Fatalf("Affiliate.Discover: %v", err)
+		}
+		if len(programs) != 1 {
+			t.Fatalf("expected 1 program, got %d", len(programs))
+		}
+		p := programs[0]
+		if p.CommissionType == "" {
+			t.Error("CommissionType is empty")
+		}
+		if p.CookieDays == 0 {
+			t.Error("CookieDays is 0 — cookieDurationDays tag regressed to cookieDays?")
+		}
+		if p.PartnerCount == 0 {
+			t.Error("PartnerCount is 0")
+		}
+		// Discover is a public summary subset — these fields are genuinely
+		// absent from the response and must decode as zero, not error.
+		if p.Status != "" {
+			t.Error("Status should be empty on a discover-subset response")
+		}
+		if p.MerchantID != "" {
+			t.Error("MerchantID should be empty on a discover-subset response")
+		}
+	})
 }
 
 func assertContractQuery(t *testing.T, want map[string]any, got url.Values) {

@@ -1,6 +1,6 @@
 {
  "$schema": "awsys-sdk-contract/1",
- "version": "1.0.11",
+ "version": "1.0.12",
  "platformBaseline": "2026-09",
  "baseUrl": "https://awsys.co",
  "auth": {
@@ -3286,8 +3286,25 @@
     "status": 200,
     "body": {
      "id": "p1",
-     "name": "P",
-     "commissionRate": 10
+     "merchantId": "u1",
+     "name": "Launch Affiliate",
+     "description": "desc",
+     "commissionType": "cpc",
+     "cpcRate": 0.5,
+     "cpaRate": 0,
+     "cookieDurationDays": 30,
+     "maxPartners": 100,
+     "partnerCount": 1,
+     "status": "active",
+     "isPublic": true,
+     "createdAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     },
+     "updatedAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     }
     }
    }
   },
@@ -3305,114 +3322,26 @@
     "body": {
      "programs": [
       {
-       "id": "prog_824a598907e5e949",
-       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "name": "go-sdk-test-program",
-       "description": "",
+       "id": "p1",
+       "merchantId": "u1",
+       "name": "Launch Affiliate",
+       "description": "desc",
        "commissionType": "cpc",
-       "cpcRate": 0.05,
+       "cpcRate": 0.5,
        "cpaRate": 0,
        "cookieDurationDays": 30,
-       "maxPartners": 50,
-       "partnerCount": 0,
+       "maxPartners": 100,
+       "partnerCount": 1,
        "status": "active",
        "isPublic": true,
        "createdAt": {
-        "_seconds": 1788756538,
-        "_nanoseconds": 675000000
+        "_seconds": 1788900000,
+        "_nanoseconds": 0
        },
        "updatedAt": {
-        "_seconds": 1788756538,
-        "_nanoseconds": 675000000
+        "_seconds": 1788900000,
+        "_nanoseconds": 0
        }
-      },
-      {
-       "id": "prog_9394d53d6bf9e15e",
-       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "name": "go-sdk-test-program",
-       "description": "",
-       "commissionType": "cpc",
-       "cpcRate": 0.05,
-       "cpaRate": 0,
-       "cookieDurationDays": 30,
-       "maxPartners": 50,
-       "partnerCount": 0,
-       "status": "active",
-       "isPublic": true,
-       "createdAt": {
-        "_seconds": 1788756493,
-        "_nanoseconds": 518000000
-       },
-       "updatedAt": {
-        "_seconds": 1788756493,
-        "_nanoseconds": 518000000
-       }
-      },
-      {
-       "id": "prog_95f82af0989d59e8",
-       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "name": "go-sdk-test-program",
-       "description": "",
-       "commissionType": "cpc",
-       "cpcRate": 0.05,
-       "cpaRate": 0,
-       "cookieDurationDays": 30,
-       "maxPartners": 50,
-       "partnerCount": 0,
-       "status": "active",
-       "isPublic": true,
-       "createdAt": {
-        "_seconds": 1788756384,
-        "_nanoseconds": 645000000
-       },
-       "updatedAt": {
-        "_seconds": 1788756384,
-        "_nanoseconds": 645000000
-       }
-      },
-      {
-       "id": "prog_6bb4c87b79b28494",
-       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "name": "go-sdk-test-program",
-       "description": "",
-       "commissionType": "cpc",
-       "cpcRate": 0.05,
-       "cpaRate": 0,
-       "cookieDurationDays": 30,
-       "maxPartners": 50,
-       "partnerCount": 0,
-       "status": "active",
-       "isPublic": true,
-       "createdAt": {
-        "_seconds": 1788756094,
-        "_nanoseconds": 65000000
-       },
-       "updatedAt": {
-        "_seconds": 1788756094,
-        "_nanoseconds": 65000000
-       }
-      },
-      {
-       "id": "prog_bb27df56be7ac74e",
-       "commissionType": "cpc",
-       "createdAt": {
-        "_seconds": 1780420671,
-        "_nanoseconds": 827000000
-       },
-       "isPublic": false,
-       "description": "Created by MCP E2E test",
-       "updatedAt": {
-        "_seconds": 1780420671,
-        "_nanoseconds": 827000000
-       },
-       "cpcRate": 0.05,
-       "maxPartners": 50,
-       "name": "MCP E2E Prog 1780420671721",
-       "cpaRate": 0,
-       "partnerCount": 0,
-       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "status": "active",
-       "cookieDurationDays": 30
       }
      ]
     }
@@ -3431,7 +3360,25 @@
     "status": 200,
     "body": {
      "id": "p1",
-     "name": "P"
+     "merchantId": "u1",
+     "name": "Launch Affiliate",
+     "description": "desc",
+     "commissionType": "cpc",
+     "cpcRate": 0.5,
+     "cpaRate": 0,
+     "cookieDurationDays": 30,
+     "maxPartners": 100,
+     "partnerCount": 1,
+     "status": "active",
+     "isPublic": true,
+     "createdAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     },
+     "updatedAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     }
     }
    }
   },
@@ -3450,7 +3397,25 @@
     "status": 200,
     "body": {
      "id": "p1",
-     "name": "P2"
+     "merchantId": "u1",
+     "name": "P2",
+     "description": "desc",
+     "commissionType": "cpc",
+     "cpcRate": 0.5,
+     "cpaRate": 0,
+     "cookieDurationDays": 30,
+     "maxPartners": 100,
+     "partnerCount": 1,
+     "status": "active",
+     "isPublic": true,
+     "createdAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     },
+     "updatedAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     }
     }
    }
   },
@@ -3530,11 +3495,18 @@
      "programs": [
       {
        "id": "p9",
-       "name": "Other"
+       "name": "Other Program",
+       "description": "desc",
+       "commissionType": "cpa",
+       "cpcRate": 0,
+       "cpaRate": 500,
+       "cookieDurationDays": 30,
+       "partnerCount": 5
       }
      ]
     }
-   }
+   },
+   "note": "discover = PUBLIC SUMMARY subset: id,name,description,commissionType,cpcRate,cpaRate,cookieDurationDays,partnerCount. NO status/merchantId/maxPartners/isPublic/timestamps. Distinct type from the owned AffiliateProgram."
   },
   {
    "id": "affiliate_join",
@@ -3552,7 +3524,33 @@
     "body": {
      "id": "ps1",
      "programId": "p9",
-     "status": "pending"
+     "partnerId": "u2",
+     "partnerEmail": "p@example.com",
+     "partnerCode": "CODE",
+     "status": "pending",
+     "stats": {
+      "totalClicks": 3,
+      "uniqueClicks": 2,
+      "conversions": 0,
+      "pendingEarnings": 0,
+      "paidEarnings": 0
+     },
+     "createdAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     },
+     "updatedAt": {
+      "_seconds": 1788900000,
+      "_nanoseconds": 0
+     },
+     "program": {
+      "id": "p9",
+      "name": "Other",
+      "commissionType": "cpa",
+      "cpcRate": 0,
+      "cpaRate": 500,
+      "status": "active"
+     }
     }
    }
   },
@@ -3570,622 +3568,33 @@
     "body": {
      "partnerships": [
       {
-       "id": "part_1a70ca1e22aca520",
-       "programId": "prog_240ddf57c480b446",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerCode": "TEST173",
-       "status": "pending",
+       "id": "ps1",
+       "programId": "p9",
+       "partnerId": "u2",
+       "partnerEmail": "p@example.com",
+       "partnerCode": "CODE",
+       "status": "approved",
        "stats": {
-        "totalClicks": 0,
-        "uniqueClicks": 0,
+        "totalClicks": 3,
+        "uniqueClicks": 2,
         "conversions": 0,
         "pendingEarnings": 0,
         "paidEarnings": 0
        },
        "createdAt": {
-        "_seconds": 1780705428,
-        "_nanoseconds": 413000000
+        "_seconds": 1788900000,
+        "_nanoseconds": 0
        },
        "updatedAt": {
-        "_seconds": 1780705428,
-        "_nanoseconds": 413000000
+        "_seconds": 1788900000,
+        "_nanoseconds": 0
        },
        "program": {
-        "id": "prog_240ddf57c480b446",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_b3942112f561d1d6",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "status": "pending",
-       "stats": {
-        "totalClicks": 0,
-        "uniqueClicks": 0,
-        "paidEarnings": 0,
-        "pendingEarnings": 0,
-        "conversions": 0
-       },
-       "updatedAt": {
-        "_seconds": 1780431267,
-        "_nanoseconds": 98000000
-       },
-       "createdAt": {
-        "_seconds": 1780431267,
-        "_nanoseconds": 98000000
-       },
-       "programId": "prog_86be9e1b360063e8",
-       "partnerCode": "TEST107",
-       "program": {
-        "id": "prog_86be9e1b360063e8",
-        "name": "Builder Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_40a4a7a4d1262b93",
-       "stats": {
-        "uniqueClicks": 0,
-        "conversions": 0,
-        "paidEarnings": 0,
-        "totalClicks": 0,
-        "pendingEarnings": 0
-       },
-       "partnerCode": "TEST392",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "programId": "prog_2271922a48f0dc61",
-       "createdAt": {
-        "_seconds": 1780425898,
-        "_nanoseconds": 129000000
-       },
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "updatedAt": {
-        "_seconds": 1780425898,
-        "_nanoseconds": 129000000
-       },
-       "status": "pending",
-       "program": {
-        "id": "prog_2271922a48f0dc61",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_d5cb287569f639c2",
-       "programId": "prog_20e453f776646491",
-       "status": "pending",
-       "partnerCode": "TEST961",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "updatedAt": {
-        "_seconds": 1780425893,
-        "_nanoseconds": 126000000
-       },
-       "createdAt": {
-        "_seconds": 1780425893,
-        "_nanoseconds": 126000000
-       },
-       "stats": {
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "uniqueClicks": 0,
-        "totalClicks": 0,
-        "paidEarnings": 0
-       },
-       "program": {
-        "id": "prog_20e453f776646491",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_c46cedb25dcdc5af",
-       "partnerCode": "TEST827",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "updatedAt": {
-        "_seconds": 1780422378,
-        "_nanoseconds": 577000000
-       },
-       "createdAt": {
-        "_seconds": 1780422378,
-        "_nanoseconds": 577000000
-       },
-       "status": "pending",
-       "programId": "prog_20ab53c192ee90a5",
-       "stats": {
-        "uniqueClicks": 0,
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "totalClicks": 0,
-        "paidEarnings": 0
-       },
-       "program": {
-        "id": "prog_20ab53c192ee90a5",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_819ef60e9c755b88",
-       "status": "pending",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerCode": "TEST304",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "stats": {
-        "totalClicks": 0,
-        "paidEarnings": 0,
-        "conversions": 0,
-        "pendingEarnings": 0,
-        "uniqueClicks": 0
-       },
-       "updatedAt": {
-        "_seconds": 1780422374,
-        "_nanoseconds": 549000000
-       },
-       "createdAt": {
-        "_seconds": 1780422374,
-        "_nanoseconds": 549000000
-       },
-       "programId": "prog_1b79743ef6bc4786",
-       "program": {
-        "id": "prog_1b79743ef6bc4786",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_a86d86f6ac6e7757",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "stats": {
-        "paidEarnings": 0,
-        "pendingEarnings": 0,
-        "totalClicks": 0,
-        "conversions": 0,
-        "uniqueClicks": 0
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "status": "pending",
-       "partnerCode": "TEST287",
-       "programId": "prog_1861faffdeb194af",
-       "createdAt": {
-        "_seconds": 1780409113,
-        "_nanoseconds": 591000000
-       },
-       "updatedAt": {
-        "_seconds": 1780409113,
-        "_nanoseconds": 591000000
-       },
-       "program": {
-        "id": "prog_1861faffdeb194af",
-        "name": "Delete Me Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_5ddd508111b44422",
-       "updatedAt": {
-        "_seconds": 1780409108,
-        "_nanoseconds": 804000000
-       },
-       "createdAt": {
-        "_seconds": 1780409108,
-        "_nanoseconds": 804000000
-       },
-       "stats": {
-        "uniqueClicks": 0,
-        "pendingEarnings": 0,
-        "paidEarnings": 0,
-        "totalClicks": 0,
-        "conversions": 0
-       },
-       "partnerCode": "TEST401",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "programId": "prog_14975c57adf6b322",
-       "status": "pending",
-       "program": {
-        "id": "prog_14975c57adf6b322",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_1361cb503c9d4df4",
-       "status": "pending",
-       "stats": {
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "totalClicks": 0,
-        "uniqueClicks": 0,
-        "paidEarnings": 0
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerCode": "TEST543",
-       "updatedAt": {
-        "_seconds": 1780405452,
-        "_nanoseconds": 831000000
-       },
-       "createdAt": {
-        "_seconds": 1780405452,
-        "_nanoseconds": 831000000
-       },
-       "programId": "prog_11aaab92e41e0d06",
-       "program": {
-        "id": "prog_11aaab92e41e0d06",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_6f8a52acc0e31395",
-       "stats": {
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "uniqueClicks": 0,
-        "totalClicks": 0,
-        "paidEarnings": 0
-       },
-       "updatedAt": {
-        "_seconds": 1780405447,
-        "_nanoseconds": 440000000
-       },
-       "createdAt": {
-        "_seconds": 1780405447,
-        "_nanoseconds": 440000000
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerCode": "TEST641",
-       "status": "pending",
-       "programId": "prog_0daf7bbb4ed07653",
-       "program": {
-        "id": "prog_0daf7bbb4ed07653",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_1e357fbfa6a27a22",
-       "createdAt": {
-        "_seconds": 1780384981,
-        "_nanoseconds": 168000000
-       },
-       "partnerCode": "TEST617",
-       "programId": "prog_0d8fbbc9360e4ede",
-       "stats": {
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "uniqueClicks": 0,
-        "totalClicks": 0,
-        "paidEarnings": 0
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "updatedAt": {
-        "_seconds": 1780384981,
-        "_nanoseconds": 168000000
-       },
-       "status": "pending",
-       "program": {
-        "id": "prog_0d8fbbc9360e4ede",
-        "name": "Delete Me Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_362f094c20c72f84",
-       "status": "pending",
-       "updatedAt": {
-        "_seconds": 1780384975,
-        "_nanoseconds": 970000000
-       },
-       "createdAt": {
-        "_seconds": 1780384975,
-        "_nanoseconds": 970000000
-       },
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerCode": "TEST818",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "programId": "prog_0b04eeb1b36e9eb4",
-       "stats": {
-        "conversions": 0,
-        "pendingEarnings": 0,
-        "paidEarnings": 0,
-        "totalClicks": 0,
-        "uniqueClicks": 0
-       },
-       "program": {
-        "id": "prog_0b04eeb1b36e9eb4",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_3a97bfdb36c240bb",
-       "createdAt": {
-        "_seconds": 1780382754,
-        "_nanoseconds": 646000000
-       },
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "updatedAt": {
-        "_seconds": 1780382754,
-        "_nanoseconds": 646000000
-       },
-       "status": "pending",
-       "stats": {
-        "uniqueClicks": 0,
-        "conversions": 0,
-        "paidEarnings": 0,
-        "totalClicks": 0,
-        "pendingEarnings": 0
-       },
-       "partnerCode": "TEST335",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "programId": "prog_0ab28b1f5af4d5d9",
-       "program": {
-        "id": "prog_0ab28b1f5af4d5d9",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_c091453560be37d8",
-       "stats": {
-        "uniqueClicks": 0,
-        "conversions": 0,
-        "paidEarnings": 0,
-        "totalClicks": 0,
-        "pendingEarnings": 0
-       },
-       "partnerCode": "TEST249",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "programId": "prog_0a35b30a67995ff8",
-       "updatedAt": {
-        "_seconds": 1780382750,
-        "_nanoseconds": 188000000
-       },
-       "createdAt": {
-        "_seconds": 1780382750,
-        "_nanoseconds": 188000000
-       },
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "status": "pending",
-       "program": {
-        "id": "prog_0a35b30a67995ff8",
-        "name": "Delete Me Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_cdc353380fedb2b8",
-       "programId": "prog_072f00a9ffe26529",
-       "status": "pending",
-       "partnerCode": "TEST114",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "updatedAt": {
-        "_seconds": 1780382670,
-        "_nanoseconds": 868000000
-       },
-       "createdAt": {
-        "_seconds": 1780382670,
-        "_nanoseconds": 868000000
-       },
-       "stats": {
-        "paidEarnings": 0,
-        "pendingEarnings": 0,
-        "totalClicks": 0,
-        "conversions": 0,
-        "uniqueClicks": 0
-       },
-       "program": {
-        "id": "prog_072f00a9ffe26529",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_6f217b5a0b5cc163",
-       "programId": "prog_06ff16393c7758ae",
-       "stats": {
-        "uniqueClicks": 0,
-        "paidEarnings": 0,
-        "totalClicks": 0,
-        "conversions": 0,
-        "pendingEarnings": 0
-       },
-       "updatedAt": {
-        "_seconds": 1780382666,
-        "_nanoseconds": 455000000
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "createdAt": {
-        "_seconds": 1780382666,
-        "_nanoseconds": 455000000
-       },
-       "status": "pending",
-       "partnerCode": "TEST696",
-       "program": {
-        "id": "prog_06ff16393c7758ae",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_389587621021a7ee",
-       "updatedAt": {
-        "_seconds": 1780380332,
-        "_nanoseconds": 457000000
-       },
-       "createdAt": {
-        "_seconds": 1780380332,
-        "_nanoseconds": 457000000
-       },
-       "programId": "prog_04c93d2ed3c0ad49",
-       "partnerCode": "TEST341",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "status": "pending",
-       "stats": {
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "uniqueClicks": 0,
-        "totalClicks": 0,
-        "paidEarnings": 0
-       },
-       "program": {
-        "id": "prog_04c93d2ed3c0ad49",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_a804e2694c01e8dd",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "programId": "prog_0387acdb5b356860",
-       "status": "pending",
-       "partnerCode": "TEST106",
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "updatedAt": {
-        "_seconds": 1780380327,
-        "_nanoseconds": 549000000
-       },
-       "createdAt": {
-        "_seconds": 1780380327,
-        "_nanoseconds": 549000000
-       },
-       "stats": {
-        "paidEarnings": 0,
-        "uniqueClicks": 0,
-        "totalClicks": 0,
-        "conversions": 0,
-        "pendingEarnings": 0
-       },
-       "program": {
-        "id": "prog_0387acdb5b356860",
-        "name": "Enterprise Test Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_40ff760bfcad0bc2",
-       "stats": {
-        "totalClicks": 0,
-        "paidEarnings": 0,
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "uniqueClicks": 0
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "updatedAt": {
-        "_seconds": 1780378749,
-        "_nanoseconds": 425000000
-       },
-       "status": "pending",
-       "createdAt": {
-        "_seconds": 1780378749,
-        "_nanoseconds": 425000000
-       },
-       "partnerCode": "TEST219",
-       "programId": "prog_002bde6c1183523f",
-       "program": {
-        "id": "prog_002bde6c1183523f",
-        "name": "Delete Me Program",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
-        "status": "active"
-       }
-      },
-      {
-       "id": "part_cf8781975168762f",
-       "updatedAt": {
-        "_seconds": 1780378746,
-        "_nanoseconds": 24000000
-       },
-       "createdAt": {
-        "_seconds": 1780378746,
-        "_nanoseconds": 24000000
-       },
-       "stats": {
-        "pendingEarnings": 0,
-        "conversions": 0,
-        "totalClicks": 0,
-        "uniqueClicks": 0,
-        "paidEarnings": 0
-       },
-       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
-       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
-       "programId": "prog_0023e96e9304e47f",
-       "status": "pending",
-       "partnerCode": "TEST577",
-       "program": {
-        "id": "prog_0023e96e9304e47f",
-        "name": "Enterprise Multi Test",
-        "commissionType": "both",
-        "cpcRate": 1,
-        "cpaRate": 5,
+        "id": "p9",
+        "name": "Other",
+        "commissionType": "cpa",
+        "cpcRate": 0,
+        "cpaRate": 500,
         "status": "active"
        }
       }

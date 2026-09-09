@@ -2,8 +2,10 @@ package awsysco
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
+	"time"
 )
 
 // AffiliateResource provides access to the affiliate programs API.
@@ -11,16 +13,58 @@ type AffiliateResource struct {
 	client *Client
 }
 
-// AffiliateProgram represents an affiliate program.
+// AffiliateProgram represents an affiliate program. The same type is used
+// for both the owner's full view (CreateProgram/ListPrograms/GetProgram/
+// UpdateProgram) and the public discover-subset view (Discover) — Discover
+// responses omit MerchantID/MaxPartners/IsPublic/Status/CreatedAt/UpdatedAt,
+// which simply decode as zero values; see ADR-024's "discover = public
+// summary subset" note.
+//
+// CookieDays' json tag is cookieDurationDays, not cookieDays — the Go field
+// name is kept as-is under ADR-014 (minor releases never break exported
+// field names) even though it no longer matches the wire name.
 type AffiliateProgram struct {
 	ID             string  `json:"id"`
+	MerchantID     string  `json:"merchantId,omitempty"`
 	Name           string  `json:"name"`
 	Description    string  `json:"description,omitempty"`
 	CommissionType string  `json:"commissionType"`
 	CpcRate        float64 `json:"cpcRate,omitempty"`
 	CpaRate        float64 `json:"cpaRate,omitempty"`
-	CookieDays     int     `json:"cookieDays,omitempty"`
+	CookieDays     int     `json:"cookieDurationDays,omitempty"`
+	MaxPartners    int     `json:"maxPartners,omitempty"`
+	PartnerCount   int     `json:"partnerCount,omitempty"`
 	Status         string  `json:"status,omitempty"`
+	IsPublic       bool    `json:"isPublic,omitempty"`
+	CreatedAt      *string `json:"createdAt,omitempty"`
+	UpdatedAt      *string `json:"updatedAt,omitempty"`
+}
+
+// UnmarshalJSON normalizes CreatedAt/UpdatedAt, which the platform sends as
+// either an ISO-8601 string or a Firestore {_seconds,_nanoseconds} object
+// (ADR-017: timestamps stay ISO-8601 strings in 1.x, never raise on an
+// unknown shape).
+func (p *AffiliateProgram) UnmarshalJSON(b []byte) error {
+	type AffiliateProgramAlias AffiliateProgram
+	aux := &struct {
+		CreatedAt *firestoreTimestamp `json:"createdAt"`
+		UpdatedAt *firestoreTimestamp `json:"updatedAt"`
+		*AffiliateProgramAlias
+	}{
+		AffiliateProgramAlias: (*AffiliateProgramAlias)(p),
+	}
+	if err := json.Unmarshal(b, aux); err != nil {
+		return err
+	}
+	if aux.CreatedAt != nil && !aux.CreatedAt.IsZero() {
+		s := aux.CreatedAt.Time.Format(time.RFC3339)
+		p.CreatedAt = &s
+	}
+	if aux.UpdatedAt != nil && !aux.UpdatedAt.IsZero() {
+		s := aux.UpdatedAt.Time.Format(time.RFC3339)
+		p.UpdatedAt = &s
+	}
+	return nil
 }
 
 // CreateAffiliateProgramInput is the input for creating an affiliate program.
@@ -31,7 +75,7 @@ type CreateAffiliateProgramInput struct {
 	CommissionRate float64 `json:"commissionRate,omitempty"`
 	CpcRate        float64 `json:"cpcRate,omitempty"`
 	CpaRate        float64 `json:"cpaRate,omitempty"`
-	CookieDays     int     `json:"cookieDays,omitempty"`
+	CookieDays     int     `json:"cookieDurationDays,omitempty"`
 }
 
 // JoinProgramInput is the input for joining an affiliate program.
