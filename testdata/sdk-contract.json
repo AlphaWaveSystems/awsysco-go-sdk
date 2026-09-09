@@ -1,6 +1,6 @@
 {
  "$schema": "awsys-sdk-contract/1",
- "version": "1.0.9",
+ "version": "1.0.11",
  "platformBaseline": "2026-09",
  "baseUrl": "https://awsys.co",
  "auth": {
@@ -297,18 +297,10 @@
    "response": {
     "status": 200,
     "body": {
-     "shortCode": "abc123",
+     "shortCode": "3iWwb7",
      "fullPath": null,
-     "totalClicks": 1,
-     "clicks": [
-      {
-       "timestamp": "2026-09-01T00:00:00.000Z",
-       "country": "MX",
-       "browser": "Chrome",
-       "os": "macOS",
-       "referrer": null
-      }
-     ]
+     "totalClicks": 0,
+     "clicks": []
     }
    }
   },
@@ -328,15 +320,42 @@
     "body": {
      "shortCode": "abc123",
      "fullPath": null,
+     "period": "7d",
      "totalClicks": 1,
-     "byCountry": {
+     "botClicksExcluded": 0,
+     "uniqueVisitors": 1,
+     "clicksByDay": [
+      {
+       "date": "2026-09-01",
+       "clicks": 1
+      }
+     ],
+     "countryBreakdown": {
       "MX": 1
      },
-     "byDay": {
-      "2026-09-01": 1
-     }
+     "deviceBreakdown": {
+      "mobile": 0,
+      "desktop": 1,
+      "tablet": 0
+     },
+     "referrerBreakdown": {},
+     "browserBreakdown": {
+      "Chrome": 1
+     },
+     "osBreakdown": {
+      "macOS": 1
+     },
+     "hourBreakdown": [
+      {
+       "hour": 0,
+       "clicks": 1
+      }
+     ],
+     "tierLimit": 90,
+     "tier": "builder"
     }
-   }
+   },
+   "note": "real field names: clicksByDay[]/countryBreakdown{} etc. (apiV1.js aggregate); NOT byCountry/byDay"
   },
   {
    "id": "bulk_create",
@@ -431,26 +450,26 @@
    "response": {
     "status": 200,
     "body": {
-     "totalLinks": 222,
+     "totalLinks": 388,
      "totalClicks": 5,
-     "linksCreatedThisMonth": 222,
+     "linksCreatedThisMonth": 388,
      "qrCodesThisMonth": 0,
      "folderCount": 0,
-     "apiCallsThisMonth": 1,
+     "apiCallsThisMonth": 324,
      "trackedClicksThisMonth": 5,
-     "tier": "pro",
+     "tier": "builder",
      "limits": {
-      "linksPerMonth": 1000,
-      "monthlyLinks": 1000,
-      "dailyLinks": 100,
-      "monthlyTrackedClicks": 10000,
-      "apiCallsPerMonth": 1000,
-      "qrCodes": 100,
-      "folders": 10,
+      "linksPerMonth": "unlimited",
+      "monthlyLinks": "unlimited",
+      "dailyLinks": "unlimited",
+      "monthlyTrackedClicks": 500000,
+      "apiCallsPerMonth": 10000,
+      "qrCodes": "unlimited",
+      "folders": "unlimited",
       "customSlugs": true
      },
      "hasApiKey": true,
-     "apiKeyCreatedAt": "2026-09-07T03:09:24.886Z",
+     "apiKeyCreatedAt": "2026-09-08T14:02:18.541Z",
      "userPrefix": "op0p",
      "isPremium": true,
      "overage": {
@@ -459,7 +478,7 @@
       "expiresAt": null,
       "hoursUntilDrop": null,
       "clicksThisCycle": 0,
-      "spendingLimitCents": null,
+      "spendingLimitCents": 0,
       "estimatedChargeCents": 0
      }
     }
@@ -480,14 +499,8 @@
    "response": {
     "status": 200,
     "body": {
-     "clicks": [
-      {
-       "shortCode": "abc123",
-       "timestamp": "2026-09-01T00:00:00.000Z",
-       "country": "MX"
-      }
-     ],
-     "count": 1
+     "clicks": [],
+     "count": 0
     }
    },
    "note": "path is /api/user/clicks/recent (NOT /api/user/recent-clicks); requires features.liveGlobe on the account (403 FEATURE_DISABLED otherwise); verified live envelope {clicks,count}"
@@ -602,13 +615,1897 @@
     "body": {
      "folders": [
       {
-       "id": "f1",
-       "name": "Work",
-       "color": "#00f",
-       "linkCount": 2
+       "id": "In8iGGFI6hbBBR2EIaBL",
+       "created": "2026-06-02T05:51:56.160Z",
+       "updated": "2026-06-02T05:51:56.160Z",
+       "name": "Bulk Organize Folder 1780379515",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "color": "#0077ff"
+      },
+      {
+       "id": "uQhPmmYg9E5tfGbigx4m",
+       "updated": "2026-06-02T17:58:54.042Z",
+       "color": "#0077ff",
+       "name": "Bulk Organize Folder 1780423133",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T17:58:54.042Z",
+       "linkCount": 0
+      },
+      {
+       "id": "CXrMOf62jjFdi2YsyFoo",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T19:10:05.204Z",
+       "linkCount": 0,
+       "name": "Bulk Organize Folder 1780427405",
+       "created": "2026-06-02T19:10:05.204Z"
+      },
+      {
+       "id": "HqHCqIZoRjmjLzkOVZrq",
+       "created": "2026-06-02T20:30:46.543Z",
+       "linkCount": 0,
+       "updated": "2026-06-02T20:30:46.543Z",
+       "color": "#0077ff",
+       "name": "Bulk Organize Folder 1780432246",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "Sa9shKdcv7arVlQreHvp",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1780709534",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-06T01:32:15.096Z",
+       "updated": "2026-06-06T01:32:15.096Z"
+      },
+      {
+       "id": "qOCvLk9AJoUHEDYcZNzX",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1781131095",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-10T22:38:15.969Z",
+       "updated": "2026-06-10T22:38:15.969Z"
+      },
+      {
+       "id": "eeZdk6TNjxYw9ZQU6FLm",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1782363825",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-25T05:03:46.107Z",
+       "updated": "2026-06-25T05:03:46.107Z"
+      },
+      {
+       "id": "6NONXhTphLrdA8ScbRna",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1782864207",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-01T00:03:27.732Z",
+       "updated": "2026-07-01T00:03:27.732Z"
+      },
+      {
+       "id": "vrth4JZNckCZvLpZPUYf",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1783132455",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-04T02:34:15.666Z",
+       "updated": "2026-07-04T02:34:15.666Z"
+      },
+      {
+       "id": "GhK4pByujXcxAM0Ro4ik",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1783544054",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-08T20:54:14.664Z",
+       "updated": "2026-07-08T20:54:14.664Z"
+      },
+      {
+       "id": "X2mn2fYtijMeUngjoLBO",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1783964876",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T17:47:56.340Z",
+       "updated": "2026-07-13T17:47:56.340Z"
+      },
+      {
+       "id": "qeA80NFEI5gbuMv4jDTm",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1783968035",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T18:40:35.753Z",
+       "updated": "2026-07-13T18:40:35.753Z"
+      },
+      {
+       "id": "qRaa1s99jmGxaIxCwk0q",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1783985607",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T23:33:27.387Z",
+       "updated": "2026-07-13T23:33:27.387Z"
+      },
+      {
+       "id": "NWH52ohz57EFMjg4zvti",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1785954599",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-05T18:29:59.729Z",
+       "updated": "2026-08-05T18:29:59.729Z"
+      },
+      {
+       "id": "tlIeKkeqLxPMOPeGdghT",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1787325799",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-21T15:23:19.649Z",
+       "updated": "2026-08-21T15:23:19.649Z"
+      },
+      {
+       "id": "cnNqbUXu0m8SpJeAmBr3",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788032700",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-29T19:45:01.028Z",
+       "updated": "2026-08-29T19:45:01.028Z"
+      },
+      {
+       "id": "SZtHivfP4NzipSsOMBQ5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788067237",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:20:37.232Z",
+       "updated": "2026-08-30T05:20:37.232Z"
+      },
+      {
+       "id": "Cqfg94zO6nvaX4HL8OYK",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788068778",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:46:18.585Z",
+       "updated": "2026-08-30T05:46:18.585Z"
+      },
+      {
+       "id": "xBda6oUYQlnGxYErzj95",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788074788",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:26:29.016Z",
+       "updated": "2026-08-30T07:26:29.016Z"
+      },
+      {
+       "id": "irk0KgXSz0JK44z9pGAv",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788077312",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T08:08:32.775Z",
+       "updated": "2026-08-30T08:08:32.775Z"
+      },
+      {
+       "id": "kDCe2vZfrt4xeIhC7Ar5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788077409",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T08:10:10.099Z",
+       "updated": "2026-08-30T08:10:10.099Z"
+      },
+      {
+       "id": "xpqqwH8j3u5uuVFKp08B",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788100285",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:31:25.488Z",
+       "updated": "2026-08-30T14:31:25.488Z"
+      },
+      {
+       "id": "AO8o5N2yrfCEJI7XNt7u",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788104551",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T15:42:31.767Z",
+       "updated": "2026-08-30T15:42:31.767Z"
+      },
+      {
+       "id": "SS6UiNDRjrpekhrUOd7j",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "Bulk Organize Folder 1788820657",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-09-07T22:37:37.630Z",
+       "updated": "2026-09-07T22:37:37.630Z"
+      },
+      {
+       "id": "asHvGvS7Q1K6syobzYqC",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "contract-test-1788097754",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T13:49:14.590Z",
+       "updated": "2026-08-30T13:49:14.591Z"
+      },
+      {
+       "id": "g0Dbx7JWym1dSIKYzTDS",
+       "color": "#0077ff",
+       "name": "e2e-assign-folder-1780378481",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "created": "2026-06-02T05:34:41.578Z",
+       "updated": "2026-06-02T05:34:41.578Z"
+      },
+      {
+       "id": "i9FphVvC3SGSKt74aUdi",
+       "updated": "2026-06-02T16:58:05.313Z",
+       "color": "#0077ff",
+       "name": "e2e-assign-folder-1780419485",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T16:58:05.313Z",
+       "linkCount": 1
+      },
+      {
+       "id": "wE2rsFwEVziECFeyMMqS",
+       "color": "#0077ff",
+       "updated": "2026-06-02T17:41:42.036Z",
+       "name": "e2e-assign-folder-1780422101",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T17:41:42.036Z",
+       "linkCount": 1
+      },
+      {
+       "id": "UoZIXrUvD8tVo5fwQ2tj",
+       "updated": "2026-06-02T18:26:58.671Z",
+       "created": "2026-06-02T18:26:58.671Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "name": "e2e-assign-folder-1780424818",
+       "linkCount": 1
+      },
+      {
+       "id": "yKfGaqJMYbynbRk8EQ9f",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T18:31:01.304Z",
+       "created": "2026-06-02T18:31:01.304Z",
+       "color": "#0077ff",
+       "name": "e2e-assign-folder-1780425061",
+       "linkCount": 1
+      },
+      {
+       "id": "LfQKKEYqkoNqvJ7fwB67",
+       "color": "#0077ff",
+       "name": "e2e-assign-folder-1780425334",
+       "created": "2026-06-02T18:35:34.616Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T18:35:34.617Z",
+       "linkCount": 1
+      },
+      {
+       "id": "1YyIyoxu0LPg9FVExIQE",
+       "created": "2026-06-02T20:05:21.973Z",
+       "name": "e2e-assign-folder-1780430721",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T20:05:21.973Z",
+       "color": "#0077ff",
+       "linkCount": 1
+      },
+      {
+       "id": "EJlKg2kotkJ9hi69oxhD",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1780705164",
+       "color": "#0077ff",
+       "created": "2026-06-06T00:19:24.935Z",
+       "updated": "2026-06-06T00:19:24.935Z",
+       "linkCount": 1
+      },
+      {
+       "id": "7WRuHRRD5l3ONrunXRnj",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1781129163",
+       "color": "#0077ff",
+       "created": "2026-06-10T22:06:03.986Z",
+       "updated": "2026-06-10T22:06:03.986Z",
+       "linkCount": 1
+      },
+      {
+       "id": "7675NRS7cn4QRqxPG16i",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1782362867",
+       "color": "#0077ff",
+       "created": "2026-06-25T04:47:48.209Z",
+       "updated": "2026-06-25T04:47:48.209Z",
+       "linkCount": 1
+      },
+      {
+       "id": "6AzKWtODsZJFksSaKqGy",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1782863222",
+       "color": "#0077ff",
+       "created": "2026-06-30T23:47:02.434Z",
+       "updated": "2026-06-30T23:47:02.434Z",
+       "linkCount": 1
+      },
+      {
+       "id": "0hiUBvAdijeMJetItDKd",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1783131460",
+       "color": "#0077ff",
+       "created": "2026-07-04T02:17:40.444Z",
+       "updated": "2026-07-04T02:17:40.444Z",
+       "linkCount": 1
+      },
+      {
+       "id": "8zihJTrt91hO6BngtgTn",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1783543070",
+       "color": "#0077ff",
+       "created": "2026-07-08T20:37:50.507Z",
+       "updated": "2026-07-08T20:37:50.507Z",
+       "linkCount": 1
+      },
+      {
+       "id": "TtWZKGprrD6rqgyhsYos",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1783963679",
+       "color": "#0077ff",
+       "created": "2026-07-13T17:27:59.830Z",
+       "updated": "2026-07-13T17:27:59.830Z",
+       "linkCount": 1
+      },
+      {
+       "id": "9AtufDIVtTTg6OXoBiXS",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1783966776",
+       "color": "#0077ff",
+       "created": "2026-07-13T18:19:36.719Z",
+       "updated": "2026-07-13T18:19:36.719Z",
+       "linkCount": 1
+      },
+      {
+       "id": "Uacf8kH479JSC7wyb4kH",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1783984419",
+       "color": "#0077ff",
+       "created": "2026-07-13T23:13:40.218Z",
+       "updated": "2026-07-13T23:13:40.218Z",
+       "linkCount": 1
+      },
+      {
+       "id": "vsXBvfw2Lz8tkZmPv8Fw",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1785952611",
+       "color": "#0077ff",
+       "created": "2026-08-05T17:56:51.301Z",
+       "updated": "2026-08-05T17:56:51.301Z",
+       "linkCount": 1
+      },
+      {
+       "id": "Yt37kjVu1k6UzC3i93yX",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1787324641",
+       "color": "#0077ff",
+       "created": "2026-08-21T15:04:01.404Z",
+       "updated": "2026-08-21T15:04:01.404Z",
+       "linkCount": 1
+      },
+      {
+       "id": "leLpo7BTygL8bgFT7xXe",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788031701",
+       "color": "#0077ff",
+       "created": "2026-08-29T19:28:22.011Z",
+       "updated": "2026-08-29T19:28:22.011Z",
+       "linkCount": 1
+      },
+      {
+       "id": "sA2mQrlKUVK8ZKKroIIZ",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788066049",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:00:49.733Z",
+       "updated": "2026-08-30T05:00:49.733Z",
+       "linkCount": 1
+      },
+      {
+       "id": "vOPbZfdg3RQBsV36FNRM",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788067639",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:27:19.711Z",
+       "updated": "2026-08-30T05:27:19.711Z",
+       "linkCount": 1
+      },
+      {
+       "id": "7vAVkdfV5cN0kQb6Mt7N",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788073711",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:08:31.773Z",
+       "updated": "2026-08-30T07:08:31.774Z",
+       "linkCount": 1
+      },
+      {
+       "id": "2CTx2wbfMza2bgYZK61I",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788076144",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:49:04.940Z",
+       "updated": "2026-08-30T07:49:04.940Z",
+       "linkCount": 1
+      },
+      {
+       "id": "8NhICMP5bUMGw6wgNPQ0",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788099187",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:13:07.666Z",
+       "updated": "2026-08-30T14:13:07.666Z",
+       "linkCount": 1
+      },
+      {
+       "id": "9FFrvyOOS4Y5NpWc1yMS",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788101057",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:44:18.206Z",
+       "updated": "2026-08-30T14:44:18.206Z",
+       "linkCount": 1
+      },
+      {
+       "id": "6zzyWAqxz1IQmOprnsgB",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-assign-folder-1788819652",
+       "color": "#0077ff",
+       "created": "2026-09-07T22:20:52.785Z",
+       "updated": "2026-09-07T22:20:52.785Z",
+       "linkCount": 1
+      },
+      {
+       "id": "1DDKItGUW9YfMXe8ipCc",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T05:34:41.842Z",
+       "color": "#0077ff",
+       "updated": "2026-06-02T05:34:41.842Z",
+       "linkCount": 0,
+       "name": "e2e-move-a-1780378481"
+      },
+      {
+       "id": "UwRqTcTiaJUeX0OH3OFi",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "name": "e2e-move-a-1780419485",
+       "updated": "2026-06-02T16:58:06.038Z",
+       "created": "2026-06-02T16:58:06.038Z",
+       "linkCount": 0
+      },
+      {
+       "id": "QHulmruZfEGRnlLEuekr",
+       "created": "2026-06-02T17:41:42.558Z",
+       "name": "e2e-move-a-1780422102",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T17:41:42.558Z",
+       "color": "#0077ff",
+       "linkCount": 0
+      },
+      {
+       "id": "KVUJbvdAzrq3Iwzg3C3n",
+       "updated": "2026-06-02T18:26:59.175Z",
+       "color": "#0077ff",
+       "created": "2026-06-02T18:26:59.175Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1780424819",
+       "linkCount": 0
+      },
+      {
+       "id": "30Skv0C7ORrXIPEASO8v",
+       "created": "2026-06-02T18:31:01.780Z",
+       "updated": "2026-06-02T18:31:01.780Z",
+       "color": "#0077ff",
+       "name": "e2e-move-a-1780425061",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0
+      },
+      {
+       "id": "P4b8JydFmpdLfB8nQnLy",
+       "created": "2026-06-02T18:35:35.288Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1780425335",
+       "updated": "2026-06-02T18:35:35.288Z",
+       "color": "#0077ff",
+       "linkCount": 0
+      },
+      {
+       "id": "CvLQZFuPZB7y1rgNb4Gf",
+       "color": "#0077ff",
+       "updated": "2026-06-02T20:05:22.496Z",
+       "name": "e2e-move-a-1780430722",
+       "created": "2026-06-02T20:05:22.496Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0
+      },
+      {
+       "id": "6JCReLVOb5Pvw3wPrfhV",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1780705165",
+       "color": "#0077ff",
+       "created": "2026-06-06T00:19:25.435Z",
+       "updated": "2026-06-06T00:19:25.435Z",
+       "linkCount": 0
+      },
+      {
+       "id": "7UT4FFIWaZLi4e8U5KUp",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1781129164",
+       "color": "#0077ff",
+       "created": "2026-06-10T22:06:04.615Z",
+       "updated": "2026-06-10T22:06:04.615Z",
+       "linkCount": 0
+      },
+      {
+       "id": "qIQMnCnljiqSYQPbYYeG",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1782362868",
+       "color": "#0077ff",
+       "created": "2026-06-25T04:47:48.735Z",
+       "updated": "2026-06-25T04:47:48.735Z",
+       "linkCount": 0
+      },
+      {
+       "id": "LVx3ilQzUmEzq4x6n17C",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1782863222",
+       "color": "#0077ff",
+       "created": "2026-06-30T23:47:03.003Z",
+       "updated": "2026-06-30T23:47:03.003Z",
+       "linkCount": 0
+      },
+      {
+       "id": "0pBcolS5Wpo5wxmaJzV4",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1783131460",
+       "color": "#0077ff",
+       "created": "2026-07-04T02:17:40.965Z",
+       "updated": "2026-07-04T02:17:40.965Z",
+       "linkCount": 0
+      },
+      {
+       "id": "wpAJFi1iUspMvdd51fzC",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1783543070",
+       "color": "#0077ff",
+       "created": "2026-07-08T20:37:50.927Z",
+       "updated": "2026-07-08T20:37:50.927Z",
+       "linkCount": 0
+      },
+      {
+       "id": "ZFWn3ThzMHRK3Q91arA6",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1783963680",
+       "color": "#0077ff",
+       "created": "2026-07-13T17:28:00.611Z",
+       "updated": "2026-07-13T17:28:00.611Z",
+       "linkCount": 0
+      },
+      {
+       "id": "SMGZAgVAwySPNFW9zPky",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1783966777",
+       "color": "#0077ff",
+       "created": "2026-07-13T18:19:37.304Z",
+       "updated": "2026-07-13T18:19:37.304Z",
+       "linkCount": 0
+      },
+      {
+       "id": "cMUv6cM8Oqf2kzPDWLPx",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1783984420",
+       "color": "#0077ff",
+       "created": "2026-07-13T23:13:40.721Z",
+       "updated": "2026-07-13T23:13:40.721Z",
+       "linkCount": 0
+      },
+      {
+       "id": "NXWzQSD6a8XgLwOBCk8t",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1785952611",
+       "color": "#0077ff",
+       "created": "2026-08-05T17:56:51.775Z",
+       "updated": "2026-08-05T17:56:51.775Z",
+       "linkCount": 0
+      },
+      {
+       "id": "wqoi0ihfsYvCt5Zqjg1B",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1787324641",
+       "color": "#0077ff",
+       "created": "2026-08-21T15:04:01.890Z",
+       "updated": "2026-08-21T15:04:01.890Z",
+       "linkCount": 0
+      },
+      {
+       "id": "cDF9Spt1QRkWlSlKs3b9",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788031702",
+       "color": "#0077ff",
+       "created": "2026-08-29T19:28:22.751Z",
+       "updated": "2026-08-29T19:28:22.751Z",
+       "linkCount": 0
+      },
+      {
+       "id": "Q7cNHQLjIsQFW7tRLV0L",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788066049",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:00:50.176Z",
+       "updated": "2026-08-30T05:00:50.176Z",
+       "linkCount": 0
+      },
+      {
+       "id": "iMxjFRY2na1ct8cRgkf5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788067639",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:27:20.175Z",
+       "updated": "2026-08-30T05:27:20.175Z",
+       "linkCount": 0
+      },
+      {
+       "id": "IzCWRB1FDKDaKvb7fbnF",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788073711",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:08:32.277Z",
+       "updated": "2026-08-30T07:08:32.277Z",
+       "linkCount": 0
+      },
+      {
+       "id": "Y4l3wV94TVqDQsnuqo6x",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788076145",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:49:05.516Z",
+       "updated": "2026-08-30T07:49:05.516Z",
+       "linkCount": 0
+      },
+      {
+       "id": "MzNT100Ygigujvsb4kar",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788099187",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:13:08.163Z",
+       "updated": "2026-08-30T14:13:08.163Z",
+       "linkCount": 0
+      },
+      {
+       "id": "rz5CPikvZxpHfgFdoifo",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788101058",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:44:18.694Z",
+       "updated": "2026-08-30T14:44:18.694Z",
+       "linkCount": 0
+      },
+      {
+       "id": "aHr5xohz2bU4A2TIQiU5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-a-1788819652",
+       "color": "#0077ff",
+       "created": "2026-09-07T22:20:53.243Z",
+       "updated": "2026-09-07T22:20:53.243Z",
+       "linkCount": 0
+      },
+      {
+       "id": "t2SuQtsjHn2sYRD4s8R4",
+       "updated": "2026-06-02T05:34:42.113Z",
+       "linkCount": 0,
+       "color": "#0077ff",
+       "created": "2026-06-02T05:34:42.113Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1780378481"
+      },
+      {
+       "id": "Anc5ACAfAb6lRDJ1Bavj",
+       "updated": "2026-06-02T16:58:06.348Z",
+       "name": "e2e-move-b-1780419486",
+       "created": "2026-06-02T16:58:06.348Z",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 1
+      },
+      {
+       "id": "866zpQl78qhWZBveONCe",
+       "updated": "2026-06-02T17:41:42.811Z",
+       "color": "#0077ff",
+       "name": "e2e-move-b-1780422102",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T17:41:42.811Z",
+       "linkCount": 1
+      },
+      {
+       "id": "5YXbqBjlb5vcjWEYUGqA",
+       "created": "2026-06-02T18:26:59.437Z",
+       "name": "e2e-move-b-1780424819",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T18:26:59.437Z",
+       "color": "#0077ff",
+       "linkCount": 1
+      },
+      {
+       "id": "Rx7laEBLVfdHZqpfMtfY",
+       "updated": "2026-06-02T18:31:02.031Z",
+       "created": "2026-06-02T18:31:02.031Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "name": "e2e-move-b-1780425061",
+       "linkCount": 1
+      },
+      {
+       "id": "9QH3lffLyp0pkw90dml6",
+       "updated": "2026-06-02T18:35:35.518Z",
+       "color": "#0077ff",
+       "name": "e2e-move-b-1780425335",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T18:35:35.518Z",
+       "linkCount": 1
+      },
+      {
+       "id": "ef9psNhpmRhpSYHpFxe7",
+       "color": "#0077ff",
+       "name": "e2e-move-b-1780430722",
+       "created": "2026-06-02T20:05:22.768Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T20:05:22.768Z",
+       "linkCount": 1
+      },
+      {
+       "id": "YAFdOvo0evo7EIKMXw7W",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1780705165",
+       "color": "#0077ff",
+       "created": "2026-06-06T00:19:25.688Z",
+       "updated": "2026-06-06T00:19:25.688Z",
+       "linkCount": 1
+      },
+      {
+       "id": "u1bGzBgmLtLKyGt2JZHq",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1781129164",
+       "color": "#0077ff",
+       "created": "2026-06-10T22:06:04.853Z",
+       "updated": "2026-06-10T22:06:04.853Z",
+       "linkCount": 1
+      },
+      {
+       "id": "57o1fcevfh9Xm6iYGL2L",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1782362868",
+       "color": "#0077ff",
+       "created": "2026-06-25T04:47:48.983Z",
+       "updated": "2026-06-25T04:47:48.983Z",
+       "linkCount": 1
+      },
+      {
+       "id": "Bv7YMOxFcHZg2sT2h1J5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1782863222",
+       "color": "#0077ff",
+       "created": "2026-06-30T23:47:03.302Z",
+       "updated": "2026-06-30T23:47:03.302Z",
+       "linkCount": 1
+      },
+      {
+       "id": "lxdLbdScdRmTJzbAzvJm",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1783131460",
+       "color": "#0077ff",
+       "created": "2026-07-04T02:17:41.224Z",
+       "updated": "2026-07-04T02:17:41.224Z",
+       "linkCount": 1
+      },
+      {
+       "id": "3eBNvtbjJICLibrIL1U9",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1783543071",
+       "color": "#0077ff",
+       "created": "2026-07-08T20:37:51.382Z",
+       "updated": "2026-07-08T20:37:51.382Z",
+       "linkCount": 1
+      },
+      {
+       "id": "hMAC3yGZqH21XJwnDoA4",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1783963680",
+       "color": "#0077ff",
+       "created": "2026-07-13T17:28:00.889Z",
+       "updated": "2026-07-13T17:28:00.889Z",
+       "linkCount": 1
+      },
+      {
+       "id": "He3I67Tr9d604wleeHkk",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1783966777",
+       "color": "#0077ff",
+       "created": "2026-07-13T18:19:37.591Z",
+       "updated": "2026-07-13T18:19:37.591Z",
+       "linkCount": 1
+      },
+      {
+       "id": "LVtkOpIEncmsjOfy9jaY",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1783984420",
+       "color": "#0077ff",
+       "created": "2026-07-13T23:13:41.003Z",
+       "updated": "2026-07-13T23:13:41.003Z",
+       "linkCount": 1
+      },
+      {
+       "id": "3Za0NbbRaqdO1qOjVN1F",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1785952611",
+       "color": "#0077ff",
+       "created": "2026-08-05T17:56:52.109Z",
+       "updated": "2026-08-05T17:56:52.109Z",
+       "linkCount": 1
+      },
+      {
+       "id": "W60D1CxaBnxWUyNEjXSB",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1787324641",
+       "color": "#0077ff",
+       "created": "2026-08-21T15:04:02.131Z",
+       "updated": "2026-08-21T15:04:02.131Z",
+       "linkCount": 1
+      },
+      {
+       "id": "WfDvzi4PLVBnLnnI59w5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788031702",
+       "color": "#0077ff",
+       "created": "2026-08-29T19:28:23.009Z",
+       "updated": "2026-08-29T19:28:23.009Z",
+       "linkCount": 1
+      },
+      {
+       "id": "xmJl8pb4t8AE4t7GGLmf",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788066050",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:00:50.392Z",
+       "updated": "2026-08-30T05:00:50.392Z",
+       "linkCount": 1
+      },
+      {
+       "id": "LB1DBNJRylxW6I5CqF3l",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788067640",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:27:20.430Z",
+       "updated": "2026-08-30T05:27:20.430Z",
+       "linkCount": 1
+      },
+      {
+       "id": "l4mJMgcy38NHKlP6sN53",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788073712",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:08:32.531Z",
+       "updated": "2026-08-30T07:08:32.531Z",
+       "linkCount": 1
+      },
+      {
+       "id": "T2YDRP2dAdDNK8CtVWv8",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788076145",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:49:05.857Z",
+       "updated": "2026-08-30T07:49:05.857Z",
+       "linkCount": 1
+      },
+      {
+       "id": "wxWH32irTuPMxg7TzK8W",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788099188",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:13:08.391Z",
+       "updated": "2026-08-30T14:13:08.391Z",
+       "linkCount": 1
+      },
+      {
+       "id": "u4aGVVvy9IOX5L8UtgJO",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788101058",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:44:18.962Z",
+       "updated": "2026-08-30T14:44:18.962Z",
+       "linkCount": 1
+      },
+      {
+       "id": "m15KutJVQWfMAsE76nGQ",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-move-b-1788819653",
+       "color": "#0077ff",
+       "created": "2026-09-07T22:20:53.487Z",
+       "updated": "2026-09-07T22:20:53.487Z",
+       "linkCount": 1
+      },
+      {
+       "id": "4tSyG0LDr2j1eKAl6qud",
+       "updated": "2026-06-02T05:34:37.467Z",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "name": "e2e-pro-folder-1780378477",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T05:34:37.467Z"
+      },
+      {
+       "id": "oV7Qkyj2fktDgWxJj7bM",
+       "created": "2026-06-02T16:58:01.164Z",
+       "updated": "2026-06-02T16:58:01.164Z",
+       "name": "e2e-pro-folder-1780419480",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0
+      },
+      {
+       "id": "7uTUZoqvJfyceEV3tZj2",
+       "updated": "2026-06-02T17:41:38.254Z",
+       "created": "2026-06-02T17:41:38.254Z",
+       "linkCount": 0,
+       "name": "e2e-pro-folder-1780422098",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "DovPoVMKOd8MtFqQ3a4c",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T18:26:54.805Z",
+       "created": "2026-06-02T18:26:54.805Z",
+       "linkCount": 0,
+       "name": "e2e-pro-folder-1780424814",
+       "color": "#0077ff"
+      },
+      {
+       "id": "aQKDGRSVbAbjYjJcDU8N",
+       "color": "#0077ff",
+       "updated": "2026-06-02T18:30:57.485Z",
+       "linkCount": 0,
+       "name": "e2e-pro-folder-1780425057",
+       "created": "2026-06-02T18:30:57.485Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "eV5uBKHvK9hFJ9RrhcxH",
+       "created": "2026-06-02T18:35:30.056Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "color": "#0077ff",
+       "name": "e2e-pro-folder-1780425329",
+       "updated": "2026-06-02T18:35:30.056Z"
+      },
+      {
+       "id": "Z236S6toVxlgLuAjQ1cV",
+       "updated": "2026-06-02T20:05:17.716Z",
+       "color": "#0077ff",
+       "name": "e2e-pro-folder-1780430717",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T20:05:17.716Z",
+       "linkCount": 0
+      },
+      {
+       "id": "b7B85hjOpuJT7TRfPlRj",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1780705160",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-06T00:19:20.817Z",
+       "updated": "2026-06-06T00:19:20.817Z"
+      },
+      {
+       "id": "x9tuXFat24IJVdQwtN7S",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1781129159",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-10T22:05:59.670Z",
+       "updated": "2026-06-10T22:05:59.670Z"
+      },
+      {
+       "id": "SVJ2BxPHdBDkX1s6ZtPz",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1782362864",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-25T04:47:44.438Z",
+       "updated": "2026-06-25T04:47:44.438Z"
+      },
+      {
+       "id": "CFE4u8HLSKtISBnX7Wwd",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1782863217",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-30T23:46:58.273Z",
+       "updated": "2026-06-30T23:46:58.273Z"
+      },
+      {
+       "id": "I4Cu4BmGeTBa7QyNJ07h",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1783131455",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-04T02:17:36.169Z",
+       "updated": "2026-07-04T02:17:36.169Z"
+      },
+      {
+       "id": "AisqXITiUFnDkDdYloyS",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1783543066",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-08T20:37:46.938Z",
+       "updated": "2026-07-08T20:37:46.938Z"
+      },
+      {
+       "id": "YOBmmohAVOfcP066jAN6",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1783963674",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T17:27:54.998Z",
+       "updated": "2026-07-13T17:27:54.998Z"
+      },
+      {
+       "id": "s1XkSAvrd4H6Wo4GP6Or",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1783966771",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T18:19:31.811Z",
+       "updated": "2026-07-13T18:19:31.811Z"
+      },
+      {
+       "id": "5tlV1Qp0L75hYVWhXz8W",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1783984415",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T23:13:35.784Z",
+       "updated": "2026-07-13T23:13:35.784Z"
+      },
+      {
+       "id": "46UQLZ0jFfAZOoo6OwrW",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1785952606",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-05T17:56:47.148Z",
+       "updated": "2026-08-05T17:56:47.148Z"
+      },
+      {
+       "id": "SMsSalwzDzDCzgePI4lU",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1787324636",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-21T15:03:56.898Z",
+       "updated": "2026-08-21T15:03:56.898Z"
+      },
+      {
+       "id": "GiGUKbouJw2DUw3QxUXo",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788031697",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-29T19:28:17.617Z",
+       "updated": "2026-08-29T19:28:17.617Z"
+      },
+      {
+       "id": "7856QVKqIfjUIbS7a4XN",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788066045",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:00:45.666Z",
+       "updated": "2026-08-30T05:00:45.666Z"
+      },
+      {
+       "id": "fEWEF6ygUy7O8K9A3uEl",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788067635",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:27:15.770Z",
+       "updated": "2026-08-30T05:27:15.770Z"
+      },
+      {
+       "id": "N9AwFj79nLyvu06qEA1k",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788073707",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:08:27.636Z",
+       "updated": "2026-08-30T07:08:27.636Z"
+      },
+      {
+       "id": "zxZQtaaPQK8v6Q3WzcR8",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788076140",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:49:00.766Z",
+       "updated": "2026-08-30T07:49:00.766Z"
+      },
+      {
+       "id": "bT7WgrY9Lqddm0e7wW0R",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788099183",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:13:03.381Z",
+       "updated": "2026-08-30T14:13:03.381Z"
+      },
+      {
+       "id": "rzgrq5yfh2wb45PXF41l",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788101053",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:44:13.896Z",
+       "updated": "2026-08-30T14:44:13.896Z"
+      },
+      {
+       "id": "14XXJdZOFDU6UNvTdagU",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-pro-folder-1788819648",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-09-07T22:20:48.633Z",
+       "updated": "2026-09-07T22:20:48.633Z"
+      },
+      {
+       "id": "jQfbsYw5GK52LLRlwSYF",
+       "created": "2026-06-02T05:34:42.940Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "name": "e2e-remove-folder-1780378482",
+       "color": "#0077ff",
+       "updated": "2026-06-02T05:34:42.940Z"
+      },
+      {
+       "id": "vAlTHAvkZ6vW5RWIh6XK",
+       "updated": "2026-06-02T16:58:08.581Z",
+       "color": "#0077ff",
+       "name": "e2e-remove-folder-1780419488",
+       "created": "2026-06-02T16:58:08.581Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 1
+      },
+      {
+       "id": "szFvv0jWIv6sZjr6fmye",
+       "updated": "2026-06-02T17:41:44.530Z",
+       "created": "2026-06-02T17:41:44.530Z",
+       "name": "e2e-remove-folder-1780422104",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 1
+      },
+      {
+       "id": "4PKjysOEQBAlxiC2hNY7",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "name": "e2e-remove-folder-1780424821",
+       "updated": "2026-06-02T18:27:01.369Z",
+       "created": "2026-06-02T18:27:01.369Z",
+       "linkCount": 1
+      },
+      {
+       "id": "LYngQQgJSapbYqPjBI2U",
+       "color": "#0077ff",
+       "name": "e2e-remove-folder-1780425064",
+       "created": "2026-06-02T18:31:04.183Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T18:31:04.183Z",
+       "linkCount": 1
+      },
+      {
+       "id": "0xNsJGZKQ0ibgjcWSMkm",
+       "updated": "2026-06-02T18:35:37.183Z",
+       "created": "2026-06-02T18:35:37.183Z",
+       "name": "e2e-remove-folder-1780425337",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 1
+      },
+      {
+       "id": "R2EnZhaIEwQY1FsfL0px",
+       "created": "2026-06-02T20:05:25.003Z",
+       "updated": "2026-06-02T20:05:25.003Z",
+       "color": "#0077ff",
+       "name": "e2e-remove-folder-1780430724",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 1
+      },
+      {
+       "id": "ht8wh72ObS19WWS7jvqr",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1780705167",
+       "color": "#0077ff",
+       "created": "2026-06-06T00:19:27.488Z",
+       "updated": "2026-06-06T00:19:27.488Z",
+       "linkCount": 1
+      },
+      {
+       "id": "RKKRSI20IRNAytMhG9oz",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1781129166",
+       "color": "#0077ff",
+       "created": "2026-06-10T22:06:07.153Z",
+       "updated": "2026-06-10T22:06:07.153Z",
+       "linkCount": 1
+      },
+      {
+       "id": "DoJ5GzUAm2kVEUvKCLLu",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1782362870",
+       "color": "#0077ff",
+       "created": "2026-06-25T04:47:50.680Z",
+       "updated": "2026-06-25T04:47:50.680Z",
+       "linkCount": 1
+      },
+      {
+       "id": "DvzrbUlDWqDVgy8hR8Pt",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1782863225",
+       "color": "#0077ff",
+       "created": "2026-06-30T23:47:05.425Z",
+       "updated": "2026-06-30T23:47:05.425Z",
+       "linkCount": 1
+      },
+      {
+       "id": "4hAZGrswNfev05pEzWg9",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1783131462",
+       "color": "#0077ff",
+       "created": "2026-07-04T02:17:43.066Z",
+       "updated": "2026-07-04T02:17:43.066Z",
+       "linkCount": 1
+      },
+      {
+       "id": "s1JeoEkMWFSBuFBNLFiK",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1783543072",
+       "color": "#0077ff",
+       "created": "2026-07-08T20:37:52.830Z",
+       "updated": "2026-07-08T20:37:52.830Z",
+       "linkCount": 1
+      },
+      {
+       "id": "HHiHynD9mlqXaYOM1wmZ",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1783963682",
+       "color": "#0077ff",
+       "created": "2026-07-13T17:28:02.993Z",
+       "updated": "2026-07-13T17:28:02.993Z",
+       "linkCount": 1
+      },
+      {
+       "id": "B0h3yAeReoTUB7282dNW",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1783966779",
+       "color": "#0077ff",
+       "created": "2026-07-13T18:19:39.612Z",
+       "updated": "2026-07-13T18:19:39.612Z",
+       "linkCount": 1
+      },
+      {
+       "id": "mErDyv2e5kKA1rjzv3gX",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1783984422",
+       "color": "#0077ff",
+       "created": "2026-07-13T23:13:42.690Z",
+       "updated": "2026-07-13T23:13:42.690Z",
+       "linkCount": 1
+      },
+      {
+       "id": "EHY6hOuZwRkrwOiP5g8g",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1785952614",
+       "color": "#0077ff",
+       "created": "2026-08-05T17:56:54.301Z",
+       "updated": "2026-08-05T17:56:54.301Z",
+       "linkCount": 1
+      },
+      {
+       "id": "1PIC5KoUfLhfAmx2uVB5",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1787324643",
+       "color": "#0077ff",
+       "created": "2026-08-21T15:04:03.873Z",
+       "updated": "2026-08-21T15:04:03.873Z",
+       "linkCount": 1
+      },
+      {
+       "id": "v4f9dTnbTMGx4ZLBeL0D",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788031704",
+       "color": "#0077ff",
+       "created": "2026-08-29T19:28:24.930Z",
+       "updated": "2026-08-29T19:28:24.930Z",
+       "linkCount": 1
+      },
+      {
+       "id": "xaplCXMFCJkyUJFGlGfH",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788066051",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:00:51.921Z",
+       "updated": "2026-08-30T05:00:51.921Z",
+       "linkCount": 1
+      },
+      {
+       "id": "bs2Crl2QUi6CbYLU4HbC",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788067641",
+       "color": "#0077ff",
+       "created": "2026-08-30T05:27:22.342Z",
+       "updated": "2026-08-30T05:27:22.342Z",
+       "linkCount": 1
+      },
+      {
+       "id": "3rWRfypVeAstiQ9rYh1Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788073713",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:08:34.157Z",
+       "updated": "2026-08-30T07:08:34.157Z",
+       "linkCount": 1
+      },
+      {
+       "id": "ExKGQpApPdUAMeQu9fWu",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788076147",
+       "color": "#0077ff",
+       "created": "2026-08-30T07:49:07.557Z",
+       "updated": "2026-08-30T07:49:07.557Z",
+       "linkCount": 1
+      },
+      {
+       "id": "hoWILwvhVgQ2zME7Lf3Y",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788099189",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:13:10.058Z",
+       "updated": "2026-08-30T14:13:10.058Z",
+       "linkCount": 1
+      },
+      {
+       "id": "upJaLcd6kHTLT0pl3Ka9",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788101060",
+       "color": "#0077ff",
+       "created": "2026-08-30T14:44:20.614Z",
+       "updated": "2026-08-30T14:44:20.614Z",
+       "linkCount": 1
+      },
+      {
+       "id": "FURC7rnZJNw5gIYIKkWI",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-remove-folder-1788819654",
+       "color": "#0077ff",
+       "created": "2026-09-07T22:20:55.119Z",
+       "updated": "2026-09-07T22:20:55.119Z",
+       "linkCount": 1
+      },
+      {
+       "id": "4ng3U4Nod20Og6xYKqC0",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "created": "2026-06-02T05:34:38.234Z",
+       "name": "e2e-renamed-1780378478",
+       "updated": "2026-06-02T05:34:38.477Z"
+      },
+      {
+       "id": "DnvoAL72Bg0smIlzllYc",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "created": "2026-06-02T16:58:02.026Z",
+       "linkCount": 0,
+       "name": "e2e-renamed-1780419482",
+       "updated": "2026-06-02T16:58:02.317Z"
+      },
+      {
+       "id": "o2bD3CqF6FvSrdZ1wj4j",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "created": "2026-06-02T17:41:39.019Z",
+       "name": "e2e-renamed-1780422099",
+       "updated": "2026-06-02T17:41:39.328Z"
+      },
+      {
+       "id": "EDRPqSepIY2Kw4oA31hE",
+       "created": "2026-06-02T18:26:55.544Z",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "name": "e2e-renamed-1780424815",
+       "updated": "2026-06-02T18:26:55.812Z"
+      },
+      {
+       "id": "fr5pj0tgrBJckWCX4vKi",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-02T18:30:58.233Z",
+       "name": "e2e-renamed-1780425058",
+       "updated": "2026-06-02T18:30:58.499Z"
+      },
+      {
+       "id": "QrWYrczr8COrn58ukSKV",
+       "color": "#0077ff",
+       "created": "2026-06-02T18:35:31.080Z",
+       "linkCount": 0,
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "e2e-renamed-1780425331",
+       "updated": "2026-06-02T18:35:31.348Z"
+      },
+      {
+       "id": "DeH9NNMOwkS5LoUxkT4U",
+       "created": "2026-06-02T20:05:18.740Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0,
+       "color": "#0077ff",
+       "name": "e2e-renamed-1780430718",
+       "updated": "2026-06-02T20:05:19.012Z"
+      },
+      {
+       "id": "rWKG7LuobSzqfg2tDkrU",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-06T00:19:21.754Z",
+       "name": "e2e-renamed-1780705161",
+       "updated": "2026-06-06T00:19:22.026Z"
+      },
+      {
+       "id": "11qtLwOYMwaRyJxt4jXS",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-10T22:06:00.820Z",
+       "name": "e2e-renamed-1781129160",
+       "updated": "2026-06-10T22:06:01.093Z"
+      },
+      {
+       "id": "Lx4KKNrmwFLOTZoBsC6Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-25T04:47:45.355Z",
+       "name": "e2e-renamed-1782362865",
+       "updated": "2026-06-25T04:47:45.614Z"
+      },
+      {
+       "id": "pq0QJgJDLng7izqXciGN",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-30T23:46:59.204Z",
+       "name": "e2e-renamed-1782863219",
+       "updated": "2026-06-30T23:46:59.497Z"
+      },
+      {
+       "id": "H68EFC04ZiAlJAt1XmHW",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-04T02:17:37.233Z",
+       "name": "e2e-renamed-1783131457",
+       "updated": "2026-07-04T02:17:37.552Z"
+      },
+      {
+       "id": "y6kStOyZqjIjUt2pGX9m",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-08T20:37:47.831Z",
+       "name": "e2e-renamed-1783543067",
+       "updated": "2026-07-08T20:37:48.062Z"
+      },
+      {
+       "id": "ZqlKfQr7DIxE3UenyaVM",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T17:27:56.196Z",
+       "name": "e2e-renamed-1783963676",
+       "updated": "2026-07-13T17:27:56.543Z"
+      },
+      {
+       "id": "cRgVFuRshf8bE7KrQpDH",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T18:19:32.972Z",
+       "name": "e2e-renamed-1783966772",
+       "updated": "2026-07-13T18:19:33.294Z"
+      },
+      {
+       "id": "llaA3XuQ8YDO0YFsNEi9",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T23:13:36.738Z",
+       "name": "e2e-renamed-1783984416",
+       "updated": "2026-07-13T23:13:37.124Z"
+      },
+      {
+       "id": "lmzcbM3MzRderu3QwcQ4",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-05T17:56:48.194Z",
+       "name": "e2e-renamed-1785952608",
+       "updated": "2026-08-05T17:56:48.466Z"
+      },
+      {
+       "id": "NkcuFlceLzcfZtmBQYmM",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-21T15:03:57.877Z",
+       "name": "e2e-renamed-1787324637",
+       "updated": "2026-08-21T15:03:58.310Z"
+      },
+      {
+       "id": "ewFzHYTKge28d6bsW81R",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-29T19:28:18.674Z",
+       "name": "e2e-renamed-1788031698",
+       "updated": "2026-08-29T19:28:18.941Z"
+      },
+      {
+       "id": "f7V3gZJyOjAZg3oF2Qo8",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:00:46.578Z",
+       "name": "e2e-renamed-1788066046",
+       "updated": "2026-08-30T05:00:46.842Z"
+      },
+      {
+       "id": "8gP41oQG5s6PPT3ys0sZ",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:27:16.750Z",
+       "name": "e2e-renamed-1788067636",
+       "updated": "2026-08-30T05:27:17.022Z"
+      },
+      {
+       "id": "ZemxmgsQpKSVfFD2HCdx",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:08:28.663Z",
+       "name": "e2e-renamed-1788073708",
+       "updated": "2026-08-30T07:08:28.944Z"
+      },
+      {
+       "id": "RAQGXM6sAILv0beGuMXX",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:49:01.776Z",
+       "name": "e2e-renamed-1788076141",
+       "updated": "2026-08-30T07:49:02.047Z"
+      },
+      {
+       "id": "haJIvslEeBKfiRkR04fO",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:13:04.504Z",
+       "name": "e2e-renamed-1788099184",
+       "updated": "2026-08-30T14:13:04.758Z"
+      },
+      {
+       "id": "QYH1Jw5yUIs6gEhw5ZVC",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:44:15.016Z",
+       "name": "e2e-renamed-1788101055",
+       "updated": "2026-08-30T14:44:15.286Z"
+      },
+      {
+       "id": "NYrXd3ZuNFbN7up4r5sn",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-09-07T22:20:49.675Z",
+       "name": "e2e-renamed-1788819649",
+       "updated": "2026-09-07T22:20:49.944Z"
+      },
+      {
+       "id": "JYYPKhwR1UiN9ar59HqT",
+       "created": "2026-06-02T05:34:04.233Z",
+       "linkCount": 0,
+       "name": "link-test-folder-1780378401",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updated": "2026-06-02T05:34:04.233Z",
+       "color": "#0077ff"
+      },
+      {
+       "id": "EGpiy7jqyjLWWn0AGma3",
+       "updated": "2026-06-02T16:55:35.148Z",
+       "name": "link-test-folder-1780419288",
+       "created": "2026-06-02T16:55:35.148Z",
+       "linkCount": 0,
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "CmAqeePRXRaEqJg93ItV",
+       "updated": "2026-06-02T17:39:15.784Z",
+       "color": "#0077ff",
+       "name": "link-test-folder-1780421908",
+       "linkCount": 0,
+       "created": "2026-06-02T17:39:15.784Z",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "d8ZqX8tDCLrBOmLZZPwA",
+       "created": "2026-06-02T18:24:11.215Z",
+       "linkCount": 0,
+       "updated": "2026-06-02T18:24:11.215Z",
+       "color": "#0077ff",
+       "name": "link-test-folder-1780424566",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "uHPt0t7aoK1iX3rVHYHT",
+       "created": "2026-06-02T18:30:17.026Z",
+       "updated": "2026-06-02T18:30:17.026Z",
+       "name": "link-test-folder-1780424932",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "linkCount": 0
+      },
+      {
+       "id": "iFlRAuNzdhg90QzGufRn",
+       "updated": "2026-06-02T18:34:42.667Z",
+       "created": "2026-06-02T18:34:42.667Z",
+       "linkCount": 0,
+       "name": "link-test-folder-1780425195",
+       "color": "#0077ff",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33"
+      },
+      {
+       "id": "7grQUOVa6mnJVfaiCPqL",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1780430582",
+       "color": "#0077ff",
+       "updated": "2026-06-02T20:04:28.933Z",
+       "created": "2026-06-02T20:04:28.933Z",
+       "linkCount": 0
+      },
+      {
+       "id": "BYJZ3MnpT2oKqOS14fOB",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1780704968",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-06T00:17:00.004Z",
+       "updated": "2026-06-06T00:17:00.004Z"
+      },
+      {
+       "id": "E1gGvUmFCDEnKroQd4ac",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1781128860",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-10T22:02:24.892Z",
+       "updated": "2026-06-10T22:02:24.892Z"
+      },
+      {
+       "id": "G1HBfmpxK2UjfTvyjLx4",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1781147638",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-11T03:14:48.401Z",
+       "updated": "2026-06-11T03:14:48.401Z"
+      },
+      {
+       "id": "fDexyUDX8v8VMZ7wEzpd",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1782362678",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-25T04:45:29.974Z",
+       "updated": "2026-06-25T04:45:29.974Z"
+      },
+      {
+       "id": "EazI7EnBZ7FGGOmNWtlf",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1782863028",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-06-30T23:44:39.613Z",
+       "updated": "2026-06-30T23:44:39.613Z"
+      },
+      {
+       "id": "7E9yQ4J4dbddQmIvbMpB",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1783131265",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-04T02:15:14.351Z",
+       "updated": "2026-07-04T02:15:14.351Z"
+      },
+      {
+       "id": "10vyk51lPV3ZFoAelzQM",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1783542872",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-08T20:35:22.114Z",
+       "updated": "2026-07-08T20:35:22.114Z"
+      },
+      {
+       "id": "mPKSRMoeXDtEv2jKmbqI",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1783963455",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T17:25:18.583Z",
+       "updated": "2026-07-13T17:25:18.583Z"
+      },
+      {
+       "id": "oq3ZktWleRtfJOwDeCbd",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1783966541",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T18:16:43.567Z",
+       "updated": "2026-07-13T18:16:43.567Z"
+      },
+      {
+       "id": "tAAb76VcYGLOExUm3EX9",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1783984192",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-07-13T23:10:52.639Z",
+       "updated": "2026-07-13T23:10:52.639Z"
+      },
+      {
+       "id": "mtxIbV0jIWuQ1n8ac3gA",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1785952297",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-05T17:53:04.954Z",
+       "updated": "2026-08-05T17:53:04.954Z"
+      },
+      {
+       "id": "aas0DbkHLIkHQsJgh2nE",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1787324431",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-21T15:01:19.470Z",
+       "updated": "2026-08-21T15:01:19.470Z"
+      },
+      {
+       "id": "ES9TRkKTBYg704nlylR8",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788028904",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-29T18:42:35.897Z",
+       "updated": "2026-08-29T18:42:35.897Z"
+      },
+      {
+       "id": "3FFhLLbLPDQYcViPY5Sy",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788065835",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T04:58:11.660Z",
+       "updated": "2026-08-30T04:58:11.660Z"
+      },
+      {
+       "id": "uHSv6g7KuId7IFTldxeY",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788067424",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T05:24:42.446Z",
+       "updated": "2026-08-30T05:24:42.446Z"
+      },
+      {
+       "id": "s1oUwNAcGlV78BXfU3Jm",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788073509",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:05:57.653Z",
+       "updated": "2026-08-30T07:05:57.653Z"
+      },
+      {
+       "id": "RBXjtv01tiecps6Ou2hj",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788075945",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T07:46:32.847Z",
+       "updated": "2026-08-30T07:46:32.847Z"
+      },
+      {
+       "id": "j0WQFDGncerNqyc8aMlf",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788098984",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:10:31.838Z",
+       "updated": "2026-08-30T14:10:31.838Z"
+      },
+      {
+       "id": "6YibiVIgVzULHQ1strVK",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788100444",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-08-30T14:37:26.607Z",
+       "updated": "2026-08-30T14:37:26.607Z"
+      },
+      {
+       "id": "3ce0iuxdIExLNPobnX8q",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "link-test-folder-1788819465",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-09-07T22:18:32.639Z",
+       "updated": "2026-09-07T22:18:32.639Z"
+      },
+      {
+       "id": "Y6hF8JCzWdz9rIJ0SYhk",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "SDK Test Folder 1788788924916",
+       "color": "#0077ff",
+       "created": "2026-09-07T13:48:45.267Z",
+       "updated": "2026-09-07T13:48:45.268Z",
+       "linkCount": 1
+      },
+      {
+       "id": "God5tH04sJGBqWu4MFKk",
+       "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "sdk-test-folder-1788787346941",
+       "color": "#0077ff",
+       "linkCount": 0,
+       "created": "2026-09-07T13:22:27.223Z",
+       "updated": "2026-09-07T13:22:27.223Z"
       }
      ],
-     "limit": 10
+     "limit": -1
     }
    },
    "note": "limit is tier quota, not pagination"
@@ -763,10 +2660,85 @@
     "body": {
      "views": [
       {
-       "id": "v1",
-       "name": "Mine",
+       "id": "Vt0iywVPxyodCTUFebpp",
+       "name": "Folder View Cross Test",
        "filters": {
-        "tag": "a"
+        "folderId": "In8iGGFI6hbBBR2EIaBL"
+       },
+       "createdAt": {
+        "_seconds": 1788820649,
+        "_nanoseconds": 681000000
+       },
+       "updatedAt": {
+        "_seconds": 1788820649,
+        "_nanoseconds": 681000000
+       }
+      },
+      {
+       "id": "ILU2w0vcajXlVT83Al7e",
+       "name": "Date Range View",
+       "filters": {},
+       "createdAt": {
+        "_seconds": 1788820100,
+        "_nanoseconds": 968000000
+       },
+       "updatedAt": {
+        "_seconds": 1788820100,
+        "_nanoseconds": 968000000
+       }
+      },
+      {
+       "id": "kAV2qF5WXgJ3UJ2h3n1I",
+       "name": "Tag Filtered View",
+       "filters": {},
+       "createdAt": {
+        "_seconds": 1788820100,
+        "_nanoseconds": 728000000
+       },
+       "updatedAt": {
+        "_seconds": 1788820100,
+        "_nanoseconds": 728000000
+       }
+      },
+      {
+       "id": "MZfhfvX0yEJMDgTtwIzO",
+       "name": "Folder Filtered View",
+       "filters": {
+        "folderId": "In8iGGFI6hbBBR2EIaBL"
+       },
+       "createdAt": {
+        "_seconds": 1788820100,
+        "_nanoseconds": 452000000
+       },
+       "updatedAt": {
+        "_seconds": 1788820100,
+        "_nanoseconds": 452000000
+       }
+      },
+      {
+       "id": "kKJsIbklzvWgOIlRU3E0",
+       "name": "Pro Limit Check",
+       "filters": {},
+       "createdAt": {
+        "_seconds": 1788820099,
+        "_nanoseconds": 341000000
+       },
+       "updatedAt": {
+        "_seconds": 1788820099,
+        "_nanoseconds": 341000000
+       }
+      },
+      {
+       "id": "WahLkndgpfXOy8e0Qa6j",
+       "name": "Pro Test View",
+       "filters": {},
+       "createdAt": {
+        "_seconds": 1788820097,
+        "_nanoseconds": 838000000
+       },
+       "updatedAt": {
+        "_seconds": 1788820097,
+        "_nanoseconds": 838000000
        }
       }
      ]
@@ -835,26 +2807,31 @@
    }
   },
   {
-   "id": "utm_list_via_me",
+   "id": "utm_list",
    "capability": "29",
    "request": {
     "method": "GET",
-    "path": "/api/v1/me",
+    "path": "/api/user/utm-templates",
     "query": {},
     "body": null
    },
    "response": {
     "status": 200,
     "body": {
-     "utmTemplates": [
+     "templates": [
       {
        "id": "t1",
-       "name": "Launch"
+       "name": "Launch",
+       "source": "newsletter",
+       "medium": "email",
+       "campaign": "sept",
+       "term": "",
+       "content": ""
       }
      ]
     }
    },
-   "note": "BROKEN: /api/v1/me does NOT return utmTemplates and no GET /api/user/utm-templates exists (issue #831). No API-key list path today."
+   "note": "GET /api/user/utm-templates (apiKeyAuth) added in #833 \u2014 live on staging, pending prod deploy; returns {templates:[\u2026]}"
   },
   {
    "id": "utm_create",
@@ -916,9 +2893,23 @@
     "status": 200,
     "body": {
      "eventTypes": [
+      "link.click",
       "link.created",
-      "link.clicked"
-     ]
+      "link.updated",
+      "link.deleted",
+      "link.expired",
+      "link.limit_reached",
+      "link.geo_blocked"
+     ],
+     "descriptions": {
+      "link.click": "Triggered when someone clicks on your short link",
+      "link.created": "Triggered when you create a new short link",
+      "link.updated": "Triggered when you update a link's settings",
+      "link.deleted": "Triggered when you delete a link",
+      "link.expired": "Triggered when a link expires",
+      "link.limit_reached": "Triggered when a link reaches its max click limit",
+      "link.geo_blocked": "Triggered when a click is blocked due to georestrictions"
+     }
     }
    }
   },
@@ -934,35 +2925,8 @@
    "response": {
     "status": 200,
     "body": {
-     "webhooks": [
-      {
-       "id": "w1",
-       "url": "https://h.example/",
-       "events": [
-        "link.created"
-       ],
-       "name": "Unnamed Webhook",
-       "secret": "whsec_x",
-       "enabled": true,
-       "failureCount": 0,
-       "successCount": 0,
-       "lastTriggered": null,
-       "createdAt": "2026-09-01T00:00:00.000Z",
-       "updatedAt": null
-      },
-      {
-       "id": "w0",
-       "url": "https://legacy.example/",
-       "events": [
-        "link.click"
-       ],
-       "name": "Legacy",
-       "createdAt": "2026-06-01T00:00:00.000Z",
-       "lastDeliveryAt": null,
-       "lastStatus": null
-      }
-     ],
-     "limit": 5
+     "webhooks": [],
+     "limit": 10
     }
    },
    "note": "serializeWebhook spreads the doc (services/webhooks.js:82); legacy docs (seen live on staging) lack enabled/secret \u2014 SDK models must treat every field except id/url/events as optional"
@@ -1083,10 +3047,22 @@
      "domains": [
       {
        "domain": "go.example.com",
-       "status": "pending",
-       "verified": false
+       "userId": "u1",
+       "type": "custom",
+       "verificationToken": "abc",
+       "verifiedAt": null,
+       "sslStatus": "pending",
+       "sslCertExpiresAt": null,
+       "stripeSubscriptionItemId": null,
+       "billingStartDate": null,
+       "createdAt": "2026-09-01T00:00:00.000Z",
+       "linkCount": 0,
+       "lastError": null,
+       "status": "pending_txt",
+       "updatedAt": null
       }
-     ]
+     ],
+     "monthlyPrice": 500
     }
    }
   },
@@ -1105,16 +3081,21 @@
     "status": 200,
     "body": {
      "domain": "go.example.com",
-     "status": "pending",
-     "dnsRecords": [
-      {
-       "type": "TXT",
-       "name": "_awsys",
-       "value": "x"
-      }
-     ]
+     "status": "pending_txt",
+     "verificationToken": "abcdef0123456789",
+     "txtRecord": {
+      "name": "_awsys-verify.go.example.com",
+      "type": "TXT",
+      "value": "awsys-verify=abcdef0123456789"
+     },
+     "cnameRecord": {
+      "name": "go.example.com",
+      "type": "CNAME",
+      "value": "custom.awsys.co"
+     }
     }
-   }
+   },
+   "note": "201 returns verificationToken + txtRecord{name,type,value} + cnameRecord{...} (domains.js:51-55); NOT dnsRecords[]"
   },
   {
    "id": "domain_verify",
@@ -1219,9 +3200,20 @@
     "status": 200,
     "body": {
      "hasAccess": true,
-     "namespace": "acme",
-     "tier": "pro",
-     "upgradeRequired": false
+     "namespace": "e2ens1780419603",
+     "namespaceData": {
+      "userEmail": "test-pro-1780377090207@awsys-test.com",
+      "isActive": true,
+      "tier": "builder",
+      "userId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+      "claimedAt": {
+       "_seconds": 1780419604,
+       "_nanoseconds": 47000000
+      }
+     },
+     "tier": "builder",
+     "canClaimSubdomain": false,
+     "canClaimCustomDomain": true
     }
    }
   },
@@ -1313,8 +3305,114 @@
     "body": {
      "programs": [
       {
-       "id": "p1",
-       "name": "P"
+       "id": "prog_824a598907e5e949",
+       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "go-sdk-test-program",
+       "description": "",
+       "commissionType": "cpc",
+       "cpcRate": 0.05,
+       "cpaRate": 0,
+       "cookieDurationDays": 30,
+       "maxPartners": 50,
+       "partnerCount": 0,
+       "status": "active",
+       "isPublic": true,
+       "createdAt": {
+        "_seconds": 1788756538,
+        "_nanoseconds": 675000000
+       },
+       "updatedAt": {
+        "_seconds": 1788756538,
+        "_nanoseconds": 675000000
+       }
+      },
+      {
+       "id": "prog_9394d53d6bf9e15e",
+       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "go-sdk-test-program",
+       "description": "",
+       "commissionType": "cpc",
+       "cpcRate": 0.05,
+       "cpaRate": 0,
+       "cookieDurationDays": 30,
+       "maxPartners": 50,
+       "partnerCount": 0,
+       "status": "active",
+       "isPublic": true,
+       "createdAt": {
+        "_seconds": 1788756493,
+        "_nanoseconds": 518000000
+       },
+       "updatedAt": {
+        "_seconds": 1788756493,
+        "_nanoseconds": 518000000
+       }
+      },
+      {
+       "id": "prog_95f82af0989d59e8",
+       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "go-sdk-test-program",
+       "description": "",
+       "commissionType": "cpc",
+       "cpcRate": 0.05,
+       "cpaRate": 0,
+       "cookieDurationDays": 30,
+       "maxPartners": 50,
+       "partnerCount": 0,
+       "status": "active",
+       "isPublic": true,
+       "createdAt": {
+        "_seconds": 1788756384,
+        "_nanoseconds": 645000000
+       },
+       "updatedAt": {
+        "_seconds": 1788756384,
+        "_nanoseconds": 645000000
+       }
+      },
+      {
+       "id": "prog_6bb4c87b79b28494",
+       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "name": "go-sdk-test-program",
+       "description": "",
+       "commissionType": "cpc",
+       "cpcRate": 0.05,
+       "cpaRate": 0,
+       "cookieDurationDays": 30,
+       "maxPartners": 50,
+       "partnerCount": 0,
+       "status": "active",
+       "isPublic": true,
+       "createdAt": {
+        "_seconds": 1788756094,
+        "_nanoseconds": 65000000
+       },
+       "updatedAt": {
+        "_seconds": 1788756094,
+        "_nanoseconds": 65000000
+       }
+      },
+      {
+       "id": "prog_bb27df56be7ac74e",
+       "commissionType": "cpc",
+       "createdAt": {
+        "_seconds": 1780420671,
+        "_nanoseconds": 827000000
+       },
+       "isPublic": false,
+       "description": "Created by MCP E2E test",
+       "updatedAt": {
+        "_seconds": 1780420671,
+        "_nanoseconds": 827000000
+       },
+       "cpcRate": 0.05,
+       "maxPartners": 50,
+       "name": "MCP E2E Prog 1780420671721",
+       "cpaRate": 0,
+       "partnerCount": 0,
+       "merchantId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "status": "active",
+       "cookieDurationDays": 30
       }
      ]
     }
@@ -1472,8 +3570,624 @@
     "body": {
      "partnerships": [
       {
-       "id": "ps1",
-       "programId": "p9"
+       "id": "part_1a70ca1e22aca520",
+       "programId": "prog_240ddf57c480b446",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerCode": "TEST173",
+       "status": "pending",
+       "stats": {
+        "totalClicks": 0,
+        "uniqueClicks": 0,
+        "conversions": 0,
+        "pendingEarnings": 0,
+        "paidEarnings": 0
+       },
+       "createdAt": {
+        "_seconds": 1780705428,
+        "_nanoseconds": 413000000
+       },
+       "updatedAt": {
+        "_seconds": 1780705428,
+        "_nanoseconds": 413000000
+       },
+       "program": {
+        "id": "prog_240ddf57c480b446",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_b3942112f561d1d6",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "status": "pending",
+       "stats": {
+        "totalClicks": 0,
+        "uniqueClicks": 0,
+        "paidEarnings": 0,
+        "pendingEarnings": 0,
+        "conversions": 0
+       },
+       "updatedAt": {
+        "_seconds": 1780431267,
+        "_nanoseconds": 98000000
+       },
+       "createdAt": {
+        "_seconds": 1780431267,
+        "_nanoseconds": 98000000
+       },
+       "programId": "prog_86be9e1b360063e8",
+       "partnerCode": "TEST107",
+       "program": {
+        "id": "prog_86be9e1b360063e8",
+        "name": "Builder Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_40a4a7a4d1262b93",
+       "stats": {
+        "uniqueClicks": 0,
+        "conversions": 0,
+        "paidEarnings": 0,
+        "totalClicks": 0,
+        "pendingEarnings": 0
+       },
+       "partnerCode": "TEST392",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "programId": "prog_2271922a48f0dc61",
+       "createdAt": {
+        "_seconds": 1780425898,
+        "_nanoseconds": 129000000
+       },
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updatedAt": {
+        "_seconds": 1780425898,
+        "_nanoseconds": 129000000
+       },
+       "status": "pending",
+       "program": {
+        "id": "prog_2271922a48f0dc61",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_d5cb287569f639c2",
+       "programId": "prog_20e453f776646491",
+       "status": "pending",
+       "partnerCode": "TEST961",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "updatedAt": {
+        "_seconds": 1780425893,
+        "_nanoseconds": 126000000
+       },
+       "createdAt": {
+        "_seconds": 1780425893,
+        "_nanoseconds": 126000000
+       },
+       "stats": {
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "uniqueClicks": 0,
+        "totalClicks": 0,
+        "paidEarnings": 0
+       },
+       "program": {
+        "id": "prog_20e453f776646491",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_c46cedb25dcdc5af",
+       "partnerCode": "TEST827",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "updatedAt": {
+        "_seconds": 1780422378,
+        "_nanoseconds": 577000000
+       },
+       "createdAt": {
+        "_seconds": 1780422378,
+        "_nanoseconds": 577000000
+       },
+       "status": "pending",
+       "programId": "prog_20ab53c192ee90a5",
+       "stats": {
+        "uniqueClicks": 0,
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "totalClicks": 0,
+        "paidEarnings": 0
+       },
+       "program": {
+        "id": "prog_20ab53c192ee90a5",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_819ef60e9c755b88",
+       "status": "pending",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerCode": "TEST304",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "stats": {
+        "totalClicks": 0,
+        "paidEarnings": 0,
+        "conversions": 0,
+        "pendingEarnings": 0,
+        "uniqueClicks": 0
+       },
+       "updatedAt": {
+        "_seconds": 1780422374,
+        "_nanoseconds": 549000000
+       },
+       "createdAt": {
+        "_seconds": 1780422374,
+        "_nanoseconds": 549000000
+       },
+       "programId": "prog_1b79743ef6bc4786",
+       "program": {
+        "id": "prog_1b79743ef6bc4786",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_a86d86f6ac6e7757",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "stats": {
+        "paidEarnings": 0,
+        "pendingEarnings": 0,
+        "totalClicks": 0,
+        "conversions": 0,
+        "uniqueClicks": 0
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "status": "pending",
+       "partnerCode": "TEST287",
+       "programId": "prog_1861faffdeb194af",
+       "createdAt": {
+        "_seconds": 1780409113,
+        "_nanoseconds": 591000000
+       },
+       "updatedAt": {
+        "_seconds": 1780409113,
+        "_nanoseconds": 591000000
+       },
+       "program": {
+        "id": "prog_1861faffdeb194af",
+        "name": "Delete Me Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_5ddd508111b44422",
+       "updatedAt": {
+        "_seconds": 1780409108,
+        "_nanoseconds": 804000000
+       },
+       "createdAt": {
+        "_seconds": 1780409108,
+        "_nanoseconds": 804000000
+       },
+       "stats": {
+        "uniqueClicks": 0,
+        "pendingEarnings": 0,
+        "paidEarnings": 0,
+        "totalClicks": 0,
+        "conversions": 0
+       },
+       "partnerCode": "TEST401",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "programId": "prog_14975c57adf6b322",
+       "status": "pending",
+       "program": {
+        "id": "prog_14975c57adf6b322",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_1361cb503c9d4df4",
+       "status": "pending",
+       "stats": {
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "totalClicks": 0,
+        "uniqueClicks": 0,
+        "paidEarnings": 0
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerCode": "TEST543",
+       "updatedAt": {
+        "_seconds": 1780405452,
+        "_nanoseconds": 831000000
+       },
+       "createdAt": {
+        "_seconds": 1780405452,
+        "_nanoseconds": 831000000
+       },
+       "programId": "prog_11aaab92e41e0d06",
+       "program": {
+        "id": "prog_11aaab92e41e0d06",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_6f8a52acc0e31395",
+       "stats": {
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "uniqueClicks": 0,
+        "totalClicks": 0,
+        "paidEarnings": 0
+       },
+       "updatedAt": {
+        "_seconds": 1780405447,
+        "_nanoseconds": 440000000
+       },
+       "createdAt": {
+        "_seconds": 1780405447,
+        "_nanoseconds": 440000000
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerCode": "TEST641",
+       "status": "pending",
+       "programId": "prog_0daf7bbb4ed07653",
+       "program": {
+        "id": "prog_0daf7bbb4ed07653",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_1e357fbfa6a27a22",
+       "createdAt": {
+        "_seconds": 1780384981,
+        "_nanoseconds": 168000000
+       },
+       "partnerCode": "TEST617",
+       "programId": "prog_0d8fbbc9360e4ede",
+       "stats": {
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "uniqueClicks": 0,
+        "totalClicks": 0,
+        "paidEarnings": 0
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updatedAt": {
+        "_seconds": 1780384981,
+        "_nanoseconds": 168000000
+       },
+       "status": "pending",
+       "program": {
+        "id": "prog_0d8fbbc9360e4ede",
+        "name": "Delete Me Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_362f094c20c72f84",
+       "status": "pending",
+       "updatedAt": {
+        "_seconds": 1780384975,
+        "_nanoseconds": 970000000
+       },
+       "createdAt": {
+        "_seconds": 1780384975,
+        "_nanoseconds": 970000000
+       },
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerCode": "TEST818",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "programId": "prog_0b04eeb1b36e9eb4",
+       "stats": {
+        "conversions": 0,
+        "pendingEarnings": 0,
+        "paidEarnings": 0,
+        "totalClicks": 0,
+        "uniqueClicks": 0
+       },
+       "program": {
+        "id": "prog_0b04eeb1b36e9eb4",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_3a97bfdb36c240bb",
+       "createdAt": {
+        "_seconds": 1780382754,
+        "_nanoseconds": 646000000
+       },
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updatedAt": {
+        "_seconds": 1780382754,
+        "_nanoseconds": 646000000
+       },
+       "status": "pending",
+       "stats": {
+        "uniqueClicks": 0,
+        "conversions": 0,
+        "paidEarnings": 0,
+        "totalClicks": 0,
+        "pendingEarnings": 0
+       },
+       "partnerCode": "TEST335",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "programId": "prog_0ab28b1f5af4d5d9",
+       "program": {
+        "id": "prog_0ab28b1f5af4d5d9",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_c091453560be37d8",
+       "stats": {
+        "uniqueClicks": 0,
+        "conversions": 0,
+        "paidEarnings": 0,
+        "totalClicks": 0,
+        "pendingEarnings": 0
+       },
+       "partnerCode": "TEST249",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "programId": "prog_0a35b30a67995ff8",
+       "updatedAt": {
+        "_seconds": 1780382750,
+        "_nanoseconds": 188000000
+       },
+       "createdAt": {
+        "_seconds": 1780382750,
+        "_nanoseconds": 188000000
+       },
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "status": "pending",
+       "program": {
+        "id": "prog_0a35b30a67995ff8",
+        "name": "Delete Me Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_cdc353380fedb2b8",
+       "programId": "prog_072f00a9ffe26529",
+       "status": "pending",
+       "partnerCode": "TEST114",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "updatedAt": {
+        "_seconds": 1780382670,
+        "_nanoseconds": 868000000
+       },
+       "createdAt": {
+        "_seconds": 1780382670,
+        "_nanoseconds": 868000000
+       },
+       "stats": {
+        "paidEarnings": 0,
+        "pendingEarnings": 0,
+        "totalClicks": 0,
+        "conversions": 0,
+        "uniqueClicks": 0
+       },
+       "program": {
+        "id": "prog_072f00a9ffe26529",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_6f217b5a0b5cc163",
+       "programId": "prog_06ff16393c7758ae",
+       "stats": {
+        "uniqueClicks": 0,
+        "paidEarnings": 0,
+        "totalClicks": 0,
+        "conversions": 0,
+        "pendingEarnings": 0
+       },
+       "updatedAt": {
+        "_seconds": 1780382666,
+        "_nanoseconds": 455000000
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "createdAt": {
+        "_seconds": 1780382666,
+        "_nanoseconds": 455000000
+       },
+       "status": "pending",
+       "partnerCode": "TEST696",
+       "program": {
+        "id": "prog_06ff16393c7758ae",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_389587621021a7ee",
+       "updatedAt": {
+        "_seconds": 1780380332,
+        "_nanoseconds": 457000000
+       },
+       "createdAt": {
+        "_seconds": 1780380332,
+        "_nanoseconds": 457000000
+       },
+       "programId": "prog_04c93d2ed3c0ad49",
+       "partnerCode": "TEST341",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "status": "pending",
+       "stats": {
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "uniqueClicks": 0,
+        "totalClicks": 0,
+        "paidEarnings": 0
+       },
+       "program": {
+        "id": "prog_04c93d2ed3c0ad49",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_a804e2694c01e8dd",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "programId": "prog_0387acdb5b356860",
+       "status": "pending",
+       "partnerCode": "TEST106",
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "updatedAt": {
+        "_seconds": 1780380327,
+        "_nanoseconds": 549000000
+       },
+       "createdAt": {
+        "_seconds": 1780380327,
+        "_nanoseconds": 549000000
+       },
+       "stats": {
+        "paidEarnings": 0,
+        "uniqueClicks": 0,
+        "totalClicks": 0,
+        "conversions": 0,
+        "pendingEarnings": 0
+       },
+       "program": {
+        "id": "prog_0387acdb5b356860",
+        "name": "Enterprise Test Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_40ff760bfcad0bc2",
+       "stats": {
+        "totalClicks": 0,
+        "paidEarnings": 0,
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "uniqueClicks": 0
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "updatedAt": {
+        "_seconds": 1780378749,
+        "_nanoseconds": 425000000
+       },
+       "status": "pending",
+       "createdAt": {
+        "_seconds": 1780378749,
+        "_nanoseconds": 425000000
+       },
+       "partnerCode": "TEST219",
+       "programId": "prog_002bde6c1183523f",
+       "program": {
+        "id": "prog_002bde6c1183523f",
+        "name": "Delete Me Program",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
+      },
+      {
+       "id": "part_cf8781975168762f",
+       "updatedAt": {
+        "_seconds": 1780378746,
+        "_nanoseconds": 24000000
+       },
+       "createdAt": {
+        "_seconds": 1780378746,
+        "_nanoseconds": 24000000
+       },
+       "stats": {
+        "pendingEarnings": 0,
+        "conversions": 0,
+        "totalClicks": 0,
+        "uniqueClicks": 0,
+        "paidEarnings": 0
+       },
+       "partnerEmail": "test-pro-1780377090207@awsys-test.com",
+       "partnerId": "Z40Bc0V1Q2SvKtdkElqT30y1hL33",
+       "programId": "prog_0023e96e9304e47f",
+       "status": "pending",
+       "partnerCode": "TEST577",
+       "program": {
+        "id": "prog_0023e96e9304e47f",
+        "name": "Enterprise Multi Test",
+        "commissionType": "both",
+        "cpcRate": 1,
+        "cpaRate": 5,
+        "status": "active"
+       }
       }
      ]
     }
@@ -1525,16 +4239,21 @@
    "response": {
     "status": 200,
     "body": {
-     "programs": {
-      "used": 1,
-      "limit": 3
+     "tier": "builder",
+     "limits": {
+      "canCreatePrograms": true,
+      "maxPrograms": 3,
+      "maxPartnersPerProgram": 100,
+      "canJoinAsPartner": true,
+      "maxPartnerships": 10
      },
-     "partnerships": {
-      "used": 1,
-      "limit": 10
+     "usage": {
+      "programs": 1,
+      "partnerships": 1
      }
     }
-   }
+   },
+   "note": "shape is {tier,limits,usage} (affiliate.js:184); usage={programs,partnerships}"
   },
   {
    "id": "agentlink_link_stats",
@@ -1784,10 +4503,13 @@
    "response": {
     "status": 200,
     "body": {
-     "shortCode": "abc123",
-     "trustScore": 95,
-     "trustStatus": "safe",
-     "threats": []
+     "short": "3iWwb7",
+     "trustScore": 88,
+     "trustStatus": "trusted",
+     "threats": [],
+     "scannedAt": "2026-09-09T10:38:23.189Z",
+     "source": "gsb+heuristics",
+     "createdAt": 1788950303155
     }
    },
    "auth": "optional",

@@ -2,8 +2,6 @@ package awsysco
 
 import (
 	"context"
-	"encoding/json"
-	"log"
 )
 
 // UtmTemplatesResource provides access to the UTM template API.
@@ -43,32 +41,25 @@ type CreateUtmTemplateResponse struct {
 	Template UtmTemplate `json:"template"`
 }
 
-// List reads templates from the utmTemplates field of GET /api/v1/me.
+// List returns the authenticated user's saved UTM templates via
+// GET /api/user/utm-templates.
 //
-// Deprecated/known-broken: as of ADR-020 (retracting ADR-003), the platform's
-// GET /api/v1/me response does not actually carry a utmTemplates field, and
-// there is no dedicated GET /api/user/utm-templates route either — tracked
-// upstream as platform issue #831. Until that ships, this always returns an
-// empty slice (never silently claims "no templates exist" without warning):
-// it logs a one-line warning on every call so the limitation is visible
-// rather than silently swallowed. Genuine transport/HTTP errors from the
-// underlying /api/v1/me call are still returned as errors.
+// This route was added by platform PR #833 (ADR-021, which supersedes
+// ADR-020/ADR-003's prior "no working list endpoint" guidance): the response
+// is {"templates": [...]}. Previously List read a nonexistent utmTemplates
+// field off GET /api/v1/me and always returned an empty slice with a warning
+// log — that behavior is gone now that the real endpoint exists.
 func (r *UtmTemplatesResource) List(ctx context.Context) ([]UtmTemplate, error) {
 	var resp struct {
-		UtmTemplates json.RawMessage `json:"utmTemplates"`
+		Templates []UtmTemplate `json:"templates"`
 	}
-	if err := r.client.doRequest(ctx, "GET", pathMe, nil, &resp); err != nil {
+	if err := r.client.doRequest(ctx, "GET", pathUserUtmTemplates, nil, &resp); err != nil {
 		return nil, err
 	}
-	var templates []UtmTemplate
-	if len(resp.UtmTemplates) > 0 {
-		_ = json.Unmarshal(resp.UtmTemplates, &templates)
+	if resp.Templates == nil {
+		resp.Templates = []UtmTemplate{}
 	}
-	if templates == nil {
-		templates = []UtmTemplate{}
-		log.Printf("awsysco: warning: UtmTemplates.List has no working platform endpoint yet (see ADR-020, platform issue #831) — always returning an empty slice, not an authoritative \"no templates\" result")
-	}
-	return templates, nil
+	return resp.Templates, nil
 }
 
 // Create saves a new UTM template.

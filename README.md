@@ -375,15 +375,10 @@ templates, err := client.UtmTemplates.List(ctx)
 _, err = client.UtmTemplates.Delete(ctx, resp.Template.ID)
 ```
 
-> **List is currently non-functional on the platform (ADR-020, retracting
-> ADR-003):** verified live 2026-09-08 — `GET /api/v1/me` does not actually
-> return a `utmTemplates` field, and there is no working
-> `GET /api/user/utm-templates` route either (tracked upstream as platform
-> issue #831). `UtmTemplates.List` always returns an **empty slice** until
-> that ships — never silently treat this as an authoritative "you have no
-> templates" answer, and note it now logs one `awsysco: warning: ...` line
-> per call to make the limitation visible. Genuine transport/HTTP failures
-> from the underlying `/api/v1/me` call still propagate normally.
+> **List** reads `GET /api/user/utm-templates` (`{"templates": [...]}`),
+> added by platform PR #833 (ADR-021, superseding ADR-020/ADR-003 — an
+> earlier revision of this SDK briefly documented `List` as non-functional
+> because that route didn't exist yet; it does now).
 >
 > The wire field names are `source`/`medium`/`campaign`/`term`/`content`
 > (not `utmSource`/`utmMedium`/`utmCampaign`/...) — verified live against

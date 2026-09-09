@@ -210,7 +210,7 @@ var contractInvokers = map[string]capabilityInvoker{
 	"view_delete": func(ctx context.Context, c *awsysco.Client) error {
 		return c.SavedViews.Delete(ctx, "v1")
 	},
-	"utm_list_via_me": func(ctx context.Context, c *awsysco.Client) error {
+	"utm_list": func(ctx context.Context, c *awsysco.Client) error {
 		_, err := c.UtmTemplates.List(ctx)
 		return err
 	},
@@ -498,6 +498,119 @@ func TestContractFixtures(t *testing.T) {
 	if covered != len(fixture.Capabilities) {
 		t.Errorf("%d/%d fixture capabilities have no invoker or skip entry", len(fixture.Capabilities)-covered, len(fixture.Capabilities))
 	}
+}
+
+// findFixture returns the single capability with the given id, failing the
+// test immediately if it's missing (a fixture rename/removal should be
+// caught here, not silently skipped).
+func findFixture(t *testing.T, fixture contractFixture, id string) contractCapability {
+	t.Helper()
+	for _, cap := range fixture.Capabilities {
+		if cap.ID == id {
+			return cap
+		}
+	}
+	t.Fatalf("fixture id %q not found in testdata/sdk-contract.json", id)
+	return contractCapability{}
+}
+
+// fixtureServer spins up an httptest server that always returns the given
+// capability's canned response, and returns a client pointed at it.
+func fixtureServer(t *testing.T, cap contractCapability) *awsysco.Client {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(cap.Response.Status)
+		if len(cap.Response.Body) > 0 {
+			_, _ = w.Write(cap.Response.Body)
+		}
+	}))
+	t.Cleanup(srv.Close)
+	return awsysco.NewClient("awsys_fieldtest", awsysco.WithBaseURL(srv.URL), awsysco.WithMaxRetries(0))
+}
+
+// TestContractFixtureFieldsDecodeThroughTypedAccessors asserts that decoding
+// a REAL fixture response body through the SDK's typed struct actually
+// populates the fields the fixture body carries — not just that the call
+// returns no error (ADR-019: a passing test must prove the SDK's typed
+// model exposes the documented fields, not merely that it echoes the
+// server). A wrong or missing json tag decodes silently to a zero value in
+// Go, so each assertion below is chosen specifically to have caught a real
+// bug found in this SDK during contract-parity work (TrustScoreResult's
+// score/status tags, NamespaceInfo's missing canClaim*/namespaceData
+// fields, AggregateAnalytics' missing botClicksExcluded).
+func TestContractFixtureFieldsDecodeThroughTypedAccessors(t *testing.T) {
+	fixture := loadContractFixture(t)
+	ctx := context.Background()
+
+	t.Run("trust_scan", func(t *testing.T) {
+		cap := findFixture(t, fixture, "trust_scan")
+		client := fixtureServer(t, cap)
+		result, err := client.TrustScore.Scan(ctx, "abc123")
+		if err != nil {
+			t.Fatalf("TrustScore.Scan: %v", err)
+		}
+		if result.Short == "" {
+			t.Error("Short is empty — expected the fixture's \"short\" value")
+		}
+		if result.Status == nil || *result.Status == "" {
+			t.Error("Status is nil/empty — trustStatus tag regressed to score/status?")
+		}
+		if result.Score == nil {
+			t.Error("Score is nil — trustScore tag regressed to score/status?")
+		}
+		if result.Source == "" {
+			t.Error("Source is empty — expected the fixture's \"source\" value")
+		}
+		if result.CreatedAt == nil {
+			t.Error("CreatedAt is nil — expected the fixture's \"createdAt\" value")
+		}
+	})
+
+	t.Run("namespace_get", func(t *testing.T) {
+		cap := findFixture(t, fixture, "namespace_get")
+		client := fixtureServer(t, cap)
+		info, err := client.Namespace.Get(ctx)
+		if err != nil {
+			t.Fatalf("Namespace.Get: %v", err)
+		}
+		if !info.HasAccess {
+			t.Error("HasAccess is false — expected true from the fixture")
+		}
+		if info.Namespace == nil || *info.Namespace == "" {
+			t.Error("Namespace is nil/empty")
+		}
+		if !info.CanClaimCustomDomain {
+			t.Error("CanClaimCustomDomain is false — expected true from the fixture")
+		}
+		if len(info.NamespaceData) == 0 {
+			t.Error("NamespaceData is empty — expected the fixture's nested object")
+		}
+	})
+
+	t.Run("aggregate_stats", func(t *testing.T) {
+		cap := findFixture(t, fixture, "aggregate_stats")
+		client := fixtureServer(t, cap)
+		agg, err := client.Analytics.GetAggregateStats(ctx, "abc123", &awsysco.AggregateOptions{Period: "7d"})
+		if err != nil {
+			t.Fatalf("Analytics.GetAggregateStats: %v", err)
+		}
+		if len(agg.ClicksByDay) == 0 {
+			t.Error("ClicksByDay is empty — expected one entry from the fixture")
+		}
+		if len(agg.CountryBreakdown) == 0 {
+			t.Error("CountryBreakdown is empty — expected the fixture's {MX:1}")
+		}
+		if agg.DeviceBreakdown == nil {
+			t.Error("DeviceBreakdown is nil")
+		}
+		if len(agg.HourBreakdown) == 0 {
+			t.Error("HourBreakdown is empty — expected one entry from the fixture")
+		}
+		if agg.Tier == "" {
+			t.Error("Tier is empty — expected \"builder\" from the fixture")
+		}
+	})
 }
 
 func assertContractQuery(t *testing.T, want map[string]any, got url.Values) {

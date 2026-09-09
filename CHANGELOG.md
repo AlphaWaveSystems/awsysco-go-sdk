@@ -101,6 +101,19 @@ suite to keep it that way, and rounds out resource coverage.
 
 ### Fixed
 
+- `TrustScoreResult.Score`/`Status` — corrected the wire field names from
+  `score`/`status` to the platform's actual `trustScore`/`trustStatus`
+  (`GET /api/link-scan/*`); the old tags decoded silently to `nil` on every
+  real response. Also gained `Source` and `CreatedAt`, which the platform
+  actually sends.
+- `NamespaceInfo` — gained `CanClaimCustomDomain`, `CanClaimSubdomain`, and
+  `NamespaceData`, which `GET /api/user/namespace` actually returns and the
+  struct was previously missing entirely.
+- `AggregateAnalytics` — gained `BotClicksExcluded`, present on the real
+  `GET /api/v1/links/*/stats/aggregate` response but previously missing.
+- `Link` — gained `GeoRestriction`, `OgMeta`, `IsCustom`, `IsDisabled`, and
+  `DisabledReason`, all real fields the platform can return that the struct
+  didn't expose.
 - `Analytics.GetRecentClicks` — corrected the request path from the
   nonexistent `/api/user/recent-clicks` to the platform's actual
   `GET /api/user/clicks/recent`, and updated the response envelope to match
@@ -120,14 +133,14 @@ suite to keep it that way, and rounds out resource coverage.
   back to the platform's actual wire names `source`/`medium`/`campaign`/
   `term`/`content` (not `utmSource`/`utmMedium`/`utmCampaign`/`utmTerm`/
   `utmContent` as an earlier pass in this same unreleased version assumed).
-  Verified live 2026-09-08 against `POST /api/user/utm-templates`
-  (`functions/app/routes/user.js:355`); see ADR-020, which retracts
-  ADR-003's original ("read via `/api/v1/me`") assumption entirely —
-  `/api/v1/me` does not actually return `utmTemplates`, and there is no
-  working `GET` list route at all yet (tracked upstream as platform issue
-  #831). `UtmTemplates.List` now logs a warning on every call rather than
-  silently returning an empty slice as if that were an authoritative
-  "you have no templates" answer.
+  Verified live against `POST /api/user/utm-templates`
+  (`functions/app/routes/user.js:355`).
+- `UtmTemplates.List` now reads the real `GET /api/user/utm-templates`
+  route (`{"templates": [...]}`), added by platform PR #833 (ADR-021,
+  superseding ADR-020/ADR-003). An earlier pass in this same unreleased
+  version briefly had `List` always return an empty slice with a warning
+  log because no working list route existed yet on the platform; that
+  route now exists and `List` returns real data.
 - `UsageLimits.CustomSlugs` — corrected from `int` to `bool`. It's a tier
   feature flag on the platform (`functions/app/config/tierLimits.js`,
   `routes/user.js:475`, `routes/apiV1.js:91`), not a count; decoding a real

@@ -10,11 +10,19 @@ type NamespaceResource struct {
 }
 
 // NamespaceInfo describes the authenticated user's namespace status.
+//
+// UpgradeRequired is not present on the real platform response (kept only
+// for backward compatibility, ADR-014 — it will always decode as false);
+// CanClaimCustomDomain/CanClaimSubdomain/NamespaceData reflect the actual
+// GET /api/user/namespace shape.
 type NamespaceInfo struct {
-	HasAccess       bool    `json:"hasAccess"`
-	Namespace       *string `json:"namespace"`
-	Tier            string  `json:"tier"`
-	UpgradeRequired bool    `json:"upgradeRequired"`
+	HasAccess            bool                   `json:"hasAccess"`
+	Namespace            *string                `json:"namespace"`
+	Tier                 string                 `json:"tier"`
+	UpgradeRequired      bool                   `json:"upgradeRequired"`
+	CanClaimCustomDomain bool                   `json:"canClaimCustomDomain"`
+	CanClaimSubdomain    bool                   `json:"canClaimSubdomain"`
+	NamespaceData        map[string]interface{} `json:"namespaceData,omitempty"`
 }
 
 // NamespaceCheckResult is the result of checking namespace availability.

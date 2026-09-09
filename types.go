@@ -10,18 +10,23 @@ import (
 // The API may return shortCode as either "shortCode" or "short" depending on
 // the endpoint; both are handled transparently.
 type Link struct {
-	ID                string     `json:"id"`
-	ShortURL          string     `json:"shortUrl"`
-	ShortCode         string     `json:"shortCode"`
-	Long              string     `json:"long"`
-	Clicks            int        `json:"clicks"`
-	Created           time.Time  `json:"created"`
-	ExpiresAt         *time.Time `json:"expiresAt"`
-	MaxClicks         *int       `json:"maxClicks"`
-	ExpireFallbackURL string     `json:"expireFallbackUrl,omitempty"`
-	PasswordProtected bool       `json:"passwordProtected"`
-	Namespace         string     `json:"namespace"`
-	FullPath          string     `json:"fullPath"`
+	ID                string          `json:"id"`
+	ShortURL          string          `json:"shortUrl"`
+	ShortCode         string          `json:"shortCode"`
+	Long              string          `json:"long"`
+	Clicks            int             `json:"clicks"`
+	Created           time.Time       `json:"created"`
+	ExpiresAt         *time.Time      `json:"expiresAt"`
+	MaxClicks         *int            `json:"maxClicks"`
+	ExpireFallbackURL string          `json:"expireFallbackUrl,omitempty"`
+	PasswordProtected bool            `json:"passwordProtected"`
+	Namespace         string          `json:"namespace"`
+	FullPath          string          `json:"fullPath"`
+	GeoRestriction    *GeoRestriction `json:"geoRestriction,omitempty"`
+	OgMeta            *OgMeta         `json:"ogMeta,omitempty"`
+	IsCustom          bool            `json:"isCustom,omitempty"`
+	IsDisabled        bool            `json:"isDisabled,omitempty"`
+	DisabledReason    string          `json:"disabledReason,omitempty"`
 }
 
 // UnmarshalJSON handles the API inconsistency where "shortCode" may be
@@ -553,6 +558,7 @@ type AggregateAnalytics struct {
 	FullPath          *string          `json:"fullPath,omitempty"`
 	Period            string           `json:"period"`
 	TotalClicks       int              `json:"totalClicks"`
+	BotClicksExcluded int              `json:"botClicksExcluded"`
 	UniqueVisitors    int              `json:"uniqueVisitors"`
 	ClicksByDay       []DayClicks      `json:"clicksByDay"`
 	CountryBreakdown  map[string]int   `json:"countryBreakdown"`
