@@ -58,6 +58,29 @@ jobs:
           go build ./...
           go vet ./...
 
+  vulncheck:
+    name: govulncheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          # Deliberately NOT tied to the build/vet/lint/test compatibility
+          # matrix above (go.mod's minimum, 1.22, plus 1.23/1.24 for
+          # backward-compat testing). govulncheck's standard-library
+          # findings reflect whichever Go toolchain built the binary being
+          # scanned, and older minor branches stop receiving security
+          # backports once they're out of Go's support window — pinning
+          # this to the matrix would mean this check could NEVER pass for
+          # an EOL branch, unrelated to anything wrong in this module's own
+          # code (it has zero third-party dependencies). Scan with a
+          # current, still-supported Go release instead; bump this version
+          # deliberately as new Go releases ship.
+          go-version: '1.26'
+          cache: true
+
       - name: govulncheck
         run: |
           go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
