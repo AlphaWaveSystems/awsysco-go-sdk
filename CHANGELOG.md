@@ -101,6 +101,24 @@ suite to keep it that way, and rounds out resource coverage.
 
 ### Fixed
 
+- `TimeoutError` now always unwraps to `context.DeadlineExceeded`, even
+  when the underlying transport error doesn't itself carry that sentinel
+  (`http.Client.Timeout` firing can produce an error that satisfies
+  `net.Error.Timeout()` without wrapping `context.DeadlineExceeded`,
+  depending on the Go toolchain version and exactly which request stage
+  timed out — CI caught this on a Go patch level where the local
+  development toolchain's behavior didn't match).
+- CI's `govulncheck` step moved out of the build/vet/lint/test
+  compatibility matrix into its own job pinned to a current Go release,
+  rather than running once per matrix leg. Standard-library CVE fixes are
+  only backported to Go's actively-supported release branches — running
+  govulncheck against an out-of-support branch (as the 1.22/1.23/1.24
+  compatibility matrix intentionally includes) could never pass regardless
+  of this module's own code, since it has zero third-party dependencies.
+- `.gitleaks.toml`'s allowlist now covers `testdata/` — the vendored
+  cross-SDK contract fixture contains example placeholder values (e.g. a
+  fake domain-verification token) that gitleaks' generic-api-key heuristic
+  flagged as a false positive.
 - `AffiliateProgram.CookieDays` — corrected the wire field name from
   `cookieDays` to the platform's actual `cookieDurationDays` (the old tag
   decoded silently to `0` on every real response). Also gained `MerchantID`,

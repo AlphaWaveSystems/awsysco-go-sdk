@@ -292,7 +292,7 @@ var contractInvokers = map[string]capabilityInvoker{
 		return err
 	},
 	"affiliate_program_create": func(ctx context.Context, c *awsysco.Client) error {
-		_, err := c.Affiliate.CreateProgram(ctx, awsysco.CreateAffiliateProgramInput{Name: "P", CommissionRate: 10})
+		_, err := c.Affiliate.CreateProgram(ctx, awsysco.CreateAffiliateProgramInput{Name: "Launch Affiliate", CommissionType: "cpc", CpcRate: 0.5, CookieDays: 30})
 		return err
 	},
 	"affiliate_programs_list": func(ctx context.Context, c *awsysco.Client) error {
@@ -615,7 +615,7 @@ func TestContractFixtureFieldsDecodeThroughTypedAccessors(t *testing.T) {
 	t.Run("affiliate_program_create", func(t *testing.T) {
 		cap := findFixture(t, fixture, "affiliate_program_create")
 		client := fixtureServer(t, cap)
-		program, err := client.Affiliate.CreateProgram(ctx, awsysco.CreateAffiliateProgramInput{Name: "P", CommissionRate: 10})
+		program, err := client.Affiliate.CreateProgram(ctx, awsysco.CreateAffiliateProgramInput{Name: "Launch Affiliate", CommissionType: "cpc", CpcRate: 0.5, CookieDays: 30})
 		if err != nil {
 			t.Fatalf("Affiliate.CreateProgram: %v", err)
 		}

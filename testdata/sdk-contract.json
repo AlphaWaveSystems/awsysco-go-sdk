@@ -1,6 +1,6 @@
 {
  "$schema": "awsys-sdk-contract/1",
- "version": "1.0.12",
+ "version": "1.0.13",
  "platformBaseline": "2026-09",
  "baseUrl": "https://awsys.co",
  "auth": {
@@ -3278,8 +3278,10 @@
     "path": "/api/affiliate/programs",
     "query": {},
     "body": {
-     "name": "P",
-     "commissionRate": 10
+     "name": "Launch Affiliate",
+     "commissionType": "cpc",
+     "cpcRate": 0.5,
+     "cookieDurationDays": 30
     }
    },
    "response": {
@@ -3306,7 +3308,8 @@
       "_nanoseconds": 0
      }
     }
-   }
+   },
+   "note": "create request: name(3-100 chars), commissionType in {cpc,cpa_return,both}; cpcRate(0.01-10) required if cpc/both; cpaRate(0.01-1000) required if cpa_return/both; cookieDurationDays optional (default, 1-365). Source: functions/affiliate/index.js:135. NOTE: request enum is cpc/cpa_return/both, but RESPONSES may carry legacy 'cpa' \u2014 read models should accept the wider set."
   },
   {
    "id": "affiliate_programs_list",

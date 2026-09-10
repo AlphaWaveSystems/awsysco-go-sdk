@@ -188,13 +188,21 @@ func indexByte(s string, b byte) int {
 func wrapTransportError(method, url string, err error) error {
 	base := NetworkError{Op: method, URL: url, Err: err}
 	if errors.Is(err, context.Canceled) {
+		// context.Canceled is a stable stdlib sentinel across Go versions,
+		// so err already unwraps to it reliably — no need to re-wrap.
 		return &base
 	}
-	if errors.Is(err, context.DeadlineExceeded) {
-		return &TimeoutError{NetworkError: base}
-	}
 	var netErr net.Error
-	if errors.As(err, &netErr) && netErr.Timeout() {
+	if errors.Is(err, context.DeadlineExceeded) || (errors.As(err, &netErr) && netErr.Timeout()) {
+		// Whether the underlying error already unwraps to
+		// context.DeadlineExceeded depends on the Go toolchain version and
+		// exactly which stage of the request timed out (net.Error.Timeout()
+		// can be satisfied by errors that never mention
+		// context.DeadlineExceeded at all, e.g. some net.OpError/poll
+		// deadline errors). Guarantee the contract's
+		// errors.Is(err, context.DeadlineExceeded) requirement explicitly
+		// rather than relying on that stdlib behavior.
+		base.Err = fmt.Errorf("%w: %w", context.DeadlineExceeded, err)
 		return &TimeoutError{NetworkError: base}
 	}
 	return &base
