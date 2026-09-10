@@ -2,6 +2,7 @@ package awsysco
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -9,28 +10,38 @@ import (
 // The API may return shortCode as either "shortCode" or "short" depending on
 // the endpoint; both are handled transparently.
 type Link struct {
-	ID                string     `json:"id"`
-	ShortURL          string     `json:"shortUrl"`
-	ShortCode         string     `json:"shortCode"`
-	Long              string     `json:"long"`
-	Clicks            int        `json:"clicks"`
-	Created           time.Time  `json:"created"`
-	ExpiresAt         *time.Time `json:"expiresAt"`
-	MaxClicks         *int       `json:"maxClicks"`
-	ExpireFallbackURL string     `json:"expireFallbackUrl,omitempty"`
-	PasswordProtected bool       `json:"passwordProtected"`
-	Namespace         string     `json:"namespace"`
-	FullPath          string     `json:"fullPath"`
+	ID                string          `json:"id"`
+	ShortURL          string          `json:"shortUrl"`
+	ShortCode         string          `json:"shortCode"`
+	Long              string          `json:"long"`
+	Clicks            int             `json:"clicks"`
+	Created           time.Time       `json:"created"`
+	ExpiresAt         *time.Time      `json:"expiresAt"`
+	MaxClicks         *int            `json:"maxClicks"`
+	ExpireFallbackURL string          `json:"expireFallbackUrl,omitempty"`
+	PasswordProtected bool            `json:"passwordProtected"`
+	Namespace         string          `json:"namespace"`
+	FullPath          string          `json:"fullPath"`
+	GeoRestriction    *GeoRestriction `json:"geoRestriction,omitempty"`
+	OgMeta            *OgMeta         `json:"ogMeta,omitempty"`
+	IsCustom          bool            `json:"isCustom,omitempty"`
+	IsDisabled        bool            `json:"isDisabled,omitempty"`
+	DisabledReason    string          `json:"disabledReason,omitempty"`
 }
 
 // UnmarshalJSON handles the API inconsistency where "shortCode" may be
 // returned as "short" on some endpoints.
 func (l *Link) UnmarshalJSON(b []byte) error {
-	// Use an alias to avoid infinite recursion.
+	// Use an alias to avoid infinite recursion. Deliberately does NOT
+	// shadow Clicks here (unlike Created/ExpiresAt below) — a same-tagged
+	// field declared directly on this anonymous struct takes priority over
+	// the same tag promoted from the embedded *LinkAlias, which would
+	// silently swallow the real "clicks" value into an unused field and
+	// leave l.Clicks always 0. Let it decode straight through the
+	// embedded alias instead.
 	type LinkAlias Link
 	aux := &struct {
 		Short     string      `json:"short"`
-		Clicks    interface{} `json:"clicks"`
 		Created   interface{} `json:"created"`
 		ExpiresAt interface{} `json:"expiresAt"`
 		*LinkAlias
@@ -185,7 +196,10 @@ type ClickEvent struct {
 	Referrer  string    `json:"referrer"`
 }
 
-// firestoreTimestamp handles both ISO string and Firestore {_seconds, _nanoseconds} formats.
+// firestoreTimestamp handles both ISO string and Firestore
+// {_seconds,_nanoseconds} / {seconds,nanoseconds} formats. Per ADR-017 it
+// must never raise on an unknown/garbage shape — worst case the field ends
+// up zero and decoding of the containing struct still succeeds.
 type firestoreTimestamp struct {
 	time.Time
 }
@@ -194,23 +208,47 @@ func (f *firestoreTimestamp) UnmarshalJSON(b []byte) error {
 	// Try plain string first.
 	var s string
 	if err := json.Unmarshal(b, &s); err == nil {
-		t, err := time.Parse(time.RFC3339, s)
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, s); err == nil {
 			f.Time = t
-			return nil
 		}
-		// Not a recognized date string — leave zero.
+		// Not a recognized date string — leave zero, never error.
 		return nil
 	}
-	// Try Firestore object {_seconds: N, _nanoseconds: N}.
-	var obj struct {
-		Seconds     int64 `json:"_seconds"`
-		Nanoseconds int64 `json:"_nanoseconds"`
-	}
-	if err := json.Unmarshal(b, &obj); err == nil && obj.Seconds != 0 {
-		f.Time = time.Unix(obj.Seconds, obj.Nanoseconds).UTC()
+
+	// Try a Firestore-shaped object: {_seconds,_nanoseconds} (underscore) or
+	// {seconds,nanoseconds} (bare) — the platform has emitted both forms.
+	// Decode field-by-field via a raw map instead of a fixed struct so a
+	// garbage value on one key (e.g. nanoseconds:"q", seconds:[1]) doesn't
+	// blow up decoding of the whole object — it's simply treated as absent.
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(b, &raw); err != nil {
+		// Not an object either (or some other shape entirely) — never error.
 		return nil
 	}
+
+	getInt := func(keys ...string) (int64, bool) {
+		for _, k := range keys {
+			v, ok := raw[k]
+			if !ok {
+				continue
+			}
+			var n int64
+			if json.Unmarshal(v, &n) == nil {
+				return n, true
+			}
+			// Present but not a valid int64 (wrong type, or a number too
+			// large/small to fit — e.g. 1e300) — treat as absent, not fatal.
+		}
+		return 0, false
+	}
+
+	secs, ok := getInt("_seconds", "seconds")
+	if !ok {
+		// No usable seconds field at all — leave zero, never error.
+		return nil
+	}
+	nanos, _ := getInt("_nanoseconds", "nanoseconds")
+	f.Time = time.Unix(secs, nanos).UTC()
 	return nil
 }
 
@@ -285,7 +323,34 @@ type BulkLinkInput struct {
 type BulkCreateResponse struct {
 	Created int              `json:"created"`
 	Failed  int              `json:"failed"`
+	Total   int              `json:"total"`
 	Results []BulkLinkResult `json:"results"`
+}
+
+// UnmarshalJSON reads Created/Failed/Total from the platform's real response
+// envelope ({success, summary:{total,created,failed}, results}), falling back
+// to top-level created/failed/total fields if summary is absent.
+func (b *BulkCreateResponse) UnmarshalJSON(data []byte) error {
+	type BulkCreateResponseAlias BulkCreateResponse
+	aux := &struct {
+		Summary *struct {
+			Total   int `json:"total"`
+			Created int `json:"created"`
+			Failed  int `json:"failed"`
+		} `json:"summary"`
+		*BulkCreateResponseAlias
+	}{
+		BulkCreateResponseAlias: (*BulkCreateResponseAlias)(b),
+	}
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+	if aux.Summary != nil {
+		b.Created = aux.Summary.Created
+		b.Failed = aux.Summary.Failed
+		b.Total = aux.Summary.Total
+	}
+	return nil
 }
 
 // BulkLinkResult is the result of a single link in a bulk create.
@@ -297,6 +362,7 @@ type BulkLinkResult struct {
 }
 
 // QROptions configures QR code generation.
+//
 // Deprecated: use QROption functional options with QRResource.GetURL instead.
 type QROptions struct {
 	Size    int
@@ -339,7 +405,11 @@ func (u *IntOrUnlimited) UnmarshalJSON(b []byte) error {
 }
 
 // UsageLimits holds the per-tier usage limits for the current account.
-// Fields that can be "unlimited" use IntOrUnlimited; the remainder are plain ints.
+// Fields that can be "unlimited" use IntOrUnlimited; the remainder are plain
+// ints. CustomSlugs is a plain bool, not a count — the platform models it as
+// a tier feature flag (functions/app/config/tierLimits.js), not a quota; see
+// functions/app/routes/user.js and apiV1.js for the same field on /api/user/*
+// and /api/v1/* responses.
 type UsageLimits struct {
 	LinksPerMonth        IntOrUnlimited `json:"linksPerMonth"`
 	MonthlyLinks         IntOrUnlimited `json:"monthlyLinks"`
@@ -348,7 +418,7 @@ type UsageLimits struct {
 	QRCodes              IntOrUnlimited `json:"qrCodes"`
 	Folders              IntOrUnlimited `json:"folders"`
 	APICallsPerMonth     int            `json:"apiCallsPerMonth"`
-	CustomSlugs          int            `json:"customSlugs"`
+	CustomSlugs          bool           `json:"customSlugs"`
 }
 
 // UsageOverage describes the account's metered-overage state.
@@ -423,10 +493,24 @@ type ImportJob struct {
 // ImportStartOptions is the input for starting a provider import.
 type ImportStartOptions struct {
 	Provider        string `json:"provider"`
-	AccessToken     string `json:"access_token"`
-	TargetNamespace string `json:"target_namespace,omitempty"`
-	ScanOnly        bool   `json:"scan_only,omitempty"`
+	AccessToken     string `json:"accessToken"`
+	TargetNamespace string `json:"targetNamespace,omitempty"`
+	ScanOnly        bool   `json:"scanOnly,omitempty"`
 }
+
+// String implements fmt.Stringer, redacting AccessToken so a provider OAuth
+// token never leaks through logging/debug output of an ImportStartOptions
+// value (or pointer — the method set of *ImportStartOptions includes this
+// value-receiver method too).
+func (o ImportStartOptions) String() string {
+	return fmt.Sprintf(
+		"awsysco.ImportStartOptions{Provider: %q, AccessToken: %s, TargetNamespace: %q, ScanOnly: %v}",
+		o.Provider, redactSecret(o.AccessToken), o.TargetNamespace, o.ScanOnly,
+	)
+}
+
+// GoString implements fmt.GoStringer, redacting AccessToken.
+func (o ImportStartOptions) GoString() string { return o.String() }
 
 // ImportListOptions filters the imports List request.
 type ImportListOptions struct {
@@ -474,6 +558,7 @@ type AggregateAnalytics struct {
 	FullPath          *string          `json:"fullPath,omitempty"`
 	Period            string           `json:"period"`
 	TotalClicks       int              `json:"totalClicks"`
+	BotClicksExcluded int              `json:"botClicksExcluded"`
 	UniqueVisitors    int              `json:"uniqueVisitors"`
 	ClicksByDay       []DayClicks      `json:"clicksByDay"`
 	CountryBreakdown  map[string]int   `json:"countryBreakdown"`
@@ -512,4 +597,45 @@ type MeResponse struct {
 	IsPremium        bool                   `json:"isPremium"`
 	Features         map[string]interface{} `json:"features"`
 	Limits           map[string]interface{} `json:"limits"`
+}
+
+// TrialInfo describes an account's active trial, if any. Profile.Trial is nil
+// when the account has no trial.
+type TrialInfo struct {
+	Active   bool    `json:"active"`
+	Locked   bool    `json:"locked"`
+	DaysLeft int     `json:"daysLeft"`
+	Tier     string  `json:"tier"`
+	EndsAt   *string `json:"endsAt"`
+}
+
+// Profile is the response from GET /api/user/profile.
+type Profile struct {
+	UID                   string                 `json:"uid"`
+	Email                 string                 `json:"email"`
+	EmailVerified         bool                   `json:"emailVerified"`
+	IsPremium             bool                   `json:"isPremium"`
+	UserPrefix            string                 `json:"userPrefix"`
+	SubscriptionTier      string                 `json:"subscriptionTier"`
+	SubscriptionSource    string                 `json:"subscriptionSource"`
+	LinksCreatedThisMonth int                    `json:"linksCreatedThisMonth"`
+	APICallsThisMonth     int                    `json:"apiCallsThisMonth"`
+	HasAPIKey             bool                   `json:"hasApiKey"`
+	Created               string                 `json:"created"`
+	PreferredLanguage     string                 `json:"preferredLanguage"`
+	Trial                 *TrialInfo             `json:"trial"`
+	OfferDeclinedAt       *string                `json:"offerDeclinedAt"`
+	Limits                map[string]interface{} `json:"limits"`
+	Features              map[string]interface{} `json:"features"`
+	FeatureFlags          map[string]interface{} `json:"featureFlags"`
+	UtmTemplates          []UtmTemplate          `json:"utmTemplates"`
+	FiscalData            map[string]interface{} `json:"fiscalData"`
+}
+
+// ProfileUpdateInput is the input for ProfileResource.Update. Only non-nil
+// fields are sent in the request body.
+type ProfileUpdateInput struct {
+	DisplayName       *string `json:"displayName,omitempty"`
+	PhotoURL          *string `json:"photoURL,omitempty"`
+	PreferredLanguage *string `json:"preferredLanguage,omitempty"`
 }

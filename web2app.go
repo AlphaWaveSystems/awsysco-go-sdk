@@ -2,8 +2,6 @@ package awsysco
 
 import (
 	"context"
-	"fmt"
-	"net/url"
 )
 
 // Web2AppResource provides access to the Web2App attribution API.
@@ -20,7 +18,7 @@ type Web2AppResource struct {
 // An invalid token format returns a 400 (use IsValidationError to detect).
 func (r *Web2AppResource) ConsumeSession(ctx context.Context, token string) (*Web2AppSession, error) {
 	var session Web2AppSession
-	path := fmt.Sprintf("/api/v1/web2app/%s", url.PathEscape(token))
+	path := pathWeb2App(token)
 	if err := r.client.doRequest(ctx, "GET", path, nil, &session); err != nil {
 		return nil, err
 	}

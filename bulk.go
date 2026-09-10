@@ -10,7 +10,7 @@ type BulkResource struct {
 // Create creates multiple links in a single request.
 func (r *BulkResource) Create(ctx context.Context, input BulkCreateInput) (*BulkCreateResponse, error) {
 	var resp BulkCreateResponse
-	if err := r.client.doRequest(ctx, "POST", "/api/v1/bulk", input, &resp); err != nil {
+	if err := r.client.doRequest(ctx, "POST", pathBulk, input, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

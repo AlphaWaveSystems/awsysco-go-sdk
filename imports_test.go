@@ -62,18 +62,19 @@ func TestImportsStart(t *testing.T) {
 		t.Errorf("path = %s, want /api/v1/imports", gotPath)
 	}
 
-	// Body must be snake_case.
+	// Body must be camelCase, matching the platform contract (and every
+	// other endpoint's wire format) — see contract-fixture "import_start".
 	if gotBody["provider"] != "bitly" {
 		t.Errorf("body provider = %v, want bitly", gotBody["provider"])
 	}
-	if gotBody["access_token"] != "secret_token" {
-		t.Errorf("body access_token = %v, want secret_token", gotBody["access_token"])
+	if gotBody["accessToken"] != "secret_token" {
+		t.Errorf("body accessToken = %v, want secret_token", gotBody["accessToken"])
 	}
-	if gotBody["target_namespace"] != "promo" {
-		t.Errorf("body target_namespace = %v, want promo", gotBody["target_namespace"])
+	if gotBody["targetNamespace"] != "promo" {
+		t.Errorf("body targetNamespace = %v, want promo", gotBody["targetNamespace"])
 	}
-	if _, hasCamel := gotBody["accessToken"]; hasCamel {
-		t.Error("body should not contain camelCase accessToken")
+	if _, hasSnake := gotBody["access_token"]; hasSnake {
+		t.Error("body should not contain snake_case access_token")
 	}
 
 	if job.ID != "imp_123" {
@@ -107,11 +108,11 @@ func TestImportsStartOmitsOptionalFields(t *testing.T) {
 		t.Fatalf("Imports.Start failed: %v", err)
 	}
 
-	if _, ok := gotBody["target_namespace"]; ok {
-		t.Error("target_namespace should be omitted when empty")
+	if _, ok := gotBody["targetNamespace"]; ok {
+		t.Error("targetNamespace should be omitted when empty")
 	}
-	if _, ok := gotBody["scan_only"]; ok {
-		t.Error("scan_only should be omitted when false")
+	if _, ok := gotBody["scanOnly"]; ok {
+		t.Error("scanOnly should be omitted when false")
 	}
 }
 

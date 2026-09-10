@@ -27,7 +27,7 @@ func TestUsageGet(t *testing.T) {
 			"apiCallsPerMonth": 1000,
 			"qrCodes": 50,
 			"folders": "unlimited",
-			"customSlugs": 25
+			"customSlugs": true
 		},
 		"hasApiKey": true,
 		"apiKeyCreatedAt": "2026-06-01T00:00:00Z",
@@ -106,8 +106,8 @@ func TestUsageGet(t *testing.T) {
 	if stats.Limits.APICallsPerMonth != 1000 {
 		t.Errorf("Limits.APICallsPerMonth = %d, want 1000", stats.Limits.APICallsPerMonth)
 	}
-	if stats.Limits.CustomSlugs != 25 {
-		t.Errorf("Limits.CustomSlugs = %d, want 25", stats.Limits.CustomSlugs)
+	if !stats.Limits.CustomSlugs {
+		t.Errorf("Limits.CustomSlugs = %v, want true", stats.Limits.CustomSlugs)
 	}
 
 	// Overage.

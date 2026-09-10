@@ -10,7 +10,7 @@ type UsageResource struct {
 // Get returns usage statistics and tier limits for the authenticated account.
 func (r *UsageResource) Get(ctx context.Context) (*UsageStats, error) {
 	var stats UsageStats
-	if err := r.client.doRequest(ctx, "GET", "/api/user/stats", nil, &stats); err != nil {
+	if err := r.client.doRequest(ctx, "GET", pathUserStats, nil, &stats); err != nil {
 		return nil, err
 	}
 	return &stats, nil

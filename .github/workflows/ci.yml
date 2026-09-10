@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    name: Build, vet, lint, test (Go ${{ matrix.go-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.22', '1.23', '1.24']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: gofmt
+        run: |
+          fmt_out="$(gofmt -l .)"
+          if [ -n "$fmt_out" ]; then
+            echo "The following files are not gofmt-formatted:"
+            echo "$fmt_out"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6.1.1
+        with:
+          version: v1.62.2
+          args: --timeout=5m
+
+      - name: go build
+        run: go build ./...
+
+      - name: go test (root module only)
+        run: go test -race ./...
+
+      - name: livetest module build/vet (compile check only, no secrets)
+        # livetest/ is a separate module (its own go.mod) so it's invisible
+        # to the root `go build ./...`/`go vet ./...` above — verify it at
+        # least compiles and vets cleanly. Its tests need a real
+        # AWSYS_API_KEY against staging, so they're deliberately not run
+        # here — this step is compile verification only.
+        run: |
+          cd livetest
+          go build ./...
+          go vet ./...
+
+      - name: govulncheck
+        run: |
+          go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+          # Pinned (not @latest) so a new govulncheck release can't silently
+          # change CI behavior/output between runs; bump deliberately.
