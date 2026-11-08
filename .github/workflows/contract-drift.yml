@@ -28,10 +28,26 @@ jobs:
           cache: true
 
       - name: Fetch upstream contract
+        # The platform repo is private, so the contract cannot be downloaded
+        # from raw.githubusercontent.com (that always returned 404 and the job
+        # failed before it could report drift). The platform's dispatch now
+        # carries it: gzip + base64 in client_payload.contractGzB64, with its
+        # SHA-256. It is read only through env: and parsed as JSON, never
+        # interpolated into the script. A scheduled run has no payload and
+        # checks the vendored copy only.
+        env:
+          CONTRACT_GZ_B64: ${{ github.event.client_payload.contractGzB64 }}
+          CONTRACT_SHA256: ${{ github.event.client_payload.contractSha256 }}
         run: |
-          curl -sSL \
-            "https://raw.githubusercontent.com/AlphaWaveSystems/awsys-shortener/master/contracts/sdk-contract.json" \
-            -o /tmp/sdk-contract-upstream.json
+          set -euo pipefail
+          if [ -z "${CONTRACT_GZ_B64:-}" ]; then
+            echo "::notice::No contract in the dispatch payload (scheduled run or an older sender); checking the vendored contract only."
+            cp testdata/sdk-contract.json /tmp/sdk-contract-upstream.json
+          else
+            printf '%s' "$CONTRACT_GZ_B64" | base64 -d | gunzip > /tmp/sdk-contract-upstream.json
+            echo "${CONTRACT_SHA256}  /tmp/sdk-contract-upstream.json" | sha256sum -c -
+          fi
+          jq -e '.version | type == "string"' /tmp/sdk-contract-upstream.json > /dev/null
 
       - name: Compare contract versions
         id: diff
