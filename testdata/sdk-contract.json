@@ -1,6 +1,6 @@
 {
  "$schema": "awsys-sdk-contract/1",
- "version": "1.0.13",
+ "version": "1.0.14",
  "platformBaseline": "2026-09",
  "baseUrl": "https://awsys.co",
  "auth": {
@@ -3968,6 +3968,17 @@
     "message": "Verify your email"
    },
    "expect_error": "AuthorizationError"
+  },
+  {
+   "id": "err_403_suspended",
+   "status": 403,
+   "body": {
+    "error": true,
+    "code": "ACCOUNT_SUSPENDED",
+    "message": "Your account has been suspended pending a fraud review. Please open a support ticket to appeal."
+   },
+   "expect_error": "AuthorizationError",
+   "note": "apiKeyAuth (API key and Firebase ID token) since scan #3 S3-M-2"
   },
   {
    "id": "err_400_missing_url",
