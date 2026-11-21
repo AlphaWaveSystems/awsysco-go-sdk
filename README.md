@@ -173,7 +173,7 @@ stats, err := client.Analytics.GetStats(ctx, "link_id", "7d")
 
 `GetAggregateStats` returns pre-aggregated analytics for a link via
 `GET /api/v1/links/{shortPath}/stats/aggregate`. The `Period` option is
-`"7d"`, `"30d"`, or `"90d"`. Paid-tier breakdowns (`DeviceBreakdown`,
+`"7d"`, `"30d"`, `"90d"`, or `"365d"`. Paid-tier breakdowns (`DeviceBreakdown`,
 `UTMBreakdown`, `HourBreakdown`, `ReferrerBreakdown`, `BrowserBreakdown`,
 `OSBreakdown`, `SourceBreakdown`) are pointers/maps that are **nil on the
 free tier**, where the response instead populates `UpgradeForMore`.

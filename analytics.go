@@ -29,7 +29,7 @@ func (r *AnalyticsResource) GetStats(ctx context.Context, shortPath string, peri
 
 // GetAggregateStats returns the aggregated analytics breakdown for a link via
 // GET /api/v1/links/{shortPath}/stats/aggregate. opts.Period filters the window
-// ("7d", "30d", "90d"); pass nil or an empty period to use the API default.
+// ("7d", "30d", "90d", "365d"); pass nil or an empty period to use the API default.
 //
 // Free-tier responses populate UpgradeForMore and leave the paid-tier
 // breakdowns (DeviceBreakdown, UTMBreakdown, etc.) nil.

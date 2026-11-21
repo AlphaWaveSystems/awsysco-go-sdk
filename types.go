@@ -575,7 +575,7 @@ type AggregateAnalytics struct {
 }
 
 // AggregateOptions filters the aggregate stats request. Period is one of
-// "7d", "30d", or "90d".
+// "7d", "30d", "90d", or "365d".
 type AggregateOptions struct {
 	Period string
 }
